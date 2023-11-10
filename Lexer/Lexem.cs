@@ -1,3 +1,5 @@
+using System;
+
 namespace Lexer
 {
     public class Lexem
