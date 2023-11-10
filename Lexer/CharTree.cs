@@ -7,14 +7,18 @@ namespace Lexer
     {
         public string Value { get; private set; }
         public List<CharTree> Children { get; }
+        
+        public bool IsComplete { get; private set; }
 
         public CharTree() : this("")
         {
+            IsComplete = false;
         }
 
         public CharTree(string val)
         {
             Value = val;
+            IsComplete = true;
             Children = new List<CharTree>();
         }
 
@@ -57,6 +61,7 @@ namespace Lexer
                     {
                         string nv = str.Substring(0, n);
                         child.Value = nv;
+                        
                         if (str != nv)
                         {
                             child.Children.Add(new CharTree(str));
@@ -65,7 +70,10 @@ namespace Lexer
                         if (cv != nv)
                         {
                             child.Children.Add(new CharTree(cv));
+                            child.IsComplete = false;
                         }
+                        
+                        
 
                         added = true;
                         break;
@@ -76,7 +84,6 @@ namespace Lexer
                 {
                     Children.Add(new CharTree(str));
                 }
-                
             }
             else
             {

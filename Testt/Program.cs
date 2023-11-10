@@ -1,4 +1,9 @@
-﻿using Lexer;
+﻿using Lexer = Lexer.Lexer;
 
-CharTree c = Lexer.Lexer._keyWordsTree;
-Console.WriteLine(c.ToString());
+global::Lexer.Lexer lexer = new();
+
+string code = "\"freuhuierhg'\"'1213'";
+foreach (var lexem in lexer.Lex(code))
+{
+    Console.WriteLine(lexem);
+}

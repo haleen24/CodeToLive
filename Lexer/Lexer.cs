@@ -53,14 +53,16 @@ namespace Lexer
             { "!=", LexemType.NotEqv },
             { "<<", LexemType.BLshift },
             { ">>", LexemType.BRshift },
-            { "\\", LexemType.LineConcat }
+            { "\\", LexemType.LineConcat },
+            { ";", LexemType.Semicolon }
         };
 
-        public static CharTree _keyWordsTree;  // TODO: private
-        public static CharTree _operatorsTree; 
+        private static CharTree _keyWordsTree;
+        private static CharTree _operatorsTree;
 
         private static readonly HashSet<char> WhiteSpace = new HashSet<char> { '\t', '\r', '\x0b', '\x0c', ' ' };
         private static HashSet<char> _specialSymbols = new HashSet<char>();
+        private static readonly HashSet<char> StringLiteralSymbols = new HashSet<char>() { '\'', '"' };
 
         static Lexer()
         {
@@ -90,7 +92,7 @@ namespace Lexer
             return stream;
         }
 
-        private Lexem GetNumericLiteral(StreamReader stream)
+        private static Lexem GetNumericLiteral(StreamReader stream)
         {
             LexemType type = LexemType.IntLiteral;
             StringBuilder sb = new StringBuilder();
@@ -114,7 +116,8 @@ namespace Lexer
                     sb.Append(c);
                     stream.Read();
                 }
-                else if (WhiteSpace.Contains(c) || _specialSymbols.Contains(c) || c == '\n')
+                else if (WhiteSpace.Contains(c) || _specialSymbols.Contains(c) || c == '\n' ||
+                         StringLiteralSymbols.Contains(c))
                 {
                     break;
                 }
@@ -132,20 +135,22 @@ namespace Lexer
             return new FloatLiteral(sb.ToString());
         }
 
-        private Lexem GetStringLiteral(StreamReader stream)
+        private static Lexem GetStringLiteral(StreamReader stream)
         {
-            char prev = (char)stream.Read();
-            StringBuilder sb = new StringBuilder(prev);
+            char start = (char)stream.Read();
+            char prev = start;
+            StringBuilder sb = new StringBuilder();
+            sb.Append(start);
             while (!stream.EndOfStream)
             {
                 char c = (char)stream.Peek();
-                if (c == '\'' && prev != '\\')
+                if (c == start && prev != '\\')
                 {
                     stream.Read();
                     return new StringLiteral(sb.ToString() + c);
                 }
 
-                if (c == '\n' || c == '\r')
+                if (c == '\n')
                 {
                     throw new Exception("Message"); // TODO: Система исключений
                 }
@@ -158,7 +163,7 @@ namespace Lexer
             throw new Exception("Message"); // TODO: Система исключений
         }
 
-        private Lexem GetOperatorLexem(StreamReader stream)
+        private static Lexem GetOperatorLexem(StreamReader stream)
         {
             String sb = "";
             CharTree current = _operatorsTree;
@@ -168,7 +173,7 @@ namespace Lexer
 
                 if (!_specialSymbols.Contains(c))
                 {
-                    if (sb != current.Value)
+                    if (sb != current.Value || !current.IsComplete)
                     {
                         throw new Exception("Message"); // TODO: Система исключений
                     }
@@ -176,29 +181,32 @@ namespace Lexer
                     return new Lexem(Operators[sb]);
                 }
 
-                if (sb.Length == current.Value.Length)
+                while (sb.Length == current.Value.Length)
                 {
-                    CharTree? pc = current.PrefixChild(sb);
+                    CharTree? pc = current.PrefixChild(sb + c);
 
                     current = pc ?? throw new Exception("Message");
                 }
+
                 sb += c;
                 stream.Read();
             }
+
             throw new Exception("Message"); // TODO: Система исключений
         }
 
-        private Lexem GetKeywordOrIdentifier(StreamReader stream)
+        private static Lexem GetKeywordOrIdentifier(StreamReader stream)
         {
             String sb = "";
-            CharTree? current = _operatorsTree;
+            CharTree? current = _keyWordsTree;
             while (!stream.EndOfStream)
             {
                 char c = (char)stream.Peek();
 
-                if (_specialSymbols.Contains(c) || WhiteSpace.Contains(c) || c == '\n')
+                if (_specialSymbols.Contains(c) || WhiteSpace.Contains(c) || c == '\n' ||
+                    StringLiteralSymbols.Contains(c))
                 {
-                    if (current == null || sb != current.Value)
+                    if (current == null || sb != current.Value || !current.IsComplete)
                     {
                         return new Identifier(sb);
                     }
@@ -206,11 +214,15 @@ namespace Lexer
                     return new Lexem(KeyWords[sb]);
                 }
 
-                if (current != null && sb.Length == current.Value.Length)
+                while (current != null && sb.Length == current.Value.Length)
                 {
-                    current = current.PrefixChild(sb);
+                    current = current.PrefixChild(sb + c);
                 }
+
+                sb += c;
+                stream.Read();
             }
+
             if (current == null || sb != current.Value)
             {
                 return new Identifier(sb);
@@ -245,7 +257,7 @@ namespace Lexer
                     continue;
                 }
 
-                if (c == '\'')
+                if (StringLiteralSymbols.Contains(c)) 
                 {
                     yield return GetStringLiteral(stream);
                     continue;
