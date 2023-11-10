@@ -20,7 +20,7 @@ namespace Lexer
             { "true", LexemType.True },
             { "false", LexemType.False },
             { "null", LexemType.Null },
-            { "Is", LexemType.Is },
+            { "is", LexemType.Is },
             { "break", LexemType.Break },
             { "return", LexemType.Return },
             { "continue", LexemType.Continue },
