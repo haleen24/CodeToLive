@@ -1,20 +1,15 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace Lexer
 {
     public class Lexer
     {
-        private static Dictionary<string, LexemType> keyWords = new Dictionary<string, LexemType>
+        private static readonly Dictionary<string, LexemType> KeyWords = new Dictionary<string, LexemType>
         {
             { "if", LexemType.If },
             { "while", LexemType.While },
             { "for", LexemType.For },
+            { "foreach", LexemType.Foreach },
             { "func", LexemType.Func },
             { "class", LexemType.Class },
             { "true", LexemType.True },
@@ -27,7 +22,7 @@ namespace Lexer
             { "else", LexemType.Else }
         };
 
-        private static Dictionary<string, LexemType> operators = new Dictionary<string, LexemType>
+        private static readonly Dictionary<string, LexemType> Operators = new Dictionary<string, LexemType>
         {
             { "+", LexemType.Plus },
             { "-", LexemType.Minus },
@@ -57,29 +52,30 @@ namespace Lexer
             { "<=", LexemType.LessEq },
             { "!=", LexemType.NotEqv },
             { "<<", LexemType.BLshift },
-            { ">>", LexemType.BRshift }
+            { ">>", LexemType.BRshift },
+            { "\\", LexemType.LineConcat }
         };
 
-        private static CharTree keyWordsTree;
-        private static CharTree operatorsTree;
+        public static CharTree _keyWordsTree;  // TODO: private
+        public static CharTree _operatorsTree; 
 
-        private static HashSet<char> whiteSpace = new HashSet<char> { '\t', '\n', '\r', '\x0b', '\x0c', ' ' };
-        private static HashSet<char> specialSymbols = new HashSet<char>();
+        private static readonly HashSet<char> WhiteSpace = new HashSet<char> { '\t', '\r', '\x0b', '\x0c', ' ' };
+        private static HashSet<char> _specialSymbols = new HashSet<char>();
 
         static Lexer()
         {
-            keyWordsTree = new CharTree(keyWords.Keys);
-            operatorsTree = new CharTree(operators.Keys);
+            _keyWordsTree = new CharTree(KeyWords.Keys);
+            _operatorsTree = new CharTree(Operators.Keys);
             FillSpecialSymbols();
         }
 
         private static void FillSpecialSymbols()
         {
-            foreach (string s in operators.Keys)
+            foreach (string s in Operators.Keys)
             {
                 foreach (char c in s)
                 {
-                    specialSymbols.Add(c);
+                    _specialSymbols.Add(c);
                 }
             }
         }
@@ -118,7 +114,7 @@ namespace Lexer
                     sb.Append(c);
                     stream.Read();
                 }
-                else if (whiteSpace.Contains(c) || specialSymbols.Contains(c))
+                else if (WhiteSpace.Contains(c) || _specialSymbols.Contains(c) || c == '\n')
                 {
                     break;
                 }
@@ -165,75 +161,103 @@ namespace Lexer
         private Lexem GetOperatorLexem(StreamReader stream)
         {
             String sb = "";
-            CharTree current = operatorsTree;
+            CharTree current = _operatorsTree;
             while (!stream.EndOfStream)
             {
                 char c = (char)stream.Peek();
 
-                if (!specialSymbols.Contains(c))
+                if (!_specialSymbols.Contains(c))
                 {
                     if (sb != current.Value)
                     {
                         throw new Exception("Message"); // TODO: Система исключений
                     }
 
-                    return new Lexem(operators[sb]);
+                    return new Lexem(Operators[sb]);
                 }
 
                 if (sb.Length == current.Value.Length)
                 {
-                    CharTree pc = current.PrefixChild(sb);
-                    if (pc == null)
-                    {
-                        throw new Exception("Message"); // TODO: Система исключений
-                    }
+                    CharTree? pc = current.PrefixChild(sb);
 
-                    current = pc;
-                    sb += c;
-                    stream.Read();
+                    current = pc ?? throw new Exception("Message");
                 }
+                sb += c;
+                stream.Read();
             }
             throw new Exception("Message"); // TODO: Система исключений
         }
 
         private Lexem GetKeywordOrIdentifier(StreamReader stream)
         {
+            String sb = "";
+            CharTree? current = _operatorsTree;
+            while (!stream.EndOfStream)
+            {
+                char c = (char)stream.Peek();
+
+                if (_specialSymbols.Contains(c) || WhiteSpace.Contains(c) || c == '\n')
+                {
+                    if (current == null || sb != current.Value)
+                    {
+                        return new Identifier(sb);
+                    }
+
+                    return new Lexem(KeyWords[sb]);
+                }
+
+                if (current != null && sb.Length == current.Value.Length)
+                {
+                    current = current.PrefixChild(sb);
+                }
+            }
+            if (current == null || sb != current.Value)
+            {
+                return new Identifier(sb);
+            }
+
+            return new Lexem(KeyWords[sb]);
         }
 
         public IEnumerable<Lexem> Lex(string str)
         {
-            using (var stream = new StreamReader(GenerateStreamFromString(str)))
+            using var stream = new StreamReader(GenerateStreamFromString(str));
+            while (!stream.EndOfStream)
             {
-                while (!stream.EndOfStream)
+                char c = (char)stream.Peek();
+
+                if (WhiteSpace.Contains(c))
                 {
-                    char c = (char)stream.Peek();
-
-                    if (whiteSpace.Contains(c))
-                    {
-                        stream.Read();
-                        continue;
-                    }
-
-                    if (char.IsDigit(c) || c == '.')
-                    {
-                        yield return GetNumericLiteral(stream);
-                        continue;
-                    }
-
-                    if (c == '\'')
-                    {
-                        yield return GetStringLiteral(stream);
-                        continue;
-                    }
-
-                    if (specialSymbols.Contains(c))
-                    {
-                        yield return GetOperatorLexem(stream);
-                        continue;
-                    }
-
-                    yield return GetKeywordOrIdentifier(stream);
+                    stream.Read();
+                    continue;
                 }
+
+                if (c == '\n')
+                {
+                    yield return new Lexem(LexemType.NewLine);
+                    stream.Read();
+                    continue;
+                }
+
+                if (char.IsDigit(c) || c == '.')
+                {
+                    yield return GetNumericLiteral(stream);
+                    continue;
+                }
+
+                if (c == '\'')
+                {
+                    yield return GetStringLiteral(stream);
+                    continue;
+                }
+
+                if (_specialSymbols.Contains(c))
+                {
+                    yield return GetOperatorLexem(stream);
+                    continue;
+                }
+
+                yield return GetKeywordOrIdentifier(stream);
             }
         }
     }

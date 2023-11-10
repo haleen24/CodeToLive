@@ -20,7 +20,7 @@ namespace Lexer
 
         public CharTree(IEnumerable<string> vals) : this()
         {
-            foreach (string s in vals)
+            foreach (string s in vals.OrderBy(x => x.Length))
             {
                 Add(s);
             }
@@ -41,9 +41,9 @@ namespace Lexer
             return start;
         }
 
-        public void Add(string str)  // TODO: переделать - выделять общий префикс
+        private void Add(string str)
         {
-            CharTree toAdd = PrefixChild(str);
+            CharTree? toAdd = PrefixChild(str);
             if (toAdd == null)
             {
                 int start = Value.Length;
@@ -84,7 +84,7 @@ namespace Lexer
             }
         }
 
-        public CharTree PrefixChild(string value)
+        public CharTree? PrefixChild(string value)
         {
             foreach (CharTree child in Children)
             {
@@ -95,6 +95,11 @@ namespace Lexer
             }
 
             return null;
+        }
+
+        public override string ToString()
+        {
+            return $"({Value}, [{string.Join(", ", Children)}])";
         }
     }
 }
