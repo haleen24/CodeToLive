@@ -47,6 +47,9 @@ namespace Lexer
         StringLiteral,
         IntLiteral,
         FloatLiteral,
-        Identifier
+        Identifier,
+        NewLine,
+        LineConcat,
+        Foreach
     }
 }
