@@ -1,6 +1,6 @@
 using System;
 
-namespace Lexer
+namespace LexerSpace
 {
     public class Lexem
     {

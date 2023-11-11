@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Lexer.Exceptions;
+namespace LexerSpace.Exceptions;
 
 public class LexerException : Exception
 {
