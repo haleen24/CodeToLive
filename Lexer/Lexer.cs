@@ -57,17 +57,12 @@ namespace Lexer
             { ";", LexemType.Semicolon }
         };
 
-        private static CharTree _keyWordsTree;
-        private static CharTree _operatorsTree;
-
         private static readonly HashSet<char> WhiteSpace = new HashSet<char> { '\t', '\r', '\x0b', '\x0c', ' ' };
         private static HashSet<char> _specialSymbols = new HashSet<char>();
         private static readonly HashSet<char> StringLiteralSymbols = new HashSet<char>() { '\'', '"' };
 
         static Lexer()
         {
-            _keyWordsTree = new CharTree(KeyWords.Keys);
-            _operatorsTree = new CharTree(Operators.Keys);
             FillSpecialSymbols();
         }
 
@@ -165,40 +160,36 @@ namespace Lexer
 
         private static Lexem GetOperatorLexem(StreamReader stream)
         {
-            String sb = "";
-            CharTree current = _operatorsTree;
+            StringBuilder sb = new StringBuilder();
             while (!stream.EndOfStream)
             {
                 char c = (char)stream.Peek();
 
                 if (!_specialSymbols.Contains(c))
                 {
-                    if (sb != current.Value || !current.IsComplete)
+                    if (!Operators.ContainsKey(sb.ToString()))
                     {
                         throw new Exception("Message"); // TODO: Система исключений
                     }
 
-                    return new Lexem(Operators[sb]);
+                    return new Lexem(Operators[sb.ToString()]);
                 }
 
-                while (sb.Length == current.Value.Length)
-                {
-                    CharTree? pc = current.PrefixChild(sb + c);
-
-                    current = pc ?? throw new Exception("Message");
-                }
-
-                sb += c;
+                sb.Append(c);
                 stream.Read();
             }
 
-            throw new Exception("Message"); // TODO: Система исключений
+            if (!Operators.ContainsKey(sb.ToString()))
+            {
+                throw new Exception("Message"); // TODO: Система исключений
+            }
+
+            return new Lexem(Operators[sb.ToString()]);
         }
 
         private static Lexem GetKeywordOrIdentifier(StreamReader stream)
         {
-            String sb = "";
-            CharTree? current = _keyWordsTree;
+            StringBuilder sb = new StringBuilder();
             while (!stream.EndOfStream)
             {
                 char c = (char)stream.Peek();
@@ -206,29 +197,24 @@ namespace Lexer
                 if (_specialSymbols.Contains(c) || WhiteSpace.Contains(c) || c == '\n' ||
                     StringLiteralSymbols.Contains(c))
                 {
-                    if (current == null || sb != current.Value || !current.IsComplete)
+                    if (!KeyWords.ContainsKey(sb.ToString()))
                     {
-                        return new Identifier(sb);
+                        return new Identifier(sb.ToString());
                     }
 
-                    return new Lexem(KeyWords[sb]);
+                    return new Lexem(KeyWords[sb.ToString()]);
                 }
 
-                while (current != null && sb.Length == current.Value.Length)
-                {
-                    current = current.PrefixChild(sb + c);
-                }
-
-                sb += c;
+                sb.Append(c);
                 stream.Read();
             }
 
-            if (current == null || sb != current.Value)
+            if (!KeyWords.ContainsKey(sb.ToString()))
             {
-                return new Identifier(sb);
+                return new Identifier(sb.ToString());
             }
 
-            return new Lexem(KeyWords[sb]);
+            return new Lexem(KeyWords[sb.ToString()]);
         }
 
         public IEnumerable<Lexem> Lex(string str)
