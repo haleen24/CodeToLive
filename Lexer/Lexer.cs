@@ -20,7 +20,19 @@ namespace Lexer
             { "break", LexemType.Break },
             { "return", LexemType.Return },
             { "continue", LexemType.Continue },
-            { "else", LexemType.Else }
+            { "else", LexemType.Else },
+            { "try", LexemType.Try },
+            { "catch", LexemType.Catch },
+            { "finally", LexemType.Finally },
+            { "import", LexemType.Import },
+            { "throw", LexemType.Throw },
+            { "final", LexemType.Final },
+            { "field", LexemType.Field },
+            { "static", LexemType.Static },
+            { "operator", LexemType.Operator },
+            { "conversion", LexemType.Conversion },
+            { "this", LexemType.This },
+            { "base", LexemType.Base }
         };
 
         private static readonly Dictionary<string, LexemType> TerminatingOperators = new Dictionary<string, LexemType>
@@ -61,6 +73,22 @@ namespace Lexer
                 { "!=", LexemType.NotEqv },
                 { "<<", LexemType.BLshift },
                 { ">>", LexemType.BRshift },
+                { "+=", LexemType.PlusAssign },
+                { "-=", LexemType.MinusAssign },
+                { "*=", LexemType.MulAssign },
+                { "/=", LexemType.TrueDivAssign },
+                { "//=", LexemType.DivAssign },
+                { "%=", LexemType.ModAssign },
+                { "&=", LexemType.BandAssign },
+                { "|=", LexemType.BorAssign },
+                { "^=", LexemType.BxorAssign },
+                { "<<=", LexemType.BLshiftAssign },
+                { ">>=", LexemType.BRshiftAssign },
+                { "&&", LexemType.And },
+                { "&&=", LexemType.AndAssign },
+                { "||", LexemType.Or },
+                { "||=", LexemType.OrAssign },
+                { ":", LexemType.Colon },
             };
 
         private static readonly HashSet<char> WhiteSpace = new HashSet<char> { '\t', '\r', '\x0b', '\x0c', ' ' };
@@ -224,6 +252,7 @@ namespace Lexer
                     yield break;
                 }
             }
+
             throw new InvalidOperatorException(_filename, lineStart, symStart, _lastLine.Append(append));
         }
 
@@ -258,6 +287,7 @@ namespace Lexer
                     {
                         yield return lexem;
                     }
+
                     yield break;
                 }
 
@@ -345,6 +375,7 @@ namespace Lexer
                     {
                         yield return lexem;
                     }
+
                     continue;
                 }
 
