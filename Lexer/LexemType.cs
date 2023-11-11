@@ -50,6 +50,7 @@ namespace Lexer
         Identifier,
         NewLine,
         LineConcat,
-        Foreach
+        Foreach,
+        Semicolon
     }
 }

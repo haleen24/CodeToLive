@@ -10,40 +10,54 @@ namespace Lexer
         {
             Type_ = type;
         }
-        
+
+        public override string ToString()
+        {
+            return Type_ + "()";
+        }
     }
 
-    public class StringLiteral : Lexem
+    public abstract class DynamicLexem : Lexem
     {
-        public string Value { get; }
+        public string Value { get; protected init; }
 
+        protected DynamicLexem(LexemType type) : base(type)
+        {
+            Value = "";
+        }
+
+        public override string ToString()
+        {
+            return Type_ + $"({Value})";
+        }
+    }
+
+    public class StringLiteral : DynamicLexem
+    {
         public StringLiteral(string val) : base(LexemType.StringLiteral)
         {
             Value = val;
         }
     }
 
-    public class IntLiteral : Lexem
+    public class IntLiteral : DynamicLexem
     {
-        public string Value { get; }
         public IntLiteral(string val) : base(LexemType.IntLiteral)
         {
             Value = val;
         }
     }
-    
-    public class FloatLiteral : Lexem
+
+    public class FloatLiteral : DynamicLexem
     {
-        public string Value { get; }
         public FloatLiteral(string val) : base(LexemType.FloatLiteral)
         {
             Value = val;
         }
     }
-    
-    public class Identifier : Lexem
+
+    public class Identifier : DynamicLexem
     {
-        public string Value { get; }
         public Identifier(string val) : base(LexemType.Identifier)
         {
             Value = val;
