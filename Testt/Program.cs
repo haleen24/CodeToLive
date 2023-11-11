@@ -2,14 +2,17 @@
 
 global::Lexer.Lexer lexer = new();
 
-string code = 
-@"
-a = 3
-for (i = 8; i < n; ahah = ahah 'lol') {
-    kek - cheburek - 'lol'
-}
-";
-foreach (var lexem in lexer.Lex(code))
+string path = "../../../Tests/Test_1.txt";
+string result = "";
+using (var i = new StreamReader(File.OpenRead(path)))
 {
-    Console.WriteLine(lexem);
+    while (!i.EndOfStream)
+    {
+        result += i.ReadLine() + '\n';
+    }
+}
+
+foreach (var i in lexer.Lex(result))
+{
+    Console.WriteLine(i);
 }

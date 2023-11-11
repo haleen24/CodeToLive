@@ -22,40 +22,45 @@ namespace Lexer
             { "else", LexemType.Else }
         };
 
-        private static readonly Dictionary<string, LexemType> Operators = new Dictionary<string, LexemType>
+        private static readonly Dictionary<string, LexemType> TerminatingOperators = new Dictionary<string, LexemType>
         {
-            { "+", LexemType.Plus },
-            { "-", LexemType.Minus },
-            { "*", LexemType.Product },
-            { "/", LexemType.TrueDiv },
-            { "//", LexemType.Div },
-            { "%", LexemType.Mod },
             { "(", LexemType.Lparenthese },
             { ")", LexemType.Rparenthese },
             { "{", LexemType.Lbrace },
             { "}", LexemType.Rbrace },
             { "[", LexemType.Lbracket },
             { "]", LexemType.Rbracket },
-            { "!", LexemType.Not },
-            { ".", LexemType.Dot },
-            { "&", LexemType.Band },
-            { "|", LexemType.Bor },
-            { "~", LexemType.Binv },
-            { "^", LexemType.Bxor },
             { ",", LexemType.Comma },
-            { "->", LexemType.Lambda },
-            { "=", LexemType.Assignment },
-            { "==", LexemType.Eqv },
-            { ">", LexemType.Greater },
-            { ">=", LexemType.GreaterEq },
-            { "<", LexemType.Less },
-            { "<=", LexemType.LessEq },
-            { "!=", LexemType.NotEqv },
-            { "<<", LexemType.BLshift },
-            { ">>", LexemType.BRshift },
             { "\\", LexemType.LineConcat },
             { ";", LexemType.Semicolon }
         };
+
+        private static readonly Dictionary<string, LexemType> NonTerminatingOperators =
+            new Dictionary<string, LexemType>
+            {
+                { "+", LexemType.Plus },
+                { "-", LexemType.Minus },
+                { "*", LexemType.Product },
+                { "/", LexemType.TrueDiv },
+                { "//", LexemType.Div },
+                { "%", LexemType.Mod },
+                { "!", LexemType.Not },
+                { ".", LexemType.Dot },
+                { "&", LexemType.Band },
+                { "|", LexemType.Bor },
+                { "~", LexemType.Binv },
+                { "^", LexemType.Bxor },
+                { "->", LexemType.Lambda },
+                { "=", LexemType.Assignment },
+                { "==", LexemType.Eqv },
+                { ">", LexemType.Greater },
+                { ">=", LexemType.GreaterEq },
+                { "<", LexemType.Less },
+                { "<=", LexemType.LessEq },
+                { "!=", LexemType.NotEqv },
+                { "<<", LexemType.BLshift },
+                { ">>", LexemType.BRshift },
+            };
 
         private static readonly HashSet<char> WhiteSpace = new HashSet<char> { '\t', '\r', '\x0b', '\x0c', ' ' };
         private static HashSet<char> _specialSymbols = new HashSet<char>();
@@ -68,7 +73,15 @@ namespace Lexer
 
         private static void FillSpecialSymbols()
         {
-            foreach (string s in Operators.Keys)
+            foreach (string s in NonTerminatingOperators.Keys)
+            {
+                foreach (char c in s)
+                {
+                    _specialSymbols.Add(c);
+                }
+            }
+
+            foreach (string s in TerminatingOperators.Keys)
             {
                 foreach (char c in s)
                 {
@@ -158,33 +171,44 @@ namespace Lexer
             throw new Exception("Message"); // TODO: Система исключений
         }
 
-        private static Lexem GetOperatorLexem(StreamReader stream)
+        private static Lexem GetOperatorLexem(StreamReader stream) // TODO: поменять !operator.Constains(key)
         {
             StringBuilder sb = new StringBuilder();
             while (!stream.EndOfStream)
             {
                 char c = (char)stream.Peek();
 
-                if (!_specialSymbols.Contains(c))
+                if (!_specialSymbols.Contains(c) || TerminatingOperators.ContainsKey(c.ToString()))
                 {
-                    if (!Operators.ContainsKey(sb.ToString()))
+                    if (sb.ToString() == "")
+                    {
+                        stream.Read();
+                        return new Lexem(TerminatingOperators[c.ToString()]);
+                    }
+
+                    if (!NonTerminatingOperators.ContainsKey(sb.ToString()))
                     {
                         throw new Exception("Message"); // TODO: Система исключений
                     }
 
-                    return new Lexem(Operators[sb.ToString()]);
+                    return new Lexem(NonTerminatingOperators[sb.ToString()]);
                 }
 
                 sb.Append(c);
                 stream.Read();
             }
 
-            if (!Operators.ContainsKey(sb.ToString()))
+            if (TerminatingOperators.ContainsKey(sb.ToString()))
             {
-                throw new Exception("Message"); // TODO: Система исключений
+                return new Lexem(TerminatingOperators[sb.ToString()]);
             }
 
-            return new Lexem(Operators[sb.ToString()]);
+            if (NonTerminatingOperators.ContainsKey(sb.ToString()))
+            {
+                return new Lexem(NonTerminatingOperators[sb.ToString()]);
+            }
+
+            throw new Exception("Message"); // TODO: Система исключений
         }
 
         private static Lexem GetKeywordOrIdentifier(StreamReader stream)
@@ -243,7 +267,7 @@ namespace Lexer
                     continue;
                 }
 
-                if (StringLiteralSymbols.Contains(c)) 
+                if (StringLiteralSymbols.Contains(c))
                 {
                     yield return GetStringLiteral(stream);
                     continue;
