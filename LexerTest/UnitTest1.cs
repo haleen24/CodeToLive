@@ -1,14 +1,15 @@
 using NUnit;
 using Lexem = LexerSpace.Lexem;
+using System.Collections.Generic;
 
 namespace LexerTest
 {
     [TestFixture]
     public class Tests
     {
-        private List<string> _fileNames = new List<string>() { "test_1", "test_2" };
+        private List<string> _fileNames = new List<string>() { "test_1.txt", "test_2.txt" };
 
-        private List<List<Lexem>> _answers = new List<List<Lexem>>();
+        private List<string> _answers = new List<string>() { "answer_1.txt", "answer_2.txt" };
 
         private global::LexerSpace.Lexer _lexer;
 
@@ -20,13 +21,32 @@ namespace LexerTest
         [Test]
         public void TestLexerFromFiles()
         {
-            string str;
+            string path = "../../../TestFiles/";
             for (int i = 0; i < _fileNames.Count; ++i)
             {
-                _lexer = new(_fileNames[i]);
-                Assert.AreEqual(_answers[i], _lexer.Lex());
+                _lexer = new(path + _fileNames[i]);
+                List<string> res = new();
+                foreach (var lexem in _lexer.Lex())
+                {
+                    res.Add(lexem.ToString());
+                }
+
+                Assert.AreEqual(ReadAnswers(path + _answers[i]), res);
             }
         }
-        
+
+        private List<string> ReadAnswers(string path)
+        {
+            List<string> list = new();
+            using (var i = new StreamReader(File.OpenRead(path)))
+            {
+                while (!i.EndOfStream)
+                {
+                    list.Add(i.ReadLine());
+                }
+            }
+
+            return list;
+        }
     }
 }
