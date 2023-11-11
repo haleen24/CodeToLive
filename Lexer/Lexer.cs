@@ -210,7 +210,24 @@ namespace Lexer
             throw new UnterminatedStringLiteralException(_filename, lineStart, symStart, _lastLine);
         }
 
-        private Lexem GetOperatorLexem(StreamReader stream)
+        private IEnumerable<Lexem> DivideOperator(string res, int lineStart, int symStart, string append)
+        {
+            for (int i = 0; i < res.Length; ++i)
+            {
+                string s1 = res.Substring(0, i + 1);
+                string s2 = res.Substring(i + 1);
+                if (NonTerminatingOperators.TryGetValue(s1, out var operator1) &&
+                    NonTerminatingOperators.TryGetValue(s2, out var operator2))
+                {
+                    yield return new Lexem(operator1);
+                    yield return new Lexem(operator2);
+                    yield break;
+                }
+            }
+            throw new InvalidOperatorException(_filename, lineStart, symStart, _lastLine.Append(append));
+        }
+
+        private IEnumerable<Lexem> GetOperatorLexem(StreamReader stream)
         {
             int lineStart = _lineNum;
             int symStart = _symNum;
@@ -225,32 +242,40 @@ namespace Lexer
                     if (sb.ToString() == "")
                     {
                         Advance();
-                        return new Lexem(TerminatingOperators[c.ToString()]);
+                        yield return new Lexem(TerminatingOperators[c.ToString()]);
+                        yield break;
                     }
 
-                    if (!NonTerminatingOperators.ContainsKey(sb.ToString()))
+                    if (NonTerminatingOperators.ContainsKey(sb.ToString()))
                     {
-                        throw new InvalidOperatorException(_filename, lineStart, symStart, _lastLine.Append(c));
+                        yield return new Lexem(NonTerminatingOperators[sb.ToString()]);
+                        yield break;
                     }
 
-                    return new Lexem(NonTerminatingOperators[sb.ToString()]);
+                    string res = sb.ToString();
+
+                    foreach (Lexem lexem in DivideOperator(res, lineStart, symStart, c.ToString()))
+                    {
+                        yield return lexem;
+                    }
+                    yield break;
                 }
 
                 sb.Append(c);
                 Advance();
             }
 
-            if (TerminatingOperators.ContainsKey(sb.ToString()))
+            if (!NonTerminatingOperators.ContainsKey(sb.ToString()))
             {
-                return new Lexem(TerminatingOperators[sb.ToString()]);
+                yield return new Lexem(NonTerminatingOperators[sb.ToString()]);
+                yield break;
             }
 
-            if (NonTerminatingOperators.ContainsKey(sb.ToString()))
+            string res1 = sb.ToString();
+            foreach (Lexem lexem in DivideOperator(res1, lineStart, symStart, ""))
             {
-                return new Lexem(NonTerminatingOperators[sb.ToString()]);
+                yield return lexem;
             }
-
-            throw new InvalidOperatorException(_filename, lineStart, symStart, _lastLine);
         }
 
         private Lexem GetKeywordOrIdentifier(StreamReader stream)
@@ -316,7 +341,10 @@ namespace Lexer
 
                 if (_specialSymbols.Contains(c))
                 {
-                    yield return GetOperatorLexem(_stream);
+                    foreach (Lexem lexem in GetOperatorLexem(_stream))
+                    {
+                        yield return lexem;
+                    }
                     continue;
                 }
 
