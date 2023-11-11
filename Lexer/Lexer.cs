@@ -271,6 +271,7 @@ namespace LexerSpace
                     yield break;
                 }
             }
+
             throw new InvalidOperatorException(_filename, lineStart, symStart, _lastLine.Append(append));
         }
 
@@ -305,6 +306,7 @@ namespace LexerSpace
                     {
                         yield return lexem;
                     }
+
                     yield break;
                 }
 
@@ -392,6 +394,7 @@ namespace LexerSpace
                     {
                         yield return lexem;
                     }
+
                     continue;
                 }
 
