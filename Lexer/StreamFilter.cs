@@ -1,4 +1,6 @@
-﻿namespace LexerSpace;
+﻿// ReSharper disable once CheckNamespace
+
+namespace LexerSpace;
 
 public class StreamFilter
 {

@@ -1,20 +1,10 @@
 ﻿using System.Runtime.Serialization;
 
+// ReSharper disable once CheckNamespace
 namespace LexerSpace.Exceptions;
 
 public class InvalidNumericalLiteralException : LexerException
 {
-    private static string FormatMessage(params object?[] args)
-    {
-        string ft = FormatFileTemplate(args[..3]);
-        ft += "invalid numerical literal\n";
-        string lit = $"{args[3]}";
-        ft += lit + "\n";
-        ft += new string(' ', lit.Length - 1);
-        ft += "^";
-        return ft;
-    }
-    
     public InvalidNumericalLiteralException()
     {
     }

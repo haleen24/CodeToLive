@@ -1,5 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
+// ReSharper disable once CheckNamespace
 namespace LexerSpace.Exceptions;
 
 public class InvalidOperatorException : LexerException

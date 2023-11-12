@@ -1,12 +1,13 @@
 ﻿using System.Runtime.Serialization;
 
+// ReSharper disable once CheckNamespace
 namespace LexerSpace.Exceptions;
 
 public class LexerException : Exception
 {
-    protected static string FileTemplate => "{0}:{1}:{2}: ";
+    private static string FileTemplate => "{0}:{1}:{2}: ";
 
-    protected static string FormatMessage(string message, params object[] args)
+    private static string FormatMessage(string message, params object[] args)
     {
         string ft = FormatFileTemplate(args);
         ft += message + "\n";
@@ -15,11 +16,12 @@ public class LexerException : Exception
         ft += "^";
         return ft;
     }
-    protected static string FormatFileTemplate(params object?[] args)
+
+    private static string FormatFileTemplate(params object?[] args)
     {
         return String.Format(FileTemplate, args);
     }
-    
+
     public LexerException()
     {
     }

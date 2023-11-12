@@ -1,6 +1,7 @@
 using System.Text;
 using LexerSpace.Exceptions;
 
+// ReSharper disable once CheckNamespace
 namespace LexerSpace
 {
     public class Lexer
@@ -92,7 +93,7 @@ namespace LexerSpace
             };
 
         private static readonly HashSet<char> WhiteSpace = new HashSet<char> { '\t', '\r', '\x0b', '\x0c', ' ' };
-        private static HashSet<char> _specialSymbols = new HashSet<char>();
+        private static readonly HashSet<char> SpecialSymbols = new HashSet<char>();
         private static readonly HashSet<char> StringLiteralSymbols = new HashSet<char>() { '\'', '"' };
 
         static Lexer()
@@ -106,7 +107,7 @@ namespace LexerSpace
             {
                 foreach (char c in s)
                 {
-                    _specialSymbols.Add(c);
+                    SpecialSymbols.Add(c);
                 }
             }
 
@@ -114,7 +115,7 @@ namespace LexerSpace
             {
                 foreach (char c in s)
                 {
-                    _specialSymbols.Add(c);
+                    SpecialSymbols.Add(c);
                 }
             }
         }
@@ -125,6 +126,7 @@ namespace LexerSpace
         private int LineNum => CharStream.LineNumber;
         private string[] Lines { get; }
 
+        // ReSharper disable once MemberCanBePrivate.Global
         public Lexer(string filename, string source)
         {
             Stream str = GenerateStreamFromString(source);
@@ -189,7 +191,7 @@ namespace LexerSpace
                     sb.Append(c);
                     CharStream.Advance();
                 }
-                else if (WhiteSpace.Contains(c) || _specialSymbols.Contains(c) || c == '\n' ||
+                else if (WhiteSpace.Contains(c) || SpecialSymbols.Contains(c) || c == '\n' ||
                          StringLiteralSymbols.Contains(c))
                 {
                     break;
@@ -267,7 +269,7 @@ namespace LexerSpace
             {
                 char c = CharStream.Peek();
 
-                if (!_specialSymbols.Contains(c) || TerminatingOperators.ContainsKey(c.ToString()))
+                if (!SpecialSymbols.Contains(c) || TerminatingOperators.ContainsKey(c.ToString()))
                 {
                     if (sb.ToString() == "")
                     {
@@ -318,7 +320,7 @@ namespace LexerSpace
             {
                 char c = CharStream.Peek();
 
-                if (_specialSymbols.Contains(c) || WhiteSpace.Contains(c) || c == '\n' ||
+                if (SpecialSymbols.Contains(c) || WhiteSpace.Contains(c) || c == '\n' ||
                     StringLiteralSymbols.Contains(c))
                 {
                     if (!KeyWords.ContainsKey(sb.ToString()))
@@ -372,7 +374,7 @@ namespace LexerSpace
                     continue;
                 }
 
-                if (_specialSymbols.Contains(c))
+                if (SpecialSymbols.Contains(c))
                 {
                     foreach (Lexem lexem in GetOperatorLexem())
                     {

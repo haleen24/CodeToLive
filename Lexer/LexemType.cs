@@ -1,3 +1,5 @@
+// ReSharper disable once CheckNamespace
+
 namespace LexerSpace
 {
     public enum LexemType
@@ -8,28 +10,28 @@ namespace LexerSpace
         TrueDiv,
         Div,
         Mod,
-        
+
         Lparenthese,
         Rparenthese,
         Lbrace,
         Rbrace,
         Lbracket,
         Rbracket,
-        
+
         Band,
         Bor,
         Binv,
         Bxor,
         BLshift,
         BRshift,
-        
+
         Comma,
         Dot,
         Semicolon,
         Colon,
-        
+
         Lambda,
-        
+
         If,
         While,
         For,
@@ -51,36 +53,36 @@ namespace LexerSpace
         Static,
         Operator,
         Conversion,
-        
+
         Assignment,
-        
+
         Eqv,
         Greater,
         Less,
         GreaterEq,
         LessEq,
         NotEqv,
-        
+
         True,
         False,
         Null,
         This,
         Base,
-        
+
         And,
         Or,
         Not,
-        
+
         StringLiteral,
         IntLiteral,
         FloatLiteral,
         Identifier,
-        
+
         NewLine,
         LineConcat,
-        
+
         PlusAssign,
-        MinusAssign, 
+        MinusAssign,
         MulAssign,
         DivAssign,
         TrueDivAssign,
