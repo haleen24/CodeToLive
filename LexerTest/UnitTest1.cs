@@ -1,5 +1,5 @@
 using NUnit;
-using Lexem = LexerSpace.Lexem;
+using LexerSpace;
 using System.Collections.Generic;
 
 namespace LexerTest
@@ -7,11 +7,27 @@ namespace LexerTest
     [TestFixture]
     public class Tests
     {
-        private List<string> _fileNames = new List<string>() { "test_1.txt", "test_2.txt" };
+        private List<string> _fileNames = new List<string>()
+        {
+            "test_1.txt",
+            "test_2.txt",
+            "test_3.txt",
+            "test_4.txt",
+            "KeywordsTest.txt",
+            "OperatorsTest.txt"
+        };
 
-        private List<string> _answers = new List<string>() { "answer_1.txt", "answer_2.txt" };
+        private List<string> _answers = new List<string>()
+        {
+            "answer_1.txt",
+            "answer_2.txt",
+            "answer_3.txt",
+            "answer_4.txt",
+            "KeywordsAnswer.txt",
+            "OperatorsAnswer.txt"
+        };
 
-        private global::LexerSpace.Lexer _lexer;
+        private Lexer _lexer;
 
         [SetUp]
         public void Setup()

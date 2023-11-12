@@ -1,0 +1,17 @@
+func(a);
+Array.sort(a.begin(),a.end(), [&] (var i, var j) { -> i > j})
+if a || \
+   b
+a + b - c * a / b //= c
+// d
+a % d
+!a && c
+~c -= 10
+b^c += 142
+b = 10
+b == 10
+b >= 11
+b <= 9
+c < d || c<= 9
+a>>b*3
+->a>>=b||=c:a

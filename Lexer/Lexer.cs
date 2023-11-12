@@ -349,7 +349,7 @@ namespace LexerSpace
                     continue;
                 }
 
-                if (char.IsDigit(c) || c == '.')
+                if (char.IsDigit(c) /*|| c == '.'*/)
                 {
                     yield return GetNumericLiteral(_stream);
                     continue;
