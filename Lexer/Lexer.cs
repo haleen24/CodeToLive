@@ -119,20 +119,18 @@ namespace LexerSpace
             }
         }
 
-        private StreamReader _stream;
-        private string _filename;
-        private int _symNum;
-        private int _lineNum;
-        private StringBuilder _lastLine;
+        private StreamFilter CharStream { get; }
+        private string Filename { get; }
+        private int SymNum => CharStream.SymNumber;
+        private int LineNum => CharStream.LineNumber;
+        private string[] Lines { get; }
 
         public Lexer(string filename, string source)
         {
             Stream str = GenerateStreamFromString(source);
-            _filename = filename;
-            _stream = new StreamReader(str);
-            _symNum = 1;
-            _lineNum = 1;
-            _lastLine = new StringBuilder();
+            Filename = filename;
+            CharStream = new StreamFilter(str);
+            Lines = source.Split("\n");
         }
 
         public Lexer(string filename)
@@ -151,23 +149,7 @@ namespace LexerSpace
                 }
             }
 
-            return sb.ToString();
-        }
-
-        private void Advance()
-        {
-            char c = (char)_stream.Read();
-            if (c == '\n')
-            {
-                _symNum = 1;
-                _lineNum += 1;
-                _lastLine.Clear();
-            }
-            else
-            {
-                _symNum += 1;
-                _lastLine.Append(c);
-            }
+            return sb.ToString().Replace("\r\n", "\n").Replace("\r", "\n");
         }
 
         static Stream GenerateStreamFromString(string s)
@@ -180,32 +162,32 @@ namespace LexerSpace
             return stream;
         }
 
-        private Lexem GetNumericLiteral(StreamReader stream)
+        private Lexem GetNumericLiteral()
         {
-            int lineStart = _lineNum;
-            int symStart = _symNum;
+            int lineStart = LineNum;
+            int symStart = SymNum;
 
             LexemType type = LexemType.IntLiteral;
             StringBuilder sb = new StringBuilder();
 
-            while (!stream.EndOfStream)
+            while (!CharStream.EndOfStream)
             {
-                char c = (char)stream.Peek();
+                char c = CharStream.Peek();
                 if (c == '.')
                 {
                     if (type == LexemType.FloatLiteral)
                     {
-                        throw new InvalidNumericalLiteralException(_filename, lineStart, symStart, _lastLine.Append(c));
+                        throw new InvalidNumericalLiteralException(Filename, lineStart, symStart, Lines[lineStart - 1]);
                     }
 
                     type = LexemType.FloatLiteral;
                     sb.Append(c);
-                    Advance();
+                    CharStream.Advance();
                 }
                 else if (char.IsDigit(c))
                 {
                     sb.Append(c);
-                    Advance();
+                    CharStream.Advance();
                 }
                 else if (WhiteSpace.Contains(c) || _specialSymbols.Contains(c) || c == '\n' ||
                          StringLiteralSymbols.Contains(c))
@@ -214,7 +196,7 @@ namespace LexerSpace
                 }
                 else
                 {
-                    throw new InvalidNumericalLiteralException(_filename, lineStart, symStart, _lastLine.Append(c));
+                    throw new InvalidNumericalLiteralException(Filename, lineStart, symStart, Lines[lineStart - 1]);
                 }
             }
 
@@ -226,38 +208,38 @@ namespace LexerSpace
             return new FloatLiteral(sb.ToString());
         }
 
-        private Lexem GetStringLiteral(StreamReader stream)
+        private Lexem GetStringLiteral()
         {
-            int symStart = _symNum;
-            int lineStart = _lineNum;
-            char start = (char)stream.Peek();
-            Advance();
+            int symStart = SymNum;
+            int lineStart = LineNum;
+            char start = CharStream.Peek();
+            CharStream.Advance();
             char prev = start;
             StringBuilder sb = new StringBuilder();
             sb.Append(start);
-            while (!stream.EndOfStream)
+            while (!CharStream.EndOfStream)
             {
-                char c = (char)stream.Peek();
+                char c = CharStream.Peek();
                 if (c == start && prev != '\\')
                 {
-                    Advance();
+                    CharStream.Advance();
                     return new StringLiteral(sb.ToString() + c);
                 }
 
                 if (c == '\n')
                 {
-                    throw new UnterminatedStringLiteralException(_filename, lineStart, symStart, _lastLine);
+                    throw new UnterminatedStringLiteralException(Filename, lineStart, symStart, Lines[lineStart - 1]);
                 }
 
                 sb.Append(c);
                 prev = c;
-                Advance();
+                CharStream.Advance();
             }
 
-            throw new UnterminatedStringLiteralException(_filename, lineStart, symStart, _lastLine);
+            throw new UnterminatedStringLiteralException(Filename, lineStart, symStart, Lines[lineStart - 1]);
         }
 
-        private IEnumerable<Lexem> DivideOperator(string res, int lineStart, int symStart, string append)
+        private IEnumerable<Lexem> DivideOperator(string res, int lineStart, int symStart)
         {
             for (int i = 0; i < res.Length; ++i)
             {
@@ -272,24 +254,24 @@ namespace LexerSpace
                 }
             }
 
-            throw new InvalidOperatorException(_filename, lineStart, symStart, _lastLine.Append(append));
+            throw new InvalidOperatorException(Filename, lineStart, symStart, Lines[lineStart - 1]);
         }
 
-        private IEnumerable<Lexem> GetOperatorLexem(StreamReader stream)
+        private IEnumerable<Lexem> GetOperatorLexem()
         {
-            int lineStart = _lineNum;
-            int symStart = _symNum;
+            int lineStart = LineNum;
+            int symStart = SymNum;
 
             StringBuilder sb = new StringBuilder();
-            while (!stream.EndOfStream)
+            while (!CharStream.EndOfStream)
             {
-                char c = (char)stream.Peek();
+                char c = CharStream.Peek();
 
                 if (!_specialSymbols.Contains(c) || TerminatingOperators.ContainsKey(c.ToString()))
                 {
                     if (sb.ToString() == "")
                     {
-                        Advance();
+                        CharStream.Advance();
                         yield return new Lexem(TerminatingOperators[c.ToString()]);
                         yield break;
                     }
@@ -302,7 +284,7 @@ namespace LexerSpace
 
                     string res = sb.ToString();
 
-                    foreach (Lexem lexem in DivideOperator(res, lineStart, symStart, c.ToString()))
+                    foreach (Lexem lexem in DivideOperator(res, lineStart, symStart))
                     {
                         yield return lexem;
                     }
@@ -311,7 +293,7 @@ namespace LexerSpace
                 }
 
                 sb.Append(c);
-                Advance();
+                CharStream.Advance();
             }
 
             if (!NonTerminatingOperators.ContainsKey(sb.ToString()))
@@ -321,18 +303,18 @@ namespace LexerSpace
             }
 
             string res1 = sb.ToString();
-            foreach (Lexem lexem in DivideOperator(res1, lineStart, symStart, ""))
+            foreach (Lexem lexem in DivideOperator(res1, lineStart, symStart))
             {
                 yield return lexem;
             }
         }
 
-        private Lexem GetKeywordOrIdentifier(StreamReader stream)
+        private Lexem GetKeywordOrIdentifier()
         {
             StringBuilder sb = new StringBuilder();
-            while (!stream.EndOfStream)
+            while (!CharStream.EndOfStream)
             {
-                char c = (char)stream.Peek();
+                char c = CharStream.Peek();
 
                 if (_specialSymbols.Contains(c) || WhiteSpace.Contains(c) || c == '\n' ||
                     StringLiteralSymbols.Contains(c))
@@ -346,7 +328,7 @@ namespace LexerSpace
                 }
 
                 sb.Append(c);
-                Advance();
+                CharStream.Advance();
             }
 
             if (!KeyWords.ContainsKey(sb.ToString()))
@@ -359,38 +341,38 @@ namespace LexerSpace
 
         public IEnumerable<Lexem> Lex()
         {
-            while (!_stream.EndOfStream)
+            while (!CharStream.EndOfStream)
             {
-                char c = (char)_stream.Peek();
+                char c = CharStream.Peek();
 
                 if (WhiteSpace.Contains(c))
                 {
-                    Advance();
+                    CharStream.Advance();
                     continue;
                 }
 
                 if (c == '\n')
                 {
                     yield return new Lexem(LexemType.NewLine);
-                    Advance();
+                    CharStream.Advance();
                     continue;
                 }
 
                 if (char.IsDigit(c) /*|| c == '.'*/)
                 {
-                    yield return GetNumericLiteral(_stream);
+                    yield return GetNumericLiteral();
                     continue;
                 }
 
                 if (StringLiteralSymbols.Contains(c))
                 {
-                    yield return GetStringLiteral(_stream);
+                    yield return GetStringLiteral();
                     continue;
                 }
 
                 if (_specialSymbols.Contains(c))
                 {
-                    foreach (Lexem lexem in GetOperatorLexem(_stream))
+                    foreach (Lexem lexem in GetOperatorLexem())
                     {
                         yield return lexem;
                     }
@@ -398,13 +380,13 @@ namespace LexerSpace
                     continue;
                 }
 
-                yield return GetKeywordOrIdentifier(_stream);
+                yield return GetKeywordOrIdentifier();
             }
         }
 
         ~Lexer()
         {
-            _stream.Close();
+            CharStream.Close();
         }
     }
 }

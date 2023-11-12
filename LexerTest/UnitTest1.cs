@@ -34,21 +34,53 @@ namespace LexerTest
         {
         }
 
-        [Test]
-        public void TestLexerFromFiles()
+        private void TestTemplate(int i)
         {
             string path = "../../../TestFiles/";
-            for (int i = 0; i < _fileNames.Count; ++i)
+            _lexer = new(path + _fileNames[i]);
+            List<string> res = new();
+            foreach (var lexem in _lexer.Lex())
             {
-                _lexer = new(path + _fileNames[i]);
-                List<string> res = new();
-                foreach (var lexem in _lexer.Lex())
-                {
-                    res.Add(lexem.ToString());
-                }
-
-                Assert.AreEqual(ReadAnswers(path + _answers[i]), res);
+                res.Add(lexem.ToString());
             }
+
+            Assert.That(res, Is.EqualTo(ReadAnswers(path + _answers[i])));
+        }
+        
+        [Test]
+        public void Test1()
+        {
+            TestTemplate(0);
+        }
+        
+        [Test]
+        public void Test2()
+        {
+            TestTemplate(1);
+        }
+        
+        [Test]
+        public void Test3()
+        {
+            TestTemplate(2);
+        }
+        
+        [Test]
+        public void Test4()
+        {
+            TestTemplate(3);
+        }
+        
+        [Test]
+        public void Test5()
+        {
+            TestTemplate(4);
+        }
+        
+        [Test]
+        public void Test6()
+        {
+            TestTemplate(5);
         }
 
         private List<string> ReadAnswers(string path)
