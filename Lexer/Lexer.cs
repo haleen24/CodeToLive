@@ -296,7 +296,7 @@ namespace LexerSpace
                 CharStream.Advance();
             }
 
-            if (!NonTerminatingOperators.ContainsKey(sb.ToString()))
+            if (NonTerminatingOperators.ContainsKey(sb.ToString()))
             {
                 yield return new Lexem(NonTerminatingOperators[sb.ToString()], lineStart, symStart);
                 yield break;
