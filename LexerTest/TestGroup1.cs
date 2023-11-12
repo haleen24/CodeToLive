@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace LexerTest
 {
     [TestFixture]
-    public class Tests
+    public class TestGroup1
     {
         private List<string> _fileNames = new List<string>()
         {

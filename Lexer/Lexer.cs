@@ -202,10 +202,10 @@ namespace LexerSpace
 
             if (type == LexemType.IntLiteral)
             {
-                return new IntLiteral(sb.ToString());
+                return new IntLiteral(sb.ToString(), lineStart, symStart);
             }
 
-            return new FloatLiteral(sb.ToString());
+            return new FloatLiteral(sb.ToString(), lineStart, symStart);
         }
 
         private Lexem GetStringLiteral()
@@ -223,7 +223,7 @@ namespace LexerSpace
                 if (c == start && prev != '\\')
                 {
                     CharStream.Advance();
-                    return new StringLiteral(sb.ToString() + c);
+                    return new StringLiteral(sb.ToString() + c, lineStart, symStart);
                 }
 
                 if (c == '\n')
@@ -248,8 +248,8 @@ namespace LexerSpace
                 if (NonTerminatingOperators.TryGetValue(s1, out var operator1) &&
                     NonTerminatingOperators.TryGetValue(s2, out var operator2))
                 {
-                    yield return new Lexem(operator1);
-                    yield return new Lexem(operator2);
+                    yield return new Lexem(operator1, lineStart, symStart);
+                    yield return new Lexem(operator2, lineStart, symStart + i + 1);
                     yield break;
                 }
             }
@@ -272,13 +272,13 @@ namespace LexerSpace
                     if (sb.ToString() == "")
                     {
                         CharStream.Advance();
-                        yield return new Lexem(TerminatingOperators[c.ToString()]);
+                        yield return new Lexem(TerminatingOperators[c.ToString()], lineStart, symStart);
                         yield break;
                     }
 
                     if (NonTerminatingOperators.ContainsKey(sb.ToString()))
                     {
-                        yield return new Lexem(NonTerminatingOperators[sb.ToString()]);
+                        yield return new Lexem(NonTerminatingOperators[sb.ToString()], lineStart, symStart);
                         yield break;
                     }
 
@@ -298,7 +298,7 @@ namespace LexerSpace
 
             if (!NonTerminatingOperators.ContainsKey(sb.ToString()))
             {
-                yield return new Lexem(NonTerminatingOperators[sb.ToString()]);
+                yield return new Lexem(NonTerminatingOperators[sb.ToString()], lineStart, symStart);
                 yield break;
             }
 
@@ -311,6 +311,8 @@ namespace LexerSpace
 
         private Lexem GetKeywordOrIdentifier()
         {
+            int lineStart = LineNum;
+            int symStart = SymNum;
             StringBuilder sb = new StringBuilder();
             while (!CharStream.EndOfStream)
             {
@@ -321,10 +323,10 @@ namespace LexerSpace
                 {
                     if (!KeyWords.ContainsKey(sb.ToString()))
                     {
-                        return new Identifier(sb.ToString());
+                        return new Identifier(sb.ToString(), lineStart, symStart);
                     }
 
-                    return new Lexem(KeyWords[sb.ToString()]);
+                    return new Lexem(KeyWords[sb.ToString()], lineStart, symStart);
                 }
 
                 sb.Append(c);
@@ -333,10 +335,10 @@ namespace LexerSpace
 
             if (!KeyWords.ContainsKey(sb.ToString()))
             {
-                return new Identifier(sb.ToString());
+                return new Identifier(sb.ToString(), lineStart, symStart);
             }
 
-            return new Lexem(KeyWords[sb.ToString()]);
+            return new Lexem(KeyWords[sb.ToString()], lineStart, symStart);
         }
 
         public IEnumerable<Lexem> Lex()
@@ -353,7 +355,7 @@ namespace LexerSpace
 
                 if (c == '\n')
                 {
-                    yield return new Lexem(LexemType.NewLine);
+                    yield return new Lexem(LexemType.NewLine, LineNum, SymNum);
                     CharStream.Advance();
                     continue;
                 }

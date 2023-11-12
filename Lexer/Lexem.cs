@@ -4,16 +4,20 @@ namespace LexerSpace
 {
     public class Lexem
     {
-        public LexemType Type_;
+        public LexemType LType { get; }
+        public int SymNumber { get; }
+        public int LineNumber { get; }
 
-        public Lexem(LexemType type)
+        public Lexem(LexemType lType, int lineNumber, int symNumber)
         {
-            Type_ = type;
+            SymNumber = symNumber;
+            LineNumber = lineNumber;
+            LType = lType;
         }
 
         public override string ToString()
         {
-            return Type_ + "()";
+            return LType + "()";
         }
     }
 
@@ -21,20 +25,21 @@ namespace LexerSpace
     {
         public string Value { get; protected init; }
 
-        protected DynamicLexem(LexemType type) : base(type)
+        protected DynamicLexem(LexemType lType, int lineNumber, int symNumber) : base(lType, lineNumber, symNumber)
         {
             Value = "";
         }
 
         public override string ToString()
         {
-            return Type_ + $"({Value})";
+            return LType + $"({Value})";
         }
     }
 
     public class StringLiteral : DynamicLexem
     {
-        public StringLiteral(string val) : base(LexemType.StringLiteral)
+        public StringLiteral(string val, int lineNumber, int symNumber) : base(LexemType.StringLiteral, lineNumber,
+            symNumber)
         {
             Value = val;
         }
@@ -42,7 +47,7 @@ namespace LexerSpace
 
     public class IntLiteral : DynamicLexem
     {
-        public IntLiteral(string val) : base(LexemType.IntLiteral)
+        public IntLiteral(string val, int lineNumber, int symNumber) : base(LexemType.IntLiteral, lineNumber, symNumber)
         {
             Value = val;
         }
@@ -50,7 +55,8 @@ namespace LexerSpace
 
     public class FloatLiteral : DynamicLexem
     {
-        public FloatLiteral(string val) : base(LexemType.FloatLiteral)
+        public FloatLiteral(string val, int lineNumber, int symNumber) : base(LexemType.FloatLiteral, lineNumber,
+            symNumber)
         {
             Value = val;
         }
@@ -58,7 +64,7 @@ namespace LexerSpace
 
     public class Identifier : DynamicLexem
     {
-        public Identifier(string val) : base(LexemType.Identifier)
+        public Identifier(string val, int lineNumber, int symNumber) : base(LexemType.Identifier, lineNumber, symNumber)
         {
             Value = val;
         }
