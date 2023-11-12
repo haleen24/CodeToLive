@@ -2,10 +2,15 @@
 
 namespace LexerSpace;
 
+/// <summary>
+/// Обёртка вокруг потока символов, которая убирающая комментарии из потока
+/// </summary>
 public class StreamFilter
 {
     private StreamReader Reader { get; }
+    /// <value>Номер символа в строке, на котором остановился поток</value>
     public int SymNumber { get; private set; } = 1;
+    /// <value>Номер строки, на которой остановился поток</value>
     public int LineNumber { get; private set; } = 1;
 
     public StreamFilter(Stream sr)
@@ -13,9 +18,13 @@ public class StreamFilter
         Reader = new StreamReader(sr);
         Normalize();
     }
-
+    
+    /// <value>Кончился ли поток или нет</value>
     public bool EndOfStream => Reader.EndOfStream;
 
+    /// <summary>
+    /// Закрывает поток
+    /// </summary>
     public void Close()
     {
         Reader.Close();
@@ -26,6 +35,10 @@ public class StreamFilter
         Close();
     }
 
+    /// <summary>
+    /// Читает (но не извлекает) последний символ из потока
+    /// </summary>
+    /// <returns>Соответствующий символ</returns>
     public char Peek()
     {
         return (char)Reader.Peek();
@@ -45,6 +58,9 @@ public class StreamFilter
         SymNumber += 1;
     }
 
+    /// <summary>
+    /// продвигает поток на один символ вперед, пропуская комментарии
+    /// </summary>
     public void Advance()
     {
         TrueAdvance();
@@ -52,7 +68,7 @@ public class StreamFilter
     }
 
 
-    private void Normalize()
+    private void Normalize()  // Пропускает комментарий
     {
         char c = Peek();
         if (c == '#')

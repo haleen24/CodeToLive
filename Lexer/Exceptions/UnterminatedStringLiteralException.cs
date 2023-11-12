@@ -3,6 +3,9 @@
 // ReSharper disable once CheckNamespace
 namespace LexerSpace.Exceptions;
 
+/// <summary>
+/// Ошибка лексера. Возникает, если строковый литерал не закрыт.
+/// </summary>
 public class UnterminatedStringLiteralException : LexerException
 {
     public UnterminatedStringLiteralException()

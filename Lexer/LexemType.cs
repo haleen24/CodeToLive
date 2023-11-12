@@ -2,6 +2,9 @@
 
 namespace LexerSpace
 {
+    /// <summary>
+    /// Перечисление всех типов лексем
+    /// </summary>
     public enum LexemType
     {
         Plus,

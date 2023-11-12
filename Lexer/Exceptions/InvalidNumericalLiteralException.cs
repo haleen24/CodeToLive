@@ -3,6 +3,9 @@
 // ReSharper disable once CheckNamespace
 namespace LexerSpace.Exceptions;
 
+/// <summary>
+/// Исключение лексера. Возникает при ошибке парсинга числовых летиралов.
+/// </summary>
 public class InvalidNumericalLiteralException : LexerException
 {
     public InvalidNumericalLiteralException()

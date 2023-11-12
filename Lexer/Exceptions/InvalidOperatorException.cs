@@ -3,6 +3,9 @@
 // ReSharper disable once CheckNamespace
 namespace LexerSpace.Exceptions;
 
+/// <summary>
+/// Исключение лексера. Возникает при вводе неправильного оператора.
+/// </summary>
 public class InvalidOperatorException : LexerException
 {
     public InvalidOperatorException()

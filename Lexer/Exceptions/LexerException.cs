@@ -3,6 +3,9 @@
 // ReSharper disable once CheckNamespace
 namespace LexerSpace.Exceptions;
 
+/// <summary>
+/// Базовое исключение лексера.
+/// </summary>
 public class LexerException : Exception
 {
     private static string FileTemplate => "{0}:{1}:{2}: ";
