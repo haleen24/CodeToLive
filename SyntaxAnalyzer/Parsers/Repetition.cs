@@ -8,7 +8,7 @@ public class Repetition : Parser
 {
     private GrammarUnit ToRepeat { get; }
     private GrammarUnit? Separator { get; }
-    private List<INode> Results { get; }
+    private new List<INode> Results { get; }
 
     public Repetition(GrammarUnit toRepeat, GrammarUnit? separator = null)
     {
@@ -16,14 +16,15 @@ public class Repetition : Parser
         Separator = separator;
         Results = new List<INode>();
     }
-    
+
+    protected override int TrueLength => Results.Count;
+
     public override INode this[int id]
     {
         get
         {
-            Debug.Assert(Success);
             Debug.Assert(id >= 0);
-            Debug.Assert(id < Results.Count);
+            Debug.Assert(id < Length);
             return Results[id];
         }
     }
@@ -34,24 +35,28 @@ public class Repetition : Parser
         while (true)
         {
             {
-                IParser parser = RulesMap.RulesDict[ToRepeat].Item2();
+                IParser parser = RulesMap.GetParser(ToRepeat);
                 if (!parser.Parse(ls))
                 {
+                    Success = true;
                     return true;
                 }
 
-                INode node = RulesMap.RulesDict[ToRepeat].Item1(parser);
+                INode node = RulesMap.GetNode(ToRepeat, parser);
                 Results.Add(node);
             }
 
             switch (Separator)
             {
                 case { } gu:
-                    IParser parser = RulesMap.RulesDict[gu].Item2();
+                    IParser parser = RulesMap.GetParser(gu);
                     if (!parser.Parse(ls))
                     {
+                        Success = true;
                         return true;
                     }
+                    INode node = RulesMap.GetNode(gu, parser);
+                    Results.Add(node);
                     break;
             }
         }

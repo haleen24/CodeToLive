@@ -21,6 +21,8 @@ public class Exact : Parser
         RequiredType = requiredType;
     }
 
+    protected override int TrueLength => 1;
+
     private INode GetLexemNode(Lexem lexem) =>
         lexem switch
         {
@@ -28,7 +30,7 @@ public class Exact : Parser
             Lexer.FloatLiteral fl => new FloatLiteral(fl),
             Lexer.IntLiteral il => new IntLiteral(il),
             Lexer.Identifier id => new Identifier(id),
-            _ => throw new Exception("Эта лексема не может быть узлом ast")  // никогда не выполнится
+            _ => new StaticLexemNode(lexem.Type_)
         };
 
     public override bool Parse(LexemStream ls)
@@ -56,8 +58,8 @@ public class Exact : Parser
     {
         get
         {
-            Debug.Assert(Success);
-            Debug.Assert(id == 0);
+            Debug.Assert(0 <= id);
+            Debug.Assert(id < Length);
 
             return Result;
         }

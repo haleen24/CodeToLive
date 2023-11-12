@@ -1,10 +1,24 @@
-﻿namespace SyntaxAnalyzer.Rules;
+﻿using Lexer;
 
-public enum GrammarUnit  // Список всех грамматических конструкций языка
+namespace SyntaxAnalyzer.Rules;
+
+public class GrammarUnit
 {
-    Identifier,
-    StringLiteral,
-    FloatLiteral,
-    IntLiteral,
-    AtomicExpression
+    public GrammarUnitType? GUType { get; }
+    public LexemType? LType { get; }
+
+    public GrammarUnit(GrammarUnitType guType)
+    {
+        GUType = guType;
+    }
+
+    public GrammarUnit(LexemType lType)
+    {
+        LType = lType;
+    }
+
+    public override string ToString()
+    {
+        return GUType != null ? GUType.ToString()! : LType!.ToString()!;
+    }
 }

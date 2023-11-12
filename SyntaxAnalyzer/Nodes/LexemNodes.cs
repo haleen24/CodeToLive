@@ -5,13 +5,28 @@ namespace SyntaxAnalyzer.Nodes;
 
 // Здесь перечисленны узлы, непосредственно соответствующие лексемам 
 
+public class StaticLexemNode : INode
+{
+    public LexemType Type_ { get; }
+
+    public StaticLexemNode(LexemType type)
+    {
+        Type_ = type;
+    }
+
+    public override string ToString()
+    {
+        return $"{Type_}()";
+    }
+}
+
 public abstract class DynamicLexemNode : INode
 {
     public string Value { get; }
 
     public override string ToString()
     {
-        return $"{GetType()}({Value})";
+        return $"{GetType().ToString().Split('.')[^1]}({Value})";
     }
 
     protected DynamicLexemNode(DynamicLexem lex)

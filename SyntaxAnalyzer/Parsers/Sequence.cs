@@ -6,21 +6,22 @@ namespace SyntaxAnalyzer.Parsers;
 
 public class Sequence : Parser
 {
-    private List<INode> Results { get; } = new List<INode>();
+    private new List<INode> Results { get; } = new List<INode>();
     private IEnumerable<GrammarUnit> Parsers { get; }
 
     public Sequence(params GrammarUnit[] parsers)
     {
         Parsers = parsers;
     }
-    
+
+    protected override int TrueLength => Results.Count;
+
     public override INode this[int id]
     {
         get
         {
-            Debug.Assert(Success);
             Debug.Assert(id >= 0);
-            Debug.Assert(id < Results.Count);
+            Debug.Assert(id < Length);
             return Results[id];
         }
     }
@@ -29,23 +30,22 @@ public class Sequence : Parser
     {
         StartPosition = ls.Position;
 
-        foreach (GrammarUnit grammarUnit in Parsers)
+        foreach (var grammarUnit in Parsers)
         {
-            IParser parser = RulesMap.RulesDict[grammarUnit].Item2();
+            IParser parser = RulesMap.GetParser(grammarUnit);
 
             if (!parser.Parse(ls))
             {
                 Rollback(ls);
                 Results.Clear();
-                Success = true;
                 return false;
             }
 
-            NodeConstructor nc = RulesMap.RulesDict[grammarUnit].Item1;
-            INode node = nc(parser);
+            INode node = RulesMap.GetNode(grammarUnit, parser);
             Results.Add(node);
         }
 
+        Success = true;
         return true;
     }
 }

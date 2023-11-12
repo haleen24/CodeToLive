@@ -13,13 +13,15 @@ public class Alternative : Parser
     {
         Parsers = parsers;
     }
-    
+
+    protected override int TrueLength => 1;
+
     public override INode this[int id]
     {
         get
         {
-            Debug.Assert(Success);
-            Debug.Assert(id == 0);
+            Debug.Assert(0 <= id);
+            Debug.Assert(id < Length);
 
             return Result;
         }
@@ -29,13 +31,13 @@ public class Alternative : Parser
     {
         StartPosition = ls.Position;
 
-        foreach (GrammarUnit grammarUnit in Parsers)
+        foreach (var grammarUnit in Parsers)
         {
-            IParser parser = RulesMap.RulesDict[grammarUnit].Item2();
+            IParser parser = RulesMap.GetParser(grammarUnit);
 
             if (parser.Parse(ls))
             {
-                INode node = RulesMap.RulesDict[grammarUnit].Item1(parser);
+                INode node = RulesMap.GetNode(grammarUnit, parser);
                 Result = node;
                 Success = true;
                 return true;
