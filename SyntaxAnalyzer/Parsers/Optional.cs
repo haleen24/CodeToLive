@@ -4,6 +4,7 @@ using SyntaxAnalyzer.Rules;
 
 namespace SyntaxAnalyzer.Parsers;
 
+// Описание вида [gu]
 public class Optional : Parser
 {
     private GrammarUnit Parser { get; }

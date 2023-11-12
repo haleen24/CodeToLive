@@ -8,8 +8,7 @@ using Identifier = SyntaxAnalyzer.Nodes.Identifier;
 
 namespace SyntaxAnalyzer.Parsers;
 
-// Пытается считать из потока лексем лексему конкретного типа
-// Сохраняет соответствующий узел (см. Nodes/LexemNodes.cs)
+// описание вида *конкретная лексема*
 public class Exact : Parser
 {
     private LexemType RequiredType { get; }

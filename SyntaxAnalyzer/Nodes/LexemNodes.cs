@@ -5,7 +5,7 @@ namespace SyntaxAnalyzer.Nodes;
 
 // Здесь перечисленны узлы, непосредственно соответствующие лексемам 
 
-public class StaticLexemNode : INode
+public class StaticLexemNode : INode  // Представляет статическую лексему, в конечном ast быть не должно
 {
     public LexemType Type_ { get; }
 
@@ -20,7 +20,7 @@ public class StaticLexemNode : INode
     }
 }
 
-public abstract class DynamicLexemNode : INode
+public abstract class DynamicLexemNode : INode  // Представляет динамическую лексему
 {
     public string Value { get; }
 

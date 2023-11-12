@@ -4,11 +4,11 @@ using SyntaxAnalyzer.Parsers;
 
 namespace SyntaxAnalyzer.Nodes;
 
-public class Assignment : INode
+public class Assignment : INode  // Представляет оператор присваивания
 {
-    public INode Lhs { get; }
-    public LexemType Sign { get; }
-    public INode Rhs { get; }
+    public INode Lhs { get; }  // Левая часть (assignable) 
+    public LexemType Sign { get; }  // Знак (=, +=, -=, *=, ...)
+    public INode Rhs { get; }  // Правая часть (expression)
 
     private Assignment(INode lhs, LexemType sign, INode rhs)
     {
@@ -19,8 +19,8 @@ public class Assignment : INode
 
     public static INode Construct(IParser parser)
     {
-        Debug.Assert(parser.Length == 4);
-        INode lhs = parser[0];  // Identifier
+        Debug.Assert(parser.Length == 4);  // lhs, sign, skipNewLine, rhs
+        INode lhs = parser[0];
         LexemType sign = (parser[1] as StaticLexemNode)!.Type_;
         INode rhs = parser[3];
         return new Assignment(lhs, sign, rhs);

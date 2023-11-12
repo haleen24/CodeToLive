@@ -4,6 +4,8 @@ using SyntaxAnalyzer.Rules;
 
 namespace SyntaxAnalyzer.Parsers;
 
+
+// Описание вида { gu1, gu2 }
 public class Repetition : Parser
 {
     private GrammarUnit ToRepeat { get; }

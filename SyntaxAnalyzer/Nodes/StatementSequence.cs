@@ -3,7 +3,8 @@ using SyntaxAnalyzer.Parsers;
 
 namespace SyntaxAnalyzer.Nodes;
 
-public class StatementSequence : INode
+public class StatementSequence : INode  // Представляет последовательность операторов произвольного характера,
+                                        // в конечном ast быть не должно 
 {
     public IReadOnlyList<INode> Statements { get; }
 
@@ -37,7 +38,7 @@ public class StatementSequence : INode
     }
 }
 
-public class Block : StatementSequence
+public class Block : StatementSequence  // Представляет последовательность операторов, обёрнутую в { }
 {
     public Block(IEnumerable<INode> statements) : base(statements)
     {
@@ -50,7 +51,7 @@ public class Block : StatementSequence
     }
 }
 
-public class Module : StatementSequence
+public class Module : StatementSequence  // Корень ast 
 {
     public Module(IEnumerable<INode> statements) : base(statements)
     {

@@ -4,6 +4,7 @@ using SyntaxAnalyzer.Rules;
 
 namespace SyntaxAnalyzer.Parsers;
 
+// Описание вида `gu1 gu2 ...`
 public class Sequence : Parser
 {
     private new List<INode> Results { get; } = new List<INode>();

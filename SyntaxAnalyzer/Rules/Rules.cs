@@ -125,7 +125,7 @@ public static class RulesMap
 
     private static INode Identical(IParser parser) => parser[0]; // Самый простой NodeConstructor
 
-    public static IParser GetParser(GrammarUnit gu)
+    public static IParser GetParser(GrammarUnit gu)  // Получить описание грамматической единицы
     {
         switch (gu.GUType)
         {
@@ -137,7 +137,8 @@ public static class RulesMap
         }
     }
 
-    public static INode GetNode(GrammarUnit gu, IParser parser)
+    public static INode GetNode(GrammarUnit gu, IParser parser)  // Получить древовидное представление
+                                                                 // грамматической единицы
     {
         switch (gu.GUType)
         {

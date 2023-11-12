@@ -2,6 +2,8 @@
 
 namespace SyntaxAnalyzer.Rules;
 
+// Представляет грамматическую единицу - простую или составную
+// (по сути, union GrammarUnitType и LexemType)
 public class GrammarUnit
 {
     public GrammarUnitType? GUType { get; }
