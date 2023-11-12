@@ -1,7 +1,7 @@
 using System.Text;
-using Lexer.Exceptions;
+using LexerSpace.Exceptions;
 
-namespace Lexer
+namespace LexerSpace
 {
     public class Lexer
     {
@@ -133,6 +133,25 @@ namespace Lexer
             _symNum = 1;
             _lineNum = 1;
             _lastLine = new StringBuilder();
+        }
+
+        public Lexer(string filename)
+            : this(filename, ReadFile(filename))
+        {
+        }
+
+        private static string ReadFile(string path)
+        {
+            StringBuilder sb = new();
+            using (var i = new StreamReader(File.OpenRead(path)))
+            {
+                while (!i.EndOfStream)
+                {
+                    sb.Append(i.ReadLine() + '\n');
+                }
+            }
+
+            return sb.ToString();
         }
 
         private void Advance()
@@ -357,7 +376,7 @@ namespace Lexer
                     continue;
                 }
 
-                if (char.IsDigit(c) || c == '.')
+                if (char.IsDigit(c) /*|| c == '.'*/)
                 {
                     yield return GetNumericLiteral(_stream);
                     continue;

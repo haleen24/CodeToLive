@@ -1,0 +1,10 @@
+if while()
+for foreach[] fori eforeach;
+func-class func class{}
+True true false False
+null Null none is not is
+break return ret
+continue; else try {} catch{}
+finally importthrow import throw
+final field,static,operator.conversion
+this->base.

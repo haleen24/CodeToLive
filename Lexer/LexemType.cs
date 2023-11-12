@@ -1,4 +1,4 @@
-namespace Lexer
+namespace LexerSpace
 {
     public enum LexemType
     {

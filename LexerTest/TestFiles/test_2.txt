@@ -1,0 +1,7 @@
+a = 0
+a += 100
+a //= -200
+for (int j = 12; j < 48; j += 1) {
+    fuck u
+}
+print(gg)
