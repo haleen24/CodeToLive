@@ -1,8 +1,0 @@
-a = 10
-for(i = 10; i <= 2041040; i = i + 1) {
-    if (i == 10) {
-        jopa
-    }
-    net = cyka
-    }\
-i - 'aaaa'; 
