@@ -106,6 +106,9 @@ namespace LexerSpace
                 { ":", LexemType.Colon },
             };
 
+        // Множество всех ключевых слов, после которого не может идти пробел
+        private HashSet<LexemType> SpaceForbiddenKeywords = new HashSet<LexemType>() { LexemType.Operator };
+
         /// <summary>
         /// Множество всех пробельных символов (кроме \n - он рассматривается отдельно)
         /// </summary>
@@ -159,6 +162,10 @@ namespace LexerSpace
             Lines = source.Split("\n");
         }
 
+        /// <summary>
+        /// Производит лексический анализ кода из файла
+        /// </summary>
+        /// <param name="filename">Название файла для анализа</param>
         public Lexer(string filename)
             : this(filename, ReadFile(filename))
         {
@@ -366,7 +373,12 @@ namespace LexerSpace
                         return new Identifier(sb.ToString(), lineStart, symStart);
                     }
 
-                    return new Lexem(KeyWords[sb.ToString()], lineStart, symStart);
+                    LexemType kw = KeyWords[sb.ToString()];
+                    if (SpaceForbiddenKeywords.Contains(kw) && WhiteSpace.Contains(c))
+                    {
+                        throw new UnexpectedSpaceException(Filename, lineStart, SymNum, Lines[lineStart - 1]);
+                    }
+                    return new Lexem(kw, lineStart, symStart);
                 }
 
                 sb.Append(c);
