@@ -8,6 +8,8 @@ public interface IParser  // Читает поток лексем, парсит 
     bool Success { get; }
     INode this[int ind] { get; }
     int Length { get; }
+
+    internal void Rollback(LexemStream ls);
 }
 
 
@@ -19,7 +21,7 @@ public abstract class Parser : IParser
     
     protected int StartPosition { get; set; }
 
-    protected void Rollback(LexemStream ls)
+    public void Rollback(LexemStream ls)
     {
         ls.Position = StartPosition;
     }

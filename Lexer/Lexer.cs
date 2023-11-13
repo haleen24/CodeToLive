@@ -41,7 +41,13 @@ namespace LexerSpace
             { "operator", LexemType.Operator },
             { "conversion", LexemType.Conversion },
             { "this", LexemType.This },
-            { "base", LexemType.Base }
+            { "base", LexemType.Base },
+            { "new", LexemType.New },
+            { "params", LexemType.Params },
+            { "getter", LexemType.Getter },
+            { "setter", LexemType.Setter },
+            { "computable", LexemType.Computable },
+            { "inner", LexemType.Inner }
         };
 
         /// <summary>
@@ -105,6 +111,7 @@ namespace LexerSpace
                 { "||", LexemType.Or },
                 { "||=", LexemType.OrAssign },
                 { ":", LexemType.Colon },
+                { "?", LexemType.Ternary }
             };
 
         // Множество всех ключевых слов, после которого не может идти пробел

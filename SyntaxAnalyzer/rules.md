@@ -3,24 +3,26 @@
 ```
 snl = [`new_line`]
 separator = (`;`|`new_line`)
-# Правила, которые будут оперделены позже
-# expression
-# stmt
-# inline_stmt
-# overloadable_operator
+
+indexator_operator = `[`, `]`
+overloadable_operator = (`+=`, `-=`, `*=`, `/=`, `//=`, `%=`, `&=`, `|=`, `^=`, `<<=`, `>>=`, `+`, `-`, `*`, `/`, `//`, `%`, `&`, `|`, `~`, `^`, `==`, `!=`, `>=`, `<=`, `>>`, `<<`, `>`, `<`, indexator_operator)
 
 operator_overload = `operator`, overloadable_operator
 conversion = `conversion`, `[`, `identifier`, `]`
-attribute_name = (`identifier`|operator_overload|conversion)
-attribute = expression, `.`, attribute_name
+attribute_name = (`identifier`|operator_overload|conversion|new)
+atrribute_name_or_accessor = (attribute_name|getter|setter|inner)
+attribute = expression, `.`, atrribute_name_or_accessor
 indexator = expression, `[`, snl, expression, snl, `]`
 
 optional_final = [`final`]
 identifier_with_final = optional_final, `identifier`
 assignable = (attribute|indexator|identifier_with_final)
 assignable_sequence = {assignable, `,`}
+multiple_assignables = `,`, assignable_sequence
+optional_multiple_assignables = [multiple_assignables]
 assign_operator = (`=`|`+=`|`-=`|`*=`|`/=`, `//=`, `%=`, `&=`, `|=`, `^=`, `<<=`, `>>=`, `&&=`, `||=`)
-assign_statement = assignable, `,`, assignable_sequence, assign_operator, expression
+optional_comma = [`,`]
+assign_statement = assignable, optional_multiple_assignables, optional_comma, assign_operator, expression
 
 parenth = `(`, snl, expression, snl, `)`
 else_stmt = `else`, snl, stmt
@@ -32,37 +34,80 @@ while_stmt = `while`, snl, parenth, snl, stmt
 optional_inline_stmt = [inline_stmt]
 optional_expr = [expression]
 for_stmt = `for`, snl, `(`, snl, optional_inline_stmt, snl, `;`, snl, optional_expr, snl, `;`, snl, optional_inline_stmt, snl, `)`, snl, stmt
-foreach = `foreach`, snl, `(`, snl, `identifier`, snl, `:`, snl, expression, snl, `)`, snl, stmt
+foreach_stmt = `foreach`, snl, `(`, snl, `identifier`, snl, `:`, snl, expression, snl, `)`, snl, stmt
 
 optional_identifier = [`identifier`]
 catch_stmt = `catch`, snl, `(`, `identifier`, snl, optional_identifier, snl, `)`, snl, stmt
 catch_sequence = {catch_stmt, separator}
 finally_stmt = `finally`, snl, stmt
 optional_finally = [finally_stmt]
-catch_block = catch_stmt, separator, catch_sequence, optional_else, separator, optional_finally
+catch_block = catch_stmt, separator, catch_sequence, separator, optional_else, separator, optional_finally
 try_body = (catch_block, finally)
 try_stmt = `try`, snl, stmt, separator, try_body
 
 break_stmt = `break`
 continue_stmt = `continue`
 return_stmt = `return`, expression
+throw_stmt = `throw`, expression
 import_stmt = `import`, `string_literal`
 
-field_stmt = optional_final, `field`, `identifier`
+optional_static = [`static`]
+field_modifier = (`final`|`computable`)
+optional_field_modifier = [field_modifier]
+field_stmt = optional_static, optional_field_modifier, `field`, `identifier`
 
-argument_with_value = `identifier`, `=`, expression
-argument = (argument_with_value | `identifier`)
+named_argument = `identifier`, snl, `=`, snl, expression
 comma_with_new_line = `,`, snl
-argument_sequence = {argument, comma_with_new_line}
-function_arguments = `(`, snl, argument_sequence, snl, `)`
-function_definition = `func`, attribute_name, snl, function_arguments, snl, stmt
+positional_formal_arguments = {`identifier`, comma_with_new_line}
+additional_positional_formal_arguments = `,`, snl, positional_formal_arguments
+optional_additional_positional_formal_arguments = [additional_positional_formal_arguments]
+named_arguments = {named_argument, comman_with_new_line}
+additional_named_arguments = `,`, snl, named_arguments
+optional_additional_named_arguments = [additional_named_arguments]
+params_argument = `params`, snl, `identifier`
+additional_params_argument = `,`, snl, params_argument
+optional_additional_params_argument = [additional_params_argument]
+formal_arguments_with_positional = `identifier`, optional_additional_positional_formal_arguments, optional_additional_params_argument, optional_additional_named_arguments
+formal_arguments_with_params = params_argument, optional_additional_named_arguments
+function_formal_arguments = (formal_arguments_with_positional|formal_arguments_with_params|named_arguments)
+getter_declaration = `identifier`, `.`, `getter`
+setter_declaration = `identifier`, `.`, `setter`
+function_name = (attribute_name|getter_declaration|setter_declaration)
+function_definition = optional_static, `func`, attribute_name, snl, `(`, snl, function_formal_arguments, snl, `)`, snl, stmt
 
 superclasses_list = {`identifier`, comma_with_new_line}
-additional_superclasses = `,`, snl, sperclass_list
+additional_superclasses = `,`, snl, superclasses_list
 optional_additional_superclasses = [additional_superclasses]
 superclasses_declaration = `:`, snl, `identifier`, snl, optional_additional_superclasses
 optional_superclasses_declaration = [superclasses_declaration]
 class_type = (`class`, `interface`)
 class_definition = class_type, `identifier`, snl, optional_superclasses_declaration, snl, stmt
+
+optional_stmt = [stmt]
+stmt_sequence = {optional_stmt, separator}
+block = `{`, snl, stmt_separator, snl, `}`
+module = stmt_sequence, snl
+
+positional_actual_arguments = {expression, comma_with_new_line}
+additional_positional_actual_arguments = `,`, snl, positional_actual_arguments
+optional_additional_positional_actual_arguments = [additional_positional_actual_arguments]
+actual_arguments_with_positional = expression, optional_additional_positional_actual_arguments, optional_additional_named_arguments
+function_actual_arguments = (actual_arguments_with_positional|named_arguments)
+function_call = expression, `(`, snl, function_actual_arguments, snl, `)`
+
+unary_operator = (`+`|`-`, `!`, `~`)
+unary_expression = unary_operator, expression
+
+binary_operator = (`+`, `-`, `*`, `/`, `//`, `%`, `&`, `|`, `^`, `==`, `>`, `<`, `>=`, `<=`, `!=`, `<<`, `>>`, `&&`, `||`, `is`)
+# Приоритет операторов будем выяснять на этапе построения синтаксического дерева
+expression_with_binary_operators = expression_without_binary_operators, binary_operator, expression
+expression = (expression_with_binary_operators|expression_without_binary_operators)
+ternary_operator_expression = expression, `?`, expression, `:`, expression
+
+lambda = function_formal_arguments, `->`, stmt
+
+inline_stmt = (assign_statement|expression)
+stmt = (if_stmt|while_stmt|for_stmt|foreach_stmt|field_stmt|try_stmt|break_stmt|continue_stmt|return_stmt|throw_stmt|import_stmt|field_stmt|function_definition|class_definition|block|block|inline_stmt)
+expression_without_binary_operators = (`true`|`false`|`null`|`this`|`base`|`inner`|`string_literal`|`int_literal`|`float_literal`|`identifier`|attribute|indexator|parenth|function_call|unary_expression|lambda)
 ```
 

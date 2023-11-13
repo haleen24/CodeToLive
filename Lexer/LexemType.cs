@@ -31,6 +31,7 @@ namespace LexerSpace
         Comma,
         Dot,
         Semicolon,
+        Ternary,
         Colon,
 
         Lambda,
@@ -57,6 +58,8 @@ namespace LexerSpace
         Static,
         Operator,
         Conversion,
+        New,
+        Params,
 
         Assignment,
 
@@ -72,6 +75,7 @@ namespace LexerSpace
         Null,
         This,
         Base,
+        Inner,
 
         And,
         Or,
@@ -97,6 +101,10 @@ namespace LexerSpace
         BLshiftAssign,
         BRshiftAssign,
         AndAssign,
-        OrAssign
+        OrAssign,
+        
+        Getter,
+        Setter,
+        Computable
     }
 }

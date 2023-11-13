@@ -34,12 +34,18 @@ public class Repetition : Parser
     public override bool Parse(LexemStream ls)
     {
         StartPosition = ls.Position;
+        IParser? lastSeparator = null;
         while (true)
         {
             {
                 IParser parser = RulesMap.GetParser(ToRepeat);
                 if (!parser.Parse(ls))
                 {
+                    if (lastSeparator != null)
+                    {
+                        Results.RemoveAt(Results.Count - 1);
+                        lastSeparator.Rollback(ls);
+                    }
                     Success = true;
                     return true;
                 }
@@ -59,6 +65,7 @@ public class Repetition : Parser
                     }
                     INode node = RulesMap.GetNode(gu, parser);
                     Results.Add(node);
+                    lastSeparator = parser;
                     break;
             }
         }
