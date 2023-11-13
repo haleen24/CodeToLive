@@ -2,8 +2,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lexer", "Lexer\Lexer.csproj", "{7B5EED51-8371-4A90-9B8E-0D1A01EB8461}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testt", "Testt\Testt.csproj", "{B131317B-7F56-466E-9FE1-A06D5E3F356C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyntaxAnalyzer", "SyntaxAnalyzer\SyntaxAnalyzer.csproj", "{529EBE31-8712-4F01-99A7-5866CC1090F6}"
 EndProject
 Global
@@ -16,10 +14,6 @@ Global
 		{7B5EED51-8371-4A90-9B8E-0D1A01EB8461}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B5EED51-8371-4A90-9B8E-0D1A01EB8461}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B5EED51-8371-4A90-9B8E-0D1A01EB8461}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B131317B-7F56-466E-9FE1-A06D5E3F356C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B131317B-7F56-466E-9FE1-A06D5E3F356C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B131317B-7F56-466E-9FE1-A06D5E3F356C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B131317B-7F56-466E-9FE1-A06D5E3F356C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{529EBE31-8712-4F01-99A7-5866CC1090F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{529EBE31-8712-4F01-99A7-5866CC1090F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{529EBE31-8712-4F01-99A7-5866CC1090F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
