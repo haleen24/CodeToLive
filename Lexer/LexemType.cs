@@ -40,6 +40,7 @@ namespace LexerSpace
         For,
         Func,
         Class,
+        Interface,
         Foreach,
         Else,
         Try,

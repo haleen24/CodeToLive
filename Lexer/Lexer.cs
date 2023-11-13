@@ -21,6 +21,7 @@ namespace LexerSpace
             { "foreach", LexemType.Foreach },
             { "func", LexemType.Func },
             { "class", LexemType.Class },
+            { "interface", LexemType.Interface },
             { "true", LexemType.True },
             { "false", LexemType.False },
             { "null", LexemType.Null },
@@ -107,17 +108,20 @@ namespace LexerSpace
             };
 
         // Множество всех ключевых слов, после которого не может идти пробел
-        private HashSet<LexemType> SpaceForbiddenKeywords = new HashSet<LexemType>() { LexemType.Operator };
+        private HashSet<LexemType> SpaceForbiddenKeywords { get; } = new HashSet<LexemType>()
+            { LexemType.Operator, LexemType.Conversion };
 
         /// <summary>
         /// Множество всех пробельных символов (кроме \n - он рассматривается отдельно)
         /// </summary>
         private static readonly HashSet<char> WhiteSpace = new HashSet<char> { '\t', '\r', '\x0b', '\x0c', ' ' };
+
         /// <summary>
         /// Множество всех специальных символов - тех символов, которые встречаются в операторах
         /// (в идентификаторах их использовать нельзя)
         /// </summary>
         private static readonly HashSet<char> SpecialSymbols = new HashSet<char>();
+
         /// <summary>
         /// Множестов всех символов, ограничивающих строковый литерал (то есть кавычек)
         /// </summary>
@@ -128,7 +132,7 @@ namespace LexerSpace
             FillSpecialSymbols();
         }
 
-        private static void FillSpecialSymbols()  // Заполняет множество специальных символов
+        private static void FillSpecialSymbols() // Заполняет множество специальных символов
         {
             foreach (string s in NonTerminatingOperators.Keys)
             {
@@ -147,12 +151,12 @@ namespace LexerSpace
             }
         }
 
-        private StreamFilter CharStream { get; }  // Поток символов
-        private string Filename { get; }  // Название файла
+        private StreamFilter CharStream { get; } // Поток символов
+        private string Filename { get; } // Название файла
         private int SymNum => CharStream.SymNumber;
         private int LineNum => CharStream.LineNumber;
-        private string[] Lines { get; }  // Массив строк файла - для красивых сообщений в ошибках
-        
+        private string[] Lines { get; } // Массив строк файла - для красивых сообщений в ошибках
+
         // ReSharper disable once MemberCanBePrivate.Global
         public Lexer(string filename, string source)
         {
@@ -196,25 +200,25 @@ namespace LexerSpace
             return stream;
         }
 
-        private Lexem GetNumericLiteral()  // Пытается прочесть в потоке числовой литерал
+        private Lexem GetNumericLiteral() // Пытается прочесть в потоке числовой литерал
         {
             int lineStart = LineNum;
             int symStart = SymNum;
 
-            LexemType type = LexemType.IntLiteral;  // Изначально литерал целочисленный
+            LexemType type = LexemType.IntLiteral; // Изначально литерал целочисленный
             StringBuilder sb = new StringBuilder();
 
             while (!CharStream.EndOfStream)
             {
                 char c = CharStream.Peek();
-                if (c == '.')  // Если нашли точку...
+                if (c == '.') // Если нашли точку...
                 {
-                    if (type == LexemType.FloatLiteral)  // ...не в первый раз - то литерал введен с ошибкой...
+                    if (type == LexemType.FloatLiteral) // ...не в первый раз - то литерал введен с ошибкой...
                     {
                         throw new InvalidNumericalLiteralException(Filename, lineStart, symStart, Lines[lineStart - 1]);
                     }
 
-                    type = LexemType.FloatLiteral;  // Иначе меняем тип на вещественный
+                    type = LexemType.FloatLiteral; // Иначе меняем тип на вещественный
                     sb.Append(c);
                     CharStream.Advance();
                 }
@@ -224,11 +228,11 @@ namespace LexerSpace
                     CharStream.Advance();
                 }
                 else if (WhiteSpace.Contains(c) || SpecialSymbols.Contains(c) || c == '\n' ||
-                         StringLiteralSymbols.Contains(c))  // В таких случаях прекращаем
+                         StringLiteralSymbols.Contains(c)) // В таких случаях прекращаем
                 {
                     break;
                 }
-                else  // Если нашли обычный символ (например, букву) - то литерал введен с ошибкой
+                else // Если нашли обычный символ (например, букву) - то литерал введен с ошибкой
                 {
                     throw new InvalidNumericalLiteralException(Filename, lineStart, symStart, Lines[lineStart - 1]);
                 }
@@ -243,11 +247,11 @@ namespace LexerSpace
             return new FloatLiteral(sb.ToString(), lineStart, symStart);
         }
 
-        private Lexem GetStringLiteral()  // Пытается прочесть в потоке строковый литерал
+        private Lexem GetStringLiteral() // Пытается прочесть в потоке строковый литерал
         {
             int symStart = SymNum;
             int lineStart = LineNum;
-            char start = CharStream.Peek();  
+            char start = CharStream.Peek();
             CharStream.Advance(); // Первую кавычку сразу вытаскиваем из потока
             char prev = start;
             StringBuilder sb = new StringBuilder();
@@ -255,14 +259,14 @@ namespace LexerSpace
             while (!CharStream.EndOfStream)
             {
                 char c = CharStream.Peek();
-                if (c == start && prev != '\\')  // Если нашлась неэкранированная кавычка того же типа, что и начальная,
-                                                 // то она означает конец строкового литерала
+                if (c == start && prev != '\\') // Если нашлась неэкранированная кавычка того же типа, что и начальная,
+                    // то она означает конец строкового литерала
                 {
                     CharStream.Advance();
                     return new StringLiteral(sb.ToString() + c, lineStart, symStart);
                 }
 
-                if (c == '\n')  // Если литерал закончился до закрытия, он написан с ошибкой
+                if (c == '\n') // Если литерал закончился до закрытия, он написан с ошибкой
                 {
                     throw new UnterminatedStringLiteralException(Filename, lineStart, symStart, Lines[lineStart - 1]);
                 }
@@ -296,7 +300,7 @@ namespace LexerSpace
             throw new InvalidOperatorException(Filename, lineStart, symStart, Lines[lineStart - 1]);
         }
 
-        private IEnumerable<Lexem> GetOperatorLexem()  // Пытается прочесть оператор из потока
+        private IEnumerable<Lexem> GetOperatorLexem() // Пытается прочесть оператор из потока
         {
             int lineStart = LineNum;
             int symStart = SymNum;
@@ -309,14 +313,14 @@ namespace LexerSpace
                 if (!SpecialSymbols.Contains(c) || TerminatingOperators.ContainsKey(c.ToString()))
                     // Если последовательность специальных символов прервана
                 {
-                    if (sb.ToString() == "")  // Обрабатываем прерывающий оператор
+                    if (sb.ToString() == "") // Обрабатываем прерывающий оператор
                     {
                         Debug.Assert(TerminatingOperators.ContainsKey(c.ToString()));
                         CharStream.Advance();
                         yield return new Lexem(TerminatingOperators[c.ToString()], lineStart, symStart);
                         yield break;
                     }
-                    
+
                     if (NonTerminatingOperators.ContainsKey(sb.ToString()))
                     {
                         // Если получился оператор, возвращаем его...
@@ -354,7 +358,7 @@ namespace LexerSpace
             }
         }
 
-        private Lexem GetKeywordOrIdentifier()  // Пытается прочесть ключевое слово из потока
+        private Lexem GetKeywordOrIdentifier() // Пытается прочесть ключевое слово из потока
         {
             int lineStart = LineNum;
             int symStart = SymNum;
@@ -364,8 +368,8 @@ namespace LexerSpace
                 char c = CharStream.Peek();
 
                 if (SpecialSymbols.Contains(c) || WhiteSpace.Contains(c) || c == '\n' ||
-                    StringLiteralSymbols.Contains(c))  // Эти символы прерывают последовательность символов
-                                                       // для ключевых слов и идентификаторов
+                    StringLiteralSymbols.Contains(c)) // Эти символы прерывают последовательность символов
+                    // для ключевых слов и идентификаторов
                 {
                     // Проверяем, что получилось - ключевое слово или идентификатор 
                     if (!KeyWords.ContainsKey(sb.ToString()))
@@ -378,6 +382,7 @@ namespace LexerSpace
                     {
                         throw new UnexpectedSpaceException(Filename, lineStart, SymNum, Lines[lineStart - 1]);
                     }
+
                     return new Lexem(kw, lineStart, symStart);
                 }
 
@@ -394,38 +399,38 @@ namespace LexerSpace
             return new Lexem(KeyWords[sb.ToString()], lineStart, symStart);
         }
 
-        public IEnumerable<Lexem> Lex()  // Производит лексический анализ
+        public IEnumerable<Lexem> Lex() // Производит лексический анализ
         {
             while (!CharStream.EndOfStream)
             {
                 char c = CharStream.Peek();
 
-                if (WhiteSpace.Contains(c))  // Пробелы пропускаем
+                if (WhiteSpace.Contains(c)) // Пробелы пропускаем
                 {
                     CharStream.Advance();
                     continue;
                 }
 
-                if (c == '\n')  // Переход строки - тоже лексема
+                if (c == '\n') // Переход строки - тоже лексема
                 {
                     yield return new Lexem(LexemType.NewLine, LineNum, SymNum);
                     CharStream.Advance();
                     continue;
                 }
 
-                if (char.IsDigit(c) /*|| c == '.'*/)  // Если лексема начинается с цифры - это числовой литерал
+                if (char.IsDigit(c) /*|| c == '.'*/) // Если лексема начинается с цифры - это числовой литерал
                 {
                     yield return GetNumericLiteral();
                     continue;
                 }
 
-                if (StringLiteralSymbols.Contains(c))  // Если лексема начинается с кавычки - это строковый литерал
+                if (StringLiteralSymbols.Contains(c)) // Если лексема начинается с кавычки - это строковый литерал
                 {
                     yield return GetStringLiteral();
                     continue;
                 }
 
-                if (SpecialSymbols.Contains(c))  // Если лексема начинается со специального символа - это оператор
+                if (SpecialSymbols.Contains(c)) // Если лексема начинается со специального символа - это оператор
                 {
                     foreach (Lexem lexem in GetOperatorLexem())
                     {
