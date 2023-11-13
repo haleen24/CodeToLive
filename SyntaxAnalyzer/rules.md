@@ -108,6 +108,5 @@ lambda = function_formal_arguments, `->`, stmt
 
 inline_stmt = (assign_statement|expression)
 stmt = (if_stmt|while_stmt|for_stmt|foreach_stmt|field_stmt|try_stmt|break_stmt|continue_stmt|return_stmt|throw_stmt|import_stmt|field_stmt|function_definition|class_definition|block|block|inline_stmt)
-expression_without_binary_operators = (`true`|`false`|`null`|`this`|`base`|`inner`|`string_literal`|`int_literal`|`float_literal`|`identifier`|attribute|indexator|parenth|function_call|unary_expression|lambda)
+expression_without_binary_operators = (`true`|`false`|`null`|`this`|`base`|`inner`|`string_literal`|`int_literal`|`float_literal`|`identifier`|attribute|indexator|parenth|function_call|unary_expression|lambda|ternary_operator_expression)
 ```
-
