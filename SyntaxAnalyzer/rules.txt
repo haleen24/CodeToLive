@@ -1,6 +1,3 @@
-# Грамматика языка
-
-```
 snl = [`new_line`]
 separator = (`;`|`new_line`)
 
@@ -18,8 +15,8 @@ optional_final = [`final`]
 identifier_with_final = optional_final, `identifier`
 assignable = (attribute|indexator|identifier_with_final)
 assignable_sequence = {assignable, `,`}
-multiple_assignables = `,`, assignable_sequence
-optional_multiple_assignables = [multiple_assignables]
+additional_assignables = `,`, assignable_sequence
+optional_additional_assignables = [additional_assignables]
 assign_operator = (`=`|`+=`|`-=`|`*=`|`/=`, `//=`, `%=`, `&=`, `|=`, `^=`, `<<=`, `>>=`, `&&=`, `||=`)
 optional_comma = [`,`]
 assign_statement = assignable, optional_multiple_assignables, optional_comma, assign_operator, expression
@@ -32,8 +29,8 @@ if_stmt = `if`, snl, parenth, snl, stmt, optional_else
 while_stmt = `while`, snl, parenth, snl, stmt
 
 optional_inline_stmt = [inline_stmt]
-optional_expr = [expression]
-for_stmt = `for`, snl, `(`, snl, optional_inline_stmt, snl, `;`, snl, optional_expr, snl, `;`, snl, optional_inline_stmt, snl, `)`, snl, stmt
+optional_expression = [expression]
+for_stmt = `for`, snl, `(`, snl, optional_inline_stmt, snl, `;`, snl, optional_expression, snl, `;`, snl, optional_inline_stmt, snl, `)`, snl, stmt
 foreach_stmt = `foreach`, snl, `(`, snl, `identifier`, snl, `:`, snl, expression, snl, `)`, snl, stmt
 
 optional_identifier = [`identifier`]
@@ -99,7 +96,6 @@ unary_operator = (`+`|`-`, `!`, `~`)
 unary_expression = unary_operator, expression
 
 binary_operator = (`+`, `-`, `*`, `/`, `//`, `%`, `&`, `|`, `^`, `==`, `>`, `<`, `>=`, `<=`, `!=`, `<<`, `>>`, `&&`, `||`, `is`)
-# Приоритет операторов будем выяснять на этапе построения синтаксического дерева
 expression_with_binary_operators = expression_without_binary_operators, binary_operator, expression
 expression = (expression_with_binary_operators|expression_without_binary_operators)
 ternary_operator_expression = expression, `?`, expression, `:`, expression
@@ -109,4 +105,3 @@ lambda = function_formal_arguments, `->`, stmt
 inline_stmt = (assign_statement|expression)
 stmt = (if_stmt|while_stmt|for_stmt|foreach_stmt|field_stmt|try_stmt|break_stmt|continue_stmt|return_stmt|throw_stmt|import_stmt|field_stmt|function_definition|class_definition|block|block|inline_stmt)
 expression_without_binary_operators = (`true`|`false`|`null`|`this`|`base`|`inner`|`string_literal`|`int_literal`|`float_literal`|`identifier`|attribute|indexator|parenth|function_call|unary_expression|lambda|ternary_operator_expression)
-```
