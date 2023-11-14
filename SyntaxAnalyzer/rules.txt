@@ -19,7 +19,7 @@ additional_assignables = `,`, assignable_sequence
 optional_additional_assignables = [additional_assignables]
 assign_operator = (`=`|`+=`|`-=`|`*=`|`/=`, `//=`, `%=`, `&=`, `|=`, `^=`, `<<=`, `>>=`, `&&=`, `||=`)
 optional_comma = [`,`]
-assign_statement = assignable, optional_multiple_assignables, optional_comma, assign_operator, expression
+assign_statement = assignable, optional_additional_assignables, optional_comma, assign_operator, expression
 
 parenth = `(`, snl, expression, snl, `)`
 else_stmt = `else`, snl, stmt
@@ -103,5 +103,5 @@ ternary_operator_expression = expression, `?`, expression, `:`, expression
 lambda = function_formal_arguments, `->`, stmt
 
 inline_stmt = (assign_statement|expression)
-stmt = (if_stmt|while_stmt|for_stmt|foreach_stmt|field_stmt|try_stmt|break_stmt|continue_stmt|return_stmt|throw_stmt|import_stmt|field_stmt|function_definition|class_definition|block|block|inline_stmt)
+stmt = (if_stmt|while_stmt|for_stmt|foreach_stmt|field_stmt|try_stmt|break_stmt|continue_stmt|return_stmt|throw_stmt|import_stmt|function_definition|class_definition|block|inline_stmt)
 expression_without_binary_operators = (`true`|`false`|`null`|`this`|`base`|`inner`|`string_literal`|`int_literal`|`float_literal`|`identifier`|attribute|indexator|parenth|function_call|unary_expression|lambda|ternary_operator_expression)
