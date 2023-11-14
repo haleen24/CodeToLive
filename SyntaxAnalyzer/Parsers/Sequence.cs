@@ -38,7 +38,6 @@ public class Sequence : Parser
             if (!parser.Parse(ls))
             {
                 Rollback(ls);
-                Results.Clear();
                 return false;
             }
 

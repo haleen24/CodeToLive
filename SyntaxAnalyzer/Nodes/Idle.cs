@@ -11,4 +11,9 @@ public class Idle : INode
     {
         return new Idle();
     }
+
+    public IEnumerable<INode> Walk()
+    {
+        yield break;
+    }
 }

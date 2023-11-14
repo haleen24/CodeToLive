@@ -18,6 +18,11 @@ public class StaticLexemNode : INode  // Представляет статиче
     {
         return $"{Type_}()";
     }
+
+    public IEnumerable<INode> Walk()
+    {
+        yield break;
+    }
 }
 
 public abstract class DynamicLexemNode : INode  // Представляет динамическую лексему
@@ -32,6 +37,11 @@ public abstract class DynamicLexemNode : INode  // Представляет ди
     protected DynamicLexemNode(DynamicLexem lex)
     {
         Value = lex.Value;
+    }
+
+    public IEnumerable<INode> Walk()
+    {
+        yield break;
     }
 }
 

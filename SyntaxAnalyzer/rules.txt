@@ -44,7 +44,7 @@ try_stmt = `try`, snl, stmt, separator, try_body
 
 break_stmt = `break`
 continue_stmt = `continue`
-return_stmt = `return`, expression
+return_stmt = `return`, optional_expression
 throw_stmt = `throw`, expression
 import_stmt = `import`, `string_literal`
 
@@ -69,7 +69,7 @@ formal_arguments_with_params = params_argument, optional_additional_named_argume
 function_formal_arguments = (formal_arguments_with_positional|formal_arguments_with_params|named_arguments)
 getter_declaration = `identifier`, `.`, `getter`
 setter_declaration = `identifier`, `.`, `setter`
-function_name = (attribute_name|getter_declaration|setter_declaration)
+function_name = (attribute_name|getter_declaration|setter_declaration|operator_overload|conversion)
 function_definition = optional_static, `func`, attribute_name, snl, `(`, snl, function_formal_arguments, snl, `)`, snl, stmt
 
 superclasses_list = {`identifier`, comma_with_new_line}

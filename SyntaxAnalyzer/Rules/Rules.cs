@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using LexerSpace;
+﻿using LexerSpace;
 using SyntaxAnalyzer.Nodes;
 using SyntaxAnalyzer.Parsers;
 
@@ -7,16 +6,12 @@ namespace SyntaxAnalyzer.Rules;
 
 public static class RulesMap
 {
-    // В этом словаре описано, что означает каждая грамматическая конструкция (ключ).
-    // Значением яляется кортеж из двух делегатов:
-    // второй возвращает парсер, который считает из потока лексем все необходимые для грамматической
-    // единицы лексемы;
-    // первый конструирует узел абстрактоного синтаксического дерева на основе работы парсера
+    // В этом словаре каждой грамматической единице сопоставляется праило (см. rules.txt)
     private static Dictionary<GrammarUnitType, Rule> RulesDict =>
         new Dictionary<GrammarUnitType, Rule>()
         {
             //TODO: конструкторы нод
-            { GrammarUnitType.SNL, new Rule(() => new Optional(GU(LexemType.NewLine)), Idle.Construct) },
+            { GrammarUnitType.SNL, Rule.Optional(GU(LexemType.NewLine)) },
             { GrammarUnitType.Separator, Rule.Alternative(GU(LexemType.Semicolon, LexemType.NewLine)) },
             {
                 GrammarUnitType.IndexatorOperator,
@@ -72,7 +67,7 @@ public static class RulesMap
 
             {
                 GrammarUnitType.OptionalFinal,
-                new Rule(() => new Optional(GU(LexemType.Final)), Idle.Construct)
+                Rule.Optional(GU(LexemType.Final))
             },
 
             {
@@ -98,7 +93,7 @@ public static class RulesMap
 
             {
                 GrammarUnitType.OptionalAdditionalAssignables,
-                new Rule(() => new Optional(GU(GrammarUnitType.AdditionalAssignables)), Idle.Construct)
+                Rule.Optional(GU(GrammarUnitType.AdditionalAssignables))
             },
 
             {
@@ -112,7 +107,7 @@ public static class RulesMap
 
             {
                 GrammarUnitType.OptionalComma,
-                new Rule(() => new Optional(GU(LexemType.Comma)), Idle.Construct)
+                Rule.Optional(GU(LexemType.Comma))
             },
 
             {
@@ -126,7 +121,7 @@ public static class RulesMap
                 GrammarUnitType.Parenth,
                 new Rule(
                     () => new Sequence(GU(LexemType.Lparenthese, GrammarUnitType.Expression, GrammarUnitType.SNL,
-                        LexemType.Rparenthese)), Idle.Construct)
+                        LexemType.Rparenthese)), Identical) // Уже поставил
             },
 
             {
@@ -137,7 +132,7 @@ public static class RulesMap
 
             {
                 GrammarUnitType.OptionalElse,
-                new Rule(() => new Optional(GU(GrammarUnitType.ElseStmt)), Idle.Construct)
+                Rule.Optional(GU(GrammarUnitType.ElseStmt))
             },
 
             {
@@ -154,12 +149,12 @@ public static class RulesMap
 
             {
                 GrammarUnitType.OptionalInlineStmt,
-                new Rule(() => new Optional(GU(GrammarUnitType.InlineStmt)), Idle.Construct)
+                Rule.Optional(GU(GrammarUnitType.InlineStmt))
             },
 
             {
                 GrammarUnitType.OptionalExpression,
-                new Rule(() => new Optional(GU(GrammarUnitType.Expression)), Idle.Construct)
+                Rule.Optional(GU(GrammarUnitType.Expression))
             },
 
             {
@@ -183,7 +178,7 @@ public static class RulesMap
 
             {
                 GrammarUnitType.OptionalIdentifier,
-                new Rule(() => new Optional(GU(LexemType.Identifier)), Idle.Construct)
+                Rule.Optional(GU(LexemType.Identifier))
             },
 
             {
@@ -207,7 +202,7 @@ public static class RulesMap
 
             {
                 GrammarUnitType.OptionalFinally,
-                new Rule(() => new Optional(GU(GrammarUnitType.FinallyStmt)), Idle.Construct)
+                Rule.Optional(GU(GrammarUnitType.FinallyStmt))
             },
 
             {
@@ -240,7 +235,7 @@ public static class RulesMap
 
             {
                 GrammarUnitType.ReturnStmt,
-                new Rule(() => new Sequence(GU(LexemType.Return, GrammarUnitType.Expression)), Idle.Construct)
+                new Rule(() => new Sequence(GU(LexemType.Return, GrammarUnitType.OptionalExpression)), Idle.Construct)
             },
 
             {
@@ -255,7 +250,7 @@ public static class RulesMap
 
             {
                 GrammarUnitType.OptionalStatic,
-                new Rule(() => new Optional(GU(LexemType.Static)), Idle.Construct)
+                Rule.Optional(GU(LexemType.Static))
             },
 
             {
@@ -265,7 +260,7 @@ public static class RulesMap
 
             {
                 GrammarUnitType.OptionalFieldModifier,
-                new Rule(() => new Optional(GU(GrammarUnitType.FieldModifier)), Idle.Construct)
+                Rule.Optional(GU(GrammarUnitType.FieldModifier))
             },
 
             {
@@ -301,7 +296,7 @@ public static class RulesMap
 
             {
                 GrammarUnitType.OptionalAdditionalPositionalFormalArguments,
-                new Rule(() => new Optional(GU(GrammarUnitType.AdditionalPositionalFormalArguments)), Idle.Construct)
+                Rule.Optional(GU(GrammarUnitType.AdditionalPositionalFormalArguments))
             },
 
             {
@@ -318,8 +313,7 @@ public static class RulesMap
 
             {
                 GrammarUnitType.OptionalAdditionalNamedArguments,
-                new Rule(() => new Optional(GU(GrammarUnitType.AdditionalNamedArguments)),
-                    Idle.Construct)
+                Rule.Optional(GU(GrammarUnitType.AdditionalNamedArguments))
             },
 
             {
@@ -336,8 +330,7 @@ public static class RulesMap
 
             {
                 GrammarUnitType.OptionalAdditionalParamsArgument,
-                new Rule(() => new Optional(GU(GrammarUnitType.AdditionalParamsArgument)),
-                    Idle.Construct)
+                Rule.Optional(GU(GrammarUnitType.AdditionalParamsArgument))
             },
 
             {
@@ -381,7 +374,7 @@ public static class RulesMap
             {
                 GrammarUnitType.FunctionName,
                 Rule.Alternative(GU(GrammarUnitType.AttributeName, GrammarUnitType.GetterDeclaration,
-                    GrammarUnitType.SetterDeclaration))
+                    GrammarUnitType.SetterDeclaration, GrammarUnitType.OperatorOverload, GrammarUnitType.Conversion))
             },
 
             {
@@ -408,7 +401,7 @@ public static class RulesMap
 
             {
                 GrammarUnitType.OptionalAdditionalSuperclasses,
-                new Rule(() => new Optional(GU(GrammarUnitType.AdditionalSuperclasses)), Idle.Construct)
+                Rule.Optional(GU(GrammarUnitType.AdditionalSuperclasses))
             },
 
             {
@@ -420,7 +413,7 @@ public static class RulesMap
 
             {
                 GrammarUnitType.OptionalSuperclassesDeclaration,
-                new Rule(() => new Optional(GU(GrammarUnitType.SuperclassesDeclaration)), Idle.Construct)
+                Rule.Optional(GU(GrammarUnitType.SuperclassesDeclaration))
             },
 
             {
@@ -438,7 +431,7 @@ public static class RulesMap
 
             {
                 GrammarUnitType.OptionalStmt,
-                new Rule(() => new Optional(GU(GrammarUnitType.Stmt)), Idle.Construct)
+                Rule.Optional(GU(GrammarUnitType.Stmt))
             },
 
             {
@@ -475,7 +468,7 @@ public static class RulesMap
 
             {
                 GrammarUnitType.OptionalAdditionalPositionalActualArguments,
-                new Rule(() => new Optional(GU(GrammarUnitType.AdditionalPositionalActualArguments)), Idle.Construct)
+                Rule.Optional(GU(GrammarUnitType.AdditionalPositionalActualArguments))
             },
 
             {
@@ -585,10 +578,10 @@ public static class RulesMap
             switch (type)
             {
                 case LexemType lexType:
-                    result.AddLast(GU(lexType));
+                    result.AddLast(new GrammarUnit(lexType));
                     break;
                 case GrammarUnitType unitType:
-                    result.AddLast(GU(unitType));
+                    result.AddLast(new GrammarUnit(unitType));
                     break;
                 default:
                     throw new Exception("Wrong Type");
@@ -623,7 +616,4 @@ public static class RulesMap
                 return RulesDict[ngu].Constructor(parser);
         }
     }
-
-    private static (NodeConstructor, ParserFactory) Alternative(params GrammarUnit[] args) =>
-        (Identical, () => new Alternative(args));
 }

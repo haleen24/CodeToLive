@@ -1,0 +1,22 @@
+﻿namespace SyntaxAnalyzer.Nodes;
+
+public class Foreach : INode
+{
+    public INode Variable { get; }
+    public INode Collection { get; }
+    public INode Body { get; }
+
+    public Foreach(INode variable, INode collection, INode body)
+    {
+        Variable = variable;
+        Collection = collection;
+        Body = body;
+    }
+
+    public IEnumerable<INode?> Walk()
+    {
+        yield return Variable;
+        yield return Collection;
+        yield return Body;
+    }
+}

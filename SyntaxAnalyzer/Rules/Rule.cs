@@ -18,4 +18,5 @@ public class Rule
     private static INode Identical(IParser parser) => parser[0]; // Самый простой NodeConstructor
 
     public static Rule Alternative(params GrammarUnit[] args) => new Rule(() => new Alternative(args), Identical);
+    public static Rule Optional(GrammarUnit gu) => new Rule(() => new Optional(gu), Identical);
 }

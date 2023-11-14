@@ -32,6 +32,11 @@ public class StatementSequence : INode  // Представляет послед
         }
     }
 
+    public IEnumerable<INode> Walk()
+    {
+        return Statements;
+    }
+
     public static INode Construct(IParser parser)
     {
         return new StatementSequence(GetStatements(parser));
@@ -46,7 +51,7 @@ public class Block : StatementSequence  // Представляет послед
 
     public new static INode Construct(IParser parser)
     {
-        Debug.Assert(parser.Length == 4);  // Внутри только {, \n, StatementSequence, }
+        Debug.Assert(parser.Length == 5);  // Внутри только {, snl, StatementSequence, snl, }
         return new Block((parser[2] as StatementSequence)!.Statements);
     }
 }
@@ -59,7 +64,7 @@ public class Module : StatementSequence  // Корень ast
     
     public new static INode Construct(IParser parser)
     {
-        Debug.Assert(parser.Length == 1);  // Внутри только StatementSequence
+        Debug.Assert(parser.Length == 2);  // Внутри только StatementSequence, snl
         return new Module((parser[0] as StatementSequence)!.Statements);
     }
 }
