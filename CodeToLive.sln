@@ -5,7 +5,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LexerTest", "LexerTest\LexerTest.csproj", "{0AFD9ECD-60C5-4303-8C5D-8D9EACD4FED4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugRun", "DebugRun\DebugRun.csproj", "{F80B3489-7F10-40E3-89CC-439E64F16990}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyntaxAnalyzer", "SyntaxAnalyzer\SyntaxAnalyzer.csproj", "{529EBE31-8712-4F01-99A7-5866CC1090F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyntaxTest", "SyntaxTest\SyntaxTest.csproj", "{05ED55B5-B910-4642-BE06-9C2A31D074C6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,5 +32,9 @@ Global
 		{529EBE31-8712-4F01-99A7-5866CC1090F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{529EBE31-8712-4F01-99A7-5866CC1090F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{529EBE31-8712-4F01-99A7-5866CC1090F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05ED55B5-B910-4642-BE06-9C2A31D074C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05ED55B5-B910-4642-BE06-9C2A31D074C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05ED55B5-B910-4642-BE06-9C2A31D074C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05ED55B5-B910-4642-BE06-9C2A31D074C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

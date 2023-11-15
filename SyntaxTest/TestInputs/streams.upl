@@ -1,0 +1,43 @@
+﻿interface IReadable {
+    func read()
+}
+
+interface IWritable
+    func write(val)
+
+interface IResource {
+    func close()
+    
+    func is_ended.getter()  # Требует наличие поля is_ended
+}
+
+class PrintWrapper : 
+    IReadable,
+    IWritable,
+    IResource
+{
+    final field inner_stream
+    computable field is_ended
+    
+    function new(inner_stream)
+        this.inner_stream = inner_stream
+    
+    func is_ended.getter()
+        return inner_stream.is_ended
+    
+    func read() {
+        res = inner_stream.read()
+        print("Read: ", res)
+        return res
+    }
+    
+    func write(val) {
+        inner_stream.write(val)
+        print("Wrote: ", val)
+    }
+    
+    func close() {
+        print("Closing")
+        inner_stream.close()
+    }
+    

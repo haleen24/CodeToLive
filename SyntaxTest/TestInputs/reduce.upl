@@ -1,0 +1,13 @@
+﻿func reduce(op, params args) {
+    res = null
+    changed = false
+    foreach (arg : args) {
+        if (!changed) {
+            changed = true
+            res = arg
+            continue
+        }
+        res = op(res, arg)
+    }
+    return res
+}

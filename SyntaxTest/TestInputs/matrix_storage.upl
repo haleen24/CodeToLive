@@ -1,0 +1,26 @@
+﻿import "linear_algebra/decompositions"
+
+
+class MatrixStorage {
+    field storage
+    
+    func storage.setter(matrix) {
+        u, s, v = decompositions.svd_decomposition(matrix)
+        print("SVD decomposition: ", u, s, v)
+        inner = tuple(u, s, v)  # Нужно добавить литералы коллекций в язык
+    }
+    
+    func storage.getter() {
+        return inner.u * inner.s * inner.v
+    }
+    
+    func new() {}  # Чтобы был
+    
+    func new(matrix) {
+        storage = matrix
+    }
+    
+    func new(u, s, v)  # Для эффективности
+        storage.inner = tuple(u, s, v)
+}   
+ 

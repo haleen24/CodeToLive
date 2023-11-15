@@ -1,0 +1,40 @@
+﻿import "std/math"
+
+class Vector2 {
+    final field x
+    final field y
+    computable field length
+    
+    func new(x, y) {
+        this.x = x
+        this.y = y
+    }
+    
+    func length.getter()
+        return math.sqrt(this * this)
+    
+    func operator+(other)
+        return Vector2(x + other.x, y + other.y)
+    
+    func operator-()
+        return Vector2(-x, -y)
+    
+    func operator-(other)
+        return Vector2(x - other.x, y - other.y)
+    
+    func operator*(scale_or_vector)
+        if (scale_or_vector is Vector2)
+            return x * scale_or_vector.x + y * scale_or_other.y
+        else
+            return Vector2(scale_or_vector * x, scale_or_vector * y)
+    
+    func operator/(scale)
+        return Vector2(x / scale, y / scale)
+    
+    func operator[](ind)  # один аргумент - значит геттер
+        if (ind == 0) return x else if (ind == 1) return y else throw IndexError("Invalid index")
+    
+    func conversion[iter]() {
+        throw NotImplementedError("Oops!")  # Нужно добавить yield в язык
+    }
+}

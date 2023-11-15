@@ -1,0 +1,31 @@
+﻿class BinaryTree {
+    field left
+    final field value
+    field right
+    
+    func new(val) {
+        value = val
+        # left и right - null
+    }
+    
+    func contains(val) {
+        if (value == val)
+            return true
+        if (value < val) if (right) return right.contains(val) else return false
+        if (left) return left.contains(val); return false
+    }
+    
+    func add(val) {
+        if (val <= value) {
+            if (left)
+                return left.add(val)
+            left = BinaryTree(val)
+            return
+        }
+        if (right)
+            return right.add(val)
+        right = BinaryTree(val)
+    }
+}
+    
+    
