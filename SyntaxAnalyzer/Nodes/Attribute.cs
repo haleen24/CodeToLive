@@ -1,4 +1,6 @@
-﻿namespace SyntaxAnalyzer.Nodes;
+﻿using SyntaxAnalyzer.Parsers;
+
+namespace SyntaxAnalyzer.Nodes;
 
 public class Attribute : INode
 {
@@ -15,5 +17,10 @@ public class Attribute : INode
     {
         yield return AttributeOf;
         yield return AttributeName;
+    }
+    
+    public static INode Construct(IParser parser)
+    {
+        throw new NotImplementedException();
     }
 }

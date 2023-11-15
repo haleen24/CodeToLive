@@ -1,4 +1,6 @@
-﻿namespace SyntaxAnalyzer.Nodes;
+﻿using SyntaxAnalyzer.Parsers;
+
+namespace SyntaxAnalyzer.Nodes;
 
 public class Try : INode
 {
@@ -25,5 +27,10 @@ public class Try : INode
 
         yield return Else;
         yield return Finally;
+    }
+    
+    public static INode Construct(IParser parser)
+    {
+        throw new NotImplementedException();
     }
 }

@@ -8,4 +8,9 @@ public class IndexatorOperator : INode  // В конечном дереве бы
     {
         yield break;
     }
+    
+    public static INode Construct(IParser parser)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -46,6 +46,12 @@ public class Repetition : Parser
                         Results.RemoveAt(Results.Count - 1);
                         lastSeparator.Rollback(ls);
                     }
+
+                    if (TrueLength == 0)
+                    {
+                        Success = false;
+                        return false;
+                    }
                     Success = true;
                     return true;
                 }

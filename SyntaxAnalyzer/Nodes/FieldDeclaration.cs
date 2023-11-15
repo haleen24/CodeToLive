@@ -1,4 +1,6 @@
-﻿namespace SyntaxAnalyzer.Nodes;
+﻿using SyntaxAnalyzer.Parsers;
+
+namespace SyntaxAnalyzer.Nodes;
 
 public class FieldDeclaration : INode
 {
@@ -18,5 +20,10 @@ public class FieldDeclaration : INode
     public IEnumerable<INode?> Walk()
     {
         yield return Name;
+    }
+    
+    public static INode Construct(IParser parser)
+    {
+        throw new NotImplementedException();
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace SyntaxAnalyzer.Nodes;
+﻿using SyntaxAnalyzer.Parsers;
+
+namespace SyntaxAnalyzer.Nodes;
 
 public class CatchBlock : INode  // В итоговом дереве быть не должно
 {
@@ -22,5 +24,10 @@ public class CatchBlock : INode  // В итоговом дереве быть н
 
         yield return Else;
         yield return Finally;
+    }
+    
+    public static INode Construct(IParser parser)
+    {
+        throw new NotImplementedException();
     }
 }

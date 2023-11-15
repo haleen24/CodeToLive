@@ -1,4 +1,6 @@
-﻿namespace SyntaxAnalyzer.Nodes;
+﻿using SyntaxAnalyzer.Parsers;
+
+namespace SyntaxAnalyzer.Nodes;
 
 public class Conversion : INode
 {
@@ -12,5 +14,10 @@ public class Conversion : INode
     public IEnumerable<INode> Walk()
     {
         yield return ConvertTo;
+    }
+    
+    public static INode Construct(IParser parser)
+    {
+        throw new NotImplementedException();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using LexerSpace;
 using SyntaxAnalyzer.Nodes;
 using SyntaxAnalyzer.Parsers;
+using Attribute = System.Attribute;
 
 namespace SyntaxAnalyzer.Rules;
 
@@ -15,7 +16,7 @@ public static class RulesMap
             { GrammarUnitType.Separator, Rule.Alternative(GU(LexemType.Semicolon, LexemType.NewLine)) },
             {
                 GrammarUnitType.IndexatorOperator,
-                new Rule(() => new Sequence(GU(LexemType.Lbracket), GU(LexemType.Rbrace)), Idle.Construct)
+                new Rule(() => new Sequence(GU(LexemType.Lbracket), GU(LexemType.Rbrace)), IndexatorOperator.Construct)
             },
             {
                 GrammarUnitType.OverloadableOperator,
@@ -32,13 +33,13 @@ public static class RulesMap
             {
                 GrammarUnitType.OperatorOverload,
                 new Rule(() => new Sequence(GU(LexemType.Operator, GrammarUnitType.OverloadableOperator)),
-                    Idle.Construct)
+                    OperatorOverload.Construct)
             },
 
             {
                 GrammarUnitType.Conversion,
                 new Rule(() => new Sequence(GU(LexemType.Conversion, LexemType.Lbracket, LexemType.Identifier,
-                    LexemType.Rbracket)), Idle.Construct)
+                    LexemType.Rbracket)), Conversion.Construct)
             },
 
             {
@@ -56,13 +57,13 @@ public static class RulesMap
                 GrammarUnitType.Attribute,
                 new Rule(
                     () => new Sequence(GU(GrammarUnitType.Expression, LexemType.Dot,
-                        GrammarUnitType.AttributeNameOrAccessor)), Idle.Construct)
+                        GrammarUnitType.AttributeNameOrAccessor)), Nodes.Attribute.Construct)
             },
 
             {
                 GrammarUnitType.Indexator,
                 new Rule(() => new Sequence(GU(GrammarUnitType.Expression, LexemType.Lbracket, GrammarUnitType.SNL,
-                    GrammarUnitType.Expression, GrammarUnitType.SNL, LexemType.Rbracket)), Idle.Construct)
+                    GrammarUnitType.Expression, GrammarUnitType.SNL, LexemType.Rbracket)), Indexator.Construct)
             },
 
             {
@@ -72,7 +73,8 @@ public static class RulesMap
 
             {
                 GrammarUnitType.IdentifierWithFinal,
-                new Rule(() => new Sequence(GU(GrammarUnitType.OptionalFinal, LexemType.Identifier)), Idle.Construct)
+                new Rule(() => new Sequence(GU(GrammarUnitType.OptionalFinal, LexemType.Identifier)),
+                    VariableDeclaration.Construct)
             },
 
             {
@@ -83,17 +85,8 @@ public static class RulesMap
 
             {
                 GrammarUnitType.AssignableSequence,
-                new Rule(() => new Repetition(GU(GrammarUnitType.Assignable), GU(LexemType.Comma)), Idle.Construct)
-            },
-
-            {
-                GrammarUnitType.AdditionalAssignables,
-                new Rule(() => new Sequence(GU(LexemType.Comma, GrammarUnitType.AssignableSequence)), Idle.Construct)
-            },
-
-            {
-                GrammarUnitType.OptionalAdditionalAssignables,
-                Rule.Optional(GU(GrammarUnitType.AdditionalAssignables))
+                new Rule(() => new Repetition(GU(GrammarUnitType.Assignable), GU(LexemType.Comma)),
+                    AssignableSequence.Construct)
             },
 
             {
@@ -112,9 +105,8 @@ public static class RulesMap
 
             {
                 GrammarUnitType.AssignStatement,
-                new Rule(() => new Sequence(GU(GrammarUnitType.Assignable,
-                    GrammarUnitType.OptionalAdditionalAssignables, GrammarUnitType.OptionalComma,
-                    GrammarUnitType.AssignOperator, GrammarUnitType.Expression)), Idle.Construct)
+                new Rule(() => new Sequence(GU(GrammarUnitType.AssignableSequence, GrammarUnitType.OptionalComma,
+                    GrammarUnitType.AssignOperator, GrammarUnitType.Expression)), Assignment.Construct)
             },
 
             {
@@ -127,7 +119,7 @@ public static class RulesMap
             {
                 GrammarUnitType.ElseStmt,
                 new Rule(() => new Sequence(GU(LexemType.Else, GrammarUnitType.SNL, GrammarUnitType.Stmt)),
-                    Idle.Construct)
+                    Else.Construct)
             },
 
             {
@@ -138,13 +130,13 @@ public static class RulesMap
             {
                 GrammarUnitType.IfStmt,
                 new Rule(() => new Sequence(GU(LexemType.If, GrammarUnitType.SNL, GrammarUnitType.Parenth,
-                    GrammarUnitType.SNL, GrammarUnitType.Stmt, GrammarUnitType.OptionalElse)), Idle.Construct)
+                    GrammarUnitType.SNL, GrammarUnitType.Stmt, GrammarUnitType.OptionalElse)), If.Construct)
             },
 
             {
                 GrammarUnitType.WhileStmt,
                 new Rule(() => new Sequence(GU(LexemType.While, GrammarUnitType.SNL, GrammarUnitType.Parenth,
-                    GrammarUnitType.SNL, GrammarUnitType.Stmt)), Idle.Construct)
+                    GrammarUnitType.SNL, GrammarUnitType.Stmt)), While.Construct)
             },
 
             {
@@ -165,7 +157,7 @@ public static class RulesMap
                         GrammarUnitType.SNL, GrammarUnitType.OptionalExpression, GrammarUnitType.SNL,
                         LexemType.Semicolon, GrammarUnitType.SNL, GrammarUnitType.OptionalInlineStmt,
                         GrammarUnitType.SNL, LexemType.Rparenthese, GrammarUnitType.SNL, GrammarUnitType.Stmt
-                    )), Idle.Construct)
+                    )), For.Construct)
             },
 
             {
@@ -173,7 +165,7 @@ public static class RulesMap
                 new Rule(() => new Sequence(GU(LexemType.Foreach, GrammarUnitType.SNL, LexemType.Lparenthese,
                     GrammarUnitType.SNL, LexemType.Identifier, GrammarUnitType.SNL, LexemType.Colon,
                     GrammarUnitType.SNL, GrammarUnitType.Expression, GrammarUnitType.SNL, LexemType.Rparenthese,
-                    GrammarUnitType.SNL, GrammarUnitType.Stmt)), Idle.Construct)
+                    GrammarUnitType.SNL, GrammarUnitType.Stmt)), Foreach.Construct)
             },
 
             {
@@ -185,19 +177,19 @@ public static class RulesMap
                 GrammarUnitType.CatchStmt,
                 new Rule(() => new Sequence(GU(LexemType.Catch, GrammarUnitType.SNL, LexemType.Lparenthese,
                     LexemType.Identifier, GrammarUnitType.SNL, GrammarUnitType.OptionalIdentifier, GrammarUnitType.SNL,
-                    LexemType.Rparenthese, GrammarUnitType.SNL, GrammarUnitType.Stmt)), Idle.Construct)
+                    LexemType.Rparenthese, GrammarUnitType.SNL, GrammarUnitType.Stmt)), Catch.Construct)
             },
 
             {
                 GrammarUnitType.CatchSequence,
-                new Rule(() => new Repetition(GU(GrammarUnitType.CatchStmt), GU(GrammarUnitType.Separator)),
-                    Idle.Construct)
+                new Rule(() => new Repetition(GU(GrammarUnitType.CatchStmt)),
+                    CatchSequence.Construct)
             },
 
             {
                 GrammarUnitType.FinallyStmt,
                 new Rule(() => new Sequence(GU(LexemType.Finally, GrammarUnitType.SNL, GrammarUnitType.Stmt)),
-                    Idle.Construct)
+                    Finally.Construct)
             },
 
             {
@@ -207,9 +199,9 @@ public static class RulesMap
 
             {
                 GrammarUnitType.CatchBlock,
-                new Rule(() => new Sequence(GU(GrammarUnitType.CatchStmt, GrammarUnitType.Separator,
-                    GrammarUnitType.CatchSequence, GrammarUnitType.Separator, GrammarUnitType.OptionalElse,
-                    GrammarUnitType.Separator, GrammarUnitType.OptionalFinally)), Idle.Construct)
+                new Rule(() => new Sequence(GU(
+                        GrammarUnitType.CatchSequence, GrammarUnitType.OptionalElse, GrammarUnitType.OptionalFinally)),
+                    CatchBlock.Construct)
             },
 
             {
@@ -219,33 +211,34 @@ public static class RulesMap
 
             {
                 GrammarUnitType.TryStmt,
-                new Rule(() => new Sequence(GU(LexemType.Try, GrammarUnitType.SNL, GrammarUnitType.Stmt,
-                    GrammarUnitType.Separator, GrammarUnitType.TryBody)), Idle.Construct)
+                new Rule(
+                    () => new Sequence(GU(LexemType.Try, GrammarUnitType.SNL, GrammarUnitType.Stmt,
+                        GrammarUnitType.TryBody)), Try.Construct)
             },
 
             {
                 GrammarUnitType.BreakStmt,
-                new Rule(() => new Sequence(GU(LexemType.Break)), Idle.Construct)
+                new Rule(() => new Sequence(GU(LexemType.Break)), Break.Construct)
             },
 
             {
                 GrammarUnitType.ContinueStmt,
-                new Rule(() => new Sequence(GU(LexemType.Continue)), Idle.Construct)
+                new Rule(() => new Sequence(GU(LexemType.Continue)), Continue.Construct)
             },
 
             {
                 GrammarUnitType.ReturnStmt,
-                new Rule(() => new Sequence(GU(LexemType.Return, GrammarUnitType.OptionalExpression)), Idle.Construct)
+                new Rule(() => new Sequence(GU(LexemType.Return, GrammarUnitType.OptionalExpression)), Return.Construct)
             },
 
             {
                 GrammarUnitType.ThrowStmt,
-                new Rule(() => new Sequence(GU(LexemType.Throw, GrammarUnitType.Expression)), Idle.Construct)
+                new Rule(() => new Sequence(GU(LexemType.Throw, GrammarUnitType.Expression)), Throw.Construct)
             },
 
             {
                 GrammarUnitType.ImportStmt,
-                new Rule(() => new Sequence(GU(LexemType.Import, LexemType.StringLiteral)), Idle.Construct)
+                new Rule(() => new Sequence(GU(LexemType.Import, LexemType.StringLiteral)), Import.Construct)
             },
 
             {
@@ -267,48 +260,34 @@ public static class RulesMap
                 GrammarUnitType.FieldStmt,
                 new Rule(() =>
                     new Sequence(GU(GrammarUnitType.OptionalStatic, GrammarUnitType.OptionalFieldModifier,
-                        LexemType.Field, LexemType.Identifier)), Idle.Construct)
+                        LexemType.Field, LexemType.Identifier)), FieldDeclaration.Construct)
             },
 
             {
                 GrammarUnitType.NamedArgument,
                 new Rule(() => new Sequence(GU(LexemType.Identifier, GrammarUnitType.SNL, LexemType.Eqv,
-                    GrammarUnitType.SNL, GrammarUnitType.Expression)), Idle.Construct)
+                    GrammarUnitType.SNL, GrammarUnitType.Expression)), NamedArgument.Construct)
             },
 
             {
                 GrammarUnitType.CommaWithNewLine,
-                new Rule(() => new Sequence(GU(LexemType.Comma, GrammarUnitType.SNL)), Idle.Construct)
+                new Rule(() => new Sequence(GU(LexemType.Comma, GrammarUnitType.SNL)), Comma.Construct)
             },
 
             {
                 GrammarUnitType.PositionalFormalArguments,
                 new Rule(() => new Repetition(GU(LexemType.Identifier), GU(GrammarUnitType.CommaWithNewLine)),
-                    Idle.Construct)
+                    PositionalArgumentsSequence.Construct)
             },
-
-            {
-                GrammarUnitType.AdditionalPositionalFormalArguments,
-                new Rule(
-                    () => new Sequence(GU(LexemType.Comma, GrammarUnitType.SNL,
-                        GrammarUnitType.PositionalFormalArguments)), Idle.Construct)
-            },
-
-            {
-                GrammarUnitType.OptionalAdditionalPositionalFormalArguments,
-                Rule.Optional(GU(GrammarUnitType.AdditionalPositionalFormalArguments))
-            },
-
             {
                 GrammarUnitType.NamedArguments,
                 new Rule(() => new Repetition(GU(GrammarUnitType.NamedArgument), GU(GrammarUnitType.CommaWithNewLine)),
-                    Idle.Construct)
+                    Arguments.Construct)
             },
-
             {
                 GrammarUnitType.AdditionalNamedArguments,
                 new Rule(() => new Sequence(GU(LexemType.Comma, GrammarUnitType.SNL, GrammarUnitType.NamedArguments)),
-                    Idle.Construct)
+                    Arguments.Construct)
             },
 
             {
@@ -319,13 +298,13 @@ public static class RulesMap
             {
                 GrammarUnitType.ParamsArgument,
                 new Rule(() => new Sequence(GU(LexemType.Params, GrammarUnitType.SNL, LexemType.Identifier)),
-                    Idle.Construct)
+                    ParamsArgument.Construct)
             },
 
             {
                 GrammarUnitType.AdditionalParamsArgument,
                 new Rule(() => new Sequence(GU(LexemType.Comma, GrammarUnitType.SNL, GrammarUnitType.ParamsArgument)),
-                    Idle.Construct)
+                    ParamsArgument.Construct)
             },
 
             {
@@ -336,11 +315,11 @@ public static class RulesMap
             {
                 GrammarUnitType.FormalArgumentsWithPositional,
                 new Rule(
-                    () => new Sequence(GU(LexemType.Identifier,
-                        GrammarUnitType.OptionalAdditionalPositionalFormalArguments,
+                    () => new Sequence(GU(
+                        GrammarUnitType.PositionalFormalArguments,
                         GrammarUnitType.OptionalAdditionalParamsArgument,
                         GrammarUnitType.OptionalAdditionalNamedArguments)),
-                    Idle.Construct)
+                    Arguments.Construct)
             },
 
             {
@@ -348,7 +327,7 @@ public static class RulesMap
                 new Rule(
                     () => new Sequence(GU(GrammarUnitType.ParamsArgument,
                         GrammarUnitType.OptionalAdditionalNamedArguments)),
-                    Idle.Construct)
+                    Arguments.Construct)
             },
 
             {
@@ -356,19 +335,23 @@ public static class RulesMap
                 Rule.Alternative(GU(GrammarUnitType.FormalArgumentsWithPositional,
                     GrammarUnitType.FormalArgumentsWithParams, GrammarUnitType.NamedArguments))
             },
+            {
+                GrammarUnitType.OptionalFunctionFormalArguments,
+                Rule.Optional(GU(GrammarUnitType.FunctionFormalArguments))
+            },
 
             {
                 GrammarUnitType.GetterDeclaration,
                 new Rule(
                     () => new Sequence(GU(LexemType.Identifier, LexemType.Dot, LexemType.Getter)),
-                    Idle.Construct)
+                    GetterDeclaration.Construct)
             },
 
             {
                 GrammarUnitType.SetterDeclaration,
                 new Rule(
                     () => new Sequence(GU(LexemType.Identifier, LexemType.Dot, LexemType.Setter)),
-                    Idle.Construct)
+                    SetterDeclaration.Construct)
             },
 
             {
@@ -382,33 +365,22 @@ public static class RulesMap
                 new Rule(
                     () => new Sequence(GU(GrammarUnitType.OptionalStatic, LexemType.Func, GrammarUnitType.AttributeName,
                         GrammarUnitType.SNL, LexemType.Lparenthese, GrammarUnitType.SNL,
-                        GrammarUnitType.FunctionFormalArguments, GrammarUnitType.SNL, LexemType.Rparenthese,
+                        GrammarUnitType.OptionalFunctionFormalArguments, GrammarUnitType.SNL, LexemType.Rparenthese,
                         GrammarUnitType.SNL, GrammarUnitType.Stmt)),
-                    Idle.Construct)
+                    FunctionDefinition.Construct)
             },
 
             {
                 GrammarUnitType.SuperclassList,
                 new Rule(() => new Repetition(GU(LexemType.Identifier), GU(GrammarUnitType.CommaWithNewLine)),
-                    Idle.Construct)
-            },
-
-            {
-                GrammarUnitType.AdditionalSuperclasses,
-                new Rule(() => new Sequence(GU(LexemType.Comma, GrammarUnitType.SNL, GrammarUnitType.SuperclassList)),
-                    Idle.Construct)
-            },
-
-            {
-                GrammarUnitType.OptionalAdditionalSuperclasses,
-                Rule.Optional(GU(GrammarUnitType.AdditionalSuperclasses))
+                    Superclasses.Construct)
             },
 
             {
                 GrammarUnitType.SuperclassesDeclaration,
                 new Rule(
-                    () => new Sequence(GU(LexemType.Colon, GrammarUnitType.SNL, LexemType.Identifier,
-                        GrammarUnitType.SNL, GrammarUnitType.OptionalAdditionalSuperclasses)), Idle.Construct)
+                    () => new Sequence(GU(LexemType.Colon, GrammarUnitType.SNL, GrammarUnitType.SuperclassList)),
+                    Superclasses.Construct)
             },
 
             {
@@ -426,7 +398,7 @@ public static class RulesMap
                 new Rule(
                     () => new Sequence(GU(GrammarUnitType.ClassType, LexemType.Identifier, GrammarUnitType.SNL,
                         GrammarUnitType.OptionalSuperclassesDeclaration, GrammarUnitType.SNL, GrammarUnitType.Stmt)),
-                    Idle.Construct)
+                    ClassDefinition.Construct)
             },
 
             {
@@ -435,49 +407,38 @@ public static class RulesMap
             },
 
             {
-                GrammarUnitType.StmtSequence,
+                GrammarUnitType.NonemptyStmtSequence,
                 new Rule(() => new Repetition(GU(GrammarUnitType.OptionalStmt), GU(GrammarUnitType.Separator)),
-                    Idle.Construct)
+                    StatementSequence.Construct)
             },
-
+            {
+                GrammarUnitType.StmtSequence,
+                Rule.Optional(GU(GrammarUnitType.NonemptyStmtSequence))
+            },
             {
                 GrammarUnitType.Block,
                 new Rule(
                     () => new Sequence(GU(LexemType.Lbrace, GrammarUnitType.StmtSequence, GrammarUnitType.SNL,
-                        LexemType.Rbrace)), Idle.Construct)
+                        LexemType.Rbrace)), Block.Construct)
             },
 
             {
                 GrammarUnitType.Module,
-                new Rule(() => new Sequence(GU(GrammarUnitType.StmtSequence, GrammarUnitType.SNL)), Idle.Construct)
+                new Rule(() => new Sequence(GU(GrammarUnitType.StmtSequence, GrammarUnitType.SNL)), Module.Construct)
             },
 
             {
                 GrammarUnitType.PositionalActualArguments,
                 new Rule(() => new Repetition(GU(GrammarUnitType.Expression), GU(GrammarUnitType.CommaWithNewLine)),
-                    Idle.Construct)
-            },
-
-            {
-                GrammarUnitType.AdditionalPositionalActualArguments,
-                new Rule(
-                    () => new Sequence(GU(LexemType.Comma, GrammarUnitType.SNL,
-                        GrammarUnitType.PositionalActualArguments)),
-                    Idle.Construct)
-            },
-
-            {
-                GrammarUnitType.OptionalAdditionalPositionalActualArguments,
-                Rule.Optional(GU(GrammarUnitType.AdditionalPositionalActualArguments))
+                    PositionalArgumentsSequence.Construct)
             },
 
             {
                 GrammarUnitType.ActualArgumentsWithPositional,
                 new Rule(
-                    () => new Sequence(GU(GrammarUnitType.Expression,
-                        GrammarUnitType.OptionalAdditionalPositionalActualArguments,
+                    () => new Sequence(GU(GrammarUnitType.PositionalActualArguments,
                         GrammarUnitType.OptionalAdditionalNamedArguments)),
-                    Idle.Construct)
+                    Arguments.Construct)
             },
 
             {
@@ -486,11 +447,16 @@ public static class RulesMap
             },
 
             {
+                GrammarUnitType.OptionalFunctionActualArguments,
+                Rule.Optional(GU(GrammarUnitType.FunctionActualArguments))
+            },
+
+            {
                 GrammarUnitType.FunctionCall,
                 new Rule(
                     () => new Sequence(GU(GrammarUnitType.Expression, LexemType.Lparenthese, GrammarUnitType.SNL,
-                        GrammarUnitType.FunctionActualArguments, GrammarUnitType.SNL, LexemType.Rparenthese)),
-                    Idle.Construct)
+                        GrammarUnitType.OptionalFunctionActualArguments, GrammarUnitType.SNL, LexemType.Rparenthese)),
+                    FunctionCall.Construct)
             },
 
             {
@@ -501,7 +467,7 @@ public static class RulesMap
             {
                 GrammarUnitType.UnaryExpression,
                 new Rule(() => new Sequence(GU(GrammarUnitType.UnaryOperator, GrammarUnitType.Expression)),
-                    Idle.Construct)
+                    UnaryExpression.Construct)
             },
 
             {
@@ -517,7 +483,7 @@ public static class RulesMap
                 new Rule(
                     () => new Sequence(GU(GrammarUnitType.ExpressionWithoutBinaryOperators,
                         GrammarUnitType.BinaryOperator, GrammarUnitType.Expression)),
-                    Idle.Construct)
+                    BinaryExpression.Construct)
             },
 
             {
@@ -531,7 +497,7 @@ public static class RulesMap
                 new Rule(
                     () => new Sequence(GU(GrammarUnitType.Expression, LexemType.Ternary, GrammarUnitType.Expression,
                         LexemType.Colon, GrammarUnitType.Expression)),
-                    Idle.Construct)
+                    TernaryExpression.Construct)
             },
 
             {
@@ -539,7 +505,7 @@ public static class RulesMap
                 new Rule(
                     () => new Sequence(GU(GrammarUnitType.FunctionFormalArguments, LexemType.Lambda,
                         GrammarUnitType.Stmt)),
-                    Idle.Construct)
+                    LambdaExpression.Construct)
             },
 
             {

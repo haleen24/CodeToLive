@@ -1,4 +1,6 @@
-﻿namespace SyntaxAnalyzer.Nodes;
+﻿using SyntaxAnalyzer.Parsers;
+
+namespace SyntaxAnalyzer.Nodes;
 
 public class OperatorOverload
 {
@@ -54,5 +56,10 @@ public class OperatorOverload
     public OperatorOverload(OverloadableOperator @operator)
     {
         Operator = @operator;
+    }
+    
+    public static INode Construct(IParser parser)
+    {
+        throw new NotImplementedException();
     }
 }

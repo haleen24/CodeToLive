@@ -1,4 +1,6 @@
-﻿namespace SyntaxAnalyzer.Nodes;
+﻿using SyntaxAnalyzer.Parsers;
+
+namespace SyntaxAnalyzer.Nodes;
 
 public class Throw : INode
 {
@@ -12,5 +14,10 @@ public class Throw : INode
     public IEnumerable<INode?> Walk()
     {
         yield return Value;
+    }
+    
+    public static INode Construct(IParser parser)
+    {
+        throw new NotImplementedException();
     }
 }

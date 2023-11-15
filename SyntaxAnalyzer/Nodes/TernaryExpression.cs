@@ -2,24 +2,24 @@
 
 namespace SyntaxAnalyzer.Nodes;
 
-public class If : INode
+public class TernaryExpression : INode
 {
     public INode Condition { get; }
-    public INode Body { get; }
-    public INode? Else { get; }
+    public INode FirstBranch { get; }
+    public INode SecondBranch { get; }
 
-    public If(INode condition, INode body, INode? @else = null)
+    public TernaryExpression(INode condition, INode firstBranch, INode secondBranch)
     {
         Condition = condition;
-        Body = body;
-        Else = @else;
+        FirstBranch = firstBranch;
+        SecondBranch = secondBranch;
     }
 
     public IEnumerable<INode?> Walk()
     {
         yield return Condition;
-        yield return Body;
-        yield return Else;
+        yield return FirstBranch;
+        yield return SecondBranch;
     }
     
     public static INode Construct(IParser parser)

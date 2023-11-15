@@ -1,4 +1,6 @@
-﻿namespace SyntaxAnalyzer.Nodes;
+﻿using SyntaxAnalyzer.Parsers;
+
+namespace SyntaxAnalyzer.Nodes;
 
 public class VariableDeclaration : INode  // IdentifierWithFinal
 {
@@ -14,5 +16,10 @@ public class VariableDeclaration : INode  // IdentifierWithFinal
     public IEnumerable<INode> Walk()
     {
         yield return Identifier;
+    }
+    
+    public static INode Construct(IParser parser)
+    {
+        throw new NotImplementedException();
     }
 }

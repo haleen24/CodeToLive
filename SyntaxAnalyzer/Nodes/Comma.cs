@@ -2,18 +2,11 @@
 
 namespace SyntaxAnalyzer.Nodes;
 
-public class Return : INode
+public class Comma : INode
 {
-    public INode? Value { get; }
-
-    public Return(INode value)
-    {
-        Value = value;
-    }
-
     public IEnumerable<INode?> Walk()
     {
-        yield return Value;
+        yield break;
     }
     
     public static INode Construct(IParser parser)

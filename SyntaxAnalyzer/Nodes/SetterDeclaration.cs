@@ -1,4 +1,6 @@
-﻿namespace SyntaxAnalyzer.Nodes;
+﻿using SyntaxAnalyzer.Parsers;
+
+namespace SyntaxAnalyzer.Nodes;
 
 public class SetterDeclaration : INode  // Для переопределения сеттера поля
 {
@@ -12,5 +14,10 @@ public class SetterDeclaration : INode  // Для переопределения
     public IEnumerable<INode?> Walk()
     {
         yield return SetterOf;
+    }
+    
+    public static INode Construct(IParser parser)
+    {
+        throw new NotImplementedException();
     }
 }

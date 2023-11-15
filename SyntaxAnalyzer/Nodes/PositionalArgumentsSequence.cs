@@ -1,4 +1,6 @@
-﻿namespace SyntaxAnalyzer.Nodes;
+﻿using SyntaxAnalyzer.Parsers;
+
+namespace SyntaxAnalyzer.Nodes;
 
 public class PositionalArgumentsSequence : INode  // Можно исползовать и для формальных, и для фактических
                                                   // В итоговом дереве быть не должно
@@ -13,5 +15,10 @@ public class PositionalArgumentsSequence : INode  // Можно исползов
     public IEnumerable<INode?> Walk()
     {
         return Arguments;
+    }
+    
+    public static INode Construct(IParser parser)
+    {
+        throw new NotImplementedException();
     }
 }

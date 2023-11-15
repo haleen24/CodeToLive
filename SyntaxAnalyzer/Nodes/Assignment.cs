@@ -26,4 +26,9 @@ public class Assignment : INode  // Представляет оператор п
 
         yield return Rhs;
     }
+    
+    public static INode Construct(IParser parser)
+    {
+        throw new NotImplementedException();
+    }
 }

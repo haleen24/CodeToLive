@@ -1,4 +1,6 @@
-﻿namespace SyntaxAnalyzer.Nodes;
+﻿using SyntaxAnalyzer.Parsers;
+
+namespace SyntaxAnalyzer.Nodes;
 
 public class Arguments : INode  // В итоговом дереве быть не должно
 {
@@ -25,5 +27,10 @@ public class Arguments : INode  // В итоговом дереве быть н�
         {
             yield return node;
         }
+    }
+
+    public static INode Construct(IParser parser)
+    {
+        throw new NotImplementedException();
     }
 }

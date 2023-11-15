@@ -1,8 +1,9 @@
-﻿namespace SyntaxAnalyzer.Nodes;
+﻿using SyntaxAnalyzer.Parsers;
+
+namespace SyntaxAnalyzer.Nodes;
 
 public class
-    AssignableSequence : INode // Используется для AssignableSequence,
-    // AdditionalAssignables, OptionalAdditionalAssignables, в итоговом дереве быть не должно
+    AssignableSequence : INode // в итоговом дереве быть не должно
 {
     public IReadOnlyList<INode> Assignables { get; }
 
@@ -14,5 +15,10 @@ public class
     public IEnumerable<INode> Walk()
     {
         return Assignables;
+    }
+    
+    public static INode Construct(IParser parser)
+    {
+        throw new NotImplementedException();
     }
 }

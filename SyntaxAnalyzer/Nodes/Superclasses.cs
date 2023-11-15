@@ -2,18 +2,18 @@
 
 namespace SyntaxAnalyzer.Nodes;
 
-public class Return : INode
+public class Superclasses : INode
 {
-    public INode? Value { get; }
+    public IReadOnlyList<INode> Classes { get; }
 
-    public Return(INode value)
+    public Superclasses(IEnumerable<INode> classes)
     {
-        Value = value;
+        Classes = new List<INode>(classes).AsReadOnly();
     }
 
     public IEnumerable<INode?> Walk()
     {
-        yield return Value;
+        return Classes;
     }
     
     public static INode Construct(IParser parser)

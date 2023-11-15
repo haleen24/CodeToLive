@@ -1,4 +1,6 @@
-﻿namespace SyntaxAnalyzer.Nodes;
+﻿using SyntaxAnalyzer.Parsers;
+
+namespace SyntaxAnalyzer.Nodes;
 
 public class GetterDeclaration : INode  // Для переопределения геттера поля
 {
@@ -12,5 +14,10 @@ public class GetterDeclaration : INode  // Для переопределения
     public IEnumerable<INode?> Walk()
     {
         yield return GetterOf;
+    }
+    
+    public static INode Construct(IParser parser)
+    {
+        throw new NotImplementedException();
     }
 }
