@@ -12,7 +12,7 @@ public class ClassDefinition : INode
     public ClassDefinition(INode name, IEnumerable<INode> superclasses, INode body)
     {
         Name = name;
-        Superclasses = new List<INode>(superclasses).AsReadOnly();
+        Superclasses = INode.Copy(superclasses);
         Body = body;
     }
 

@@ -12,7 +12,7 @@ public class Assignment : INode  // Представляет оператор п
 
     private Assignment(IEnumerable<INode> lhs, LexemType sign, INode rhs)
     {
-        Lhs = new List<INode>(lhs).AsReadOnly();
+        Lhs = INode.Copy(lhs);
         Sign = sign;
         Rhs = rhs;
     }

@@ -10,7 +10,7 @@ public class StatementSequence : INode  // Представляет послед
 
     public StatementSequence(IEnumerable<INode> statements)
     {
-        Statements = new List<INode>(statements).AsReadOnly();
+        Statements = INode.Copy(statements);
     }
 
     protected string Typename => GetType().ToString().Split(".")[^1];

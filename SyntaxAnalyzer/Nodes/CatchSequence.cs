@@ -8,7 +8,7 @@ public class CatchSequence : INode  // в итоговом дереве быть
 
     public CatchSequence(IEnumerable<INode> catches)
     {
-        Catches = new List<INode>(catches).AsReadOnly();
+        Catches = INode.Copy(catches);
     }
 
     public IEnumerable<INode?> Walk()

@@ -10,7 +10,7 @@ public class CatchBlock : INode  // В итоговом дереве быть н
 
     public CatchBlock(IEnumerable<INode> catches, INode? @else, INode? @finally)
     {
-        Catches = new List<INode>(catches).AsReadOnly();
+        Catches = INode.Copy(catches);
         Else = @else;
         Finally = @finally;
     }

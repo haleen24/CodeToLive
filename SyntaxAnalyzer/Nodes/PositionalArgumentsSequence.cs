@@ -9,7 +9,7 @@ public class PositionalArgumentsSequence : INode  // Можно исползов
 
     public PositionalArgumentsSequence(IEnumerable<INode> arguments)
     {
-        Arguments = new List<INode>(arguments).AsReadOnly();
+        Arguments = INode.Copy(arguments);
     }
 
     public IEnumerable<INode?> Walk()

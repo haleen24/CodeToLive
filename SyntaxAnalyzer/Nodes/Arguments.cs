@@ -10,9 +10,9 @@ public class Arguments : INode  // В итоговом дереве быть н�
 
     public Arguments(IEnumerable<INode> positional, INode? @params, IEnumerable<INode> named)
     {
-        Positional = new List<INode>(positional).AsReadOnly();
+        Positional = INode.Copy(positional);
         Params = @params;
-        Named = new List<INode>(named).AsReadOnly();
+        Named = INode.Copy(named);
     }
 
     public IEnumerable<INode?> Walk()

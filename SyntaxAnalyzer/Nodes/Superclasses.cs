@@ -8,7 +8,7 @@ public class Superclasses : INode
 
     public Superclasses(IEnumerable<INode> classes)
     {
-        Classes = new List<INode>(classes).AsReadOnly();
+        Classes = INode.Copy(classes);
     }
 
     public IEnumerable<INode?> Walk()

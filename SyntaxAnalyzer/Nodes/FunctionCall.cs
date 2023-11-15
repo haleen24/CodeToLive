@@ -12,8 +12,8 @@ public class FunctionCall : INode
     public FunctionCall(INode name, IEnumerable<INode> positionalArguments, IEnumerable<INode> namedArguments, INode body)
     {
         Name = name;
-        PositionalArguments = new List<INode>(positionalArguments).AsReadOnly();
-        NamedArguments = new List<INode>(namedArguments).AsReadOnly();
+        PositionalArguments = INode.Copy(positionalArguments);
+        NamedArguments = INode.Copy(namedArguments);
         Body = body;
     }
 

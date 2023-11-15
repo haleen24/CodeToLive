@@ -14,10 +14,10 @@ public class FunctionDefinition : INode
         IEnumerable<INode> namedArguments, INode body)
     {
         Name = name;
-        PositionalArguments = new List<INode>(positionalArguments).AsReadOnly();
+        PositionalArguments = INode.Copy(positionalArguments);
         ParamsArgument = paramsArgument;
         Body = body;
-        NamedArguments = new List<INode>(namedArguments).AsReadOnly();
+        NamedArguments = INode.Copy(namedArguments);
     }
 
     public IEnumerable<INode?> Walk()
