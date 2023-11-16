@@ -21,7 +21,7 @@ public class Assignment : INode // Представляет оператор п�
 
     public override string ToString()
     {
-        return $"Assignment(lhs=[{string.Join(", ", Lhs)}], sign={Sign}, rhs={Rhs})";
+        return $"Assignment(lhs=[{string.Join(", ", Lhs)}], sign={Sign}, rhs={Rhs}, is_seq={IsSeq})";
     }
 
     public IEnumerable<INode> Walk()

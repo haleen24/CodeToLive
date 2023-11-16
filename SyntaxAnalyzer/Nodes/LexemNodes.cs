@@ -25,6 +25,70 @@ public class StaticLexemNode : INode  // Представляет статиче
     }
 }
 
+public class True : EmptyNode, INode
+{
+    public IEnumerable<INode?> Walk()
+    {
+        yield break;
+    }
+}
+
+public class False : EmptyNode, INode
+{
+    public IEnumerable<INode?> Walk()
+    {
+        yield break;
+    }
+}
+
+public class Null : EmptyNode, INode
+{
+    public IEnumerable<INode?> Walk()
+    {
+        yield break;
+    }
+}
+
+public class This : EmptyNode, INode
+{
+    public IEnumerable<INode?> Walk()
+    {
+        yield break;
+    }
+}
+
+public class Base : EmptyNode, INode
+{
+    public IEnumerable<INode?> Walk()
+    {
+        yield break;
+    }
+}
+
+public class Inner : EmptyNode, INode
+{
+    public IEnumerable<INode?> Walk()
+    {
+        yield break;
+    }
+}
+
+public class Getter : EmptyNode, INode 
+{
+    public IEnumerable<INode?> Walk()
+    {
+        yield break;
+    }
+}
+
+public class Setter : EmptyNode, INode 
+{
+    public IEnumerable<INode?> Walk()
+    {
+        yield break;
+    }
+}
+
 public abstract class DynamicLexemNode : INode  // Представляет динамическую лексему
 {
     public string Value { get; }

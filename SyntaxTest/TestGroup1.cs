@@ -95,6 +95,67 @@ public class TestGroup1
         );
     }
 
+    private ITreeTester Reduce()
+    {
+        return TT<Module>(
+            TT<FunctionDefinition>(
+                o => o.ParamsArgument != null && o.PositionalArguments.Count == 1,
+                TT<Identifier>(o => o.Value == "reduce"),
+                TT<Identifier>(o => o.Value == "op"),
+                TT<Identifier>(o => o.Value == "args"),
+                TT<Block>(
+                    TT<Assignment>(
+                        o => !o.IsSeq && o.Sign == LexemType.Assignment,
+                        TT<IdentifierWithFinal>(o => !o.IsFinal && o.Value == "res"),
+                        TT<Null>()
+                    ),
+                    TT<Assignment>(
+                        o => !o.IsSeq && o.Sign == LexemType.Assignment,
+                        TT<IdentifierWithFinal>(o => !o.IsFinal && o.Value == "changed"),
+                        TT<False>()
+                    ),
+                    TT<Foreach>(
+                        TT<Identifier>(o => o.Value == "arg"),
+                        TT<Identifier>(o => o.Value == "args"),
+                        TT<Block>(
+                            TT<If>(
+                                TT<UnaryExpression>(
+                                    o => o.Operator == LexemType.Not,
+                                    TT<Identifier>(o => o.Value == "changed")
+                                ),
+                                TT<Block>(
+                                    TT<Assignment>(
+                                        o => !o.IsSeq && o.Sign == LexemType.Assignment,
+                                        TT<IdentifierWithFinal>(o => !o.IsFinal && o.Value == "changed"),
+                                        TT<True>()
+                                    ),
+                                    TT<Assignment>(
+                                        o => !o.IsSeq && o.Sign == LexemType.Assignment,
+                                        TT<IdentifierWithFinal>(o => !o.IsFinal && o.Value == "res"),
+                                        TT<Identifier>(o => o.Value == "arg")
+                                    ),
+                                    TT<Continue>()
+                                )
+                            ),
+                            TT<Assignment>(
+                                o => !o.IsSeq && o.Sign == LexemType.Assignment,
+                                TT<IdentifierWithFinal>(o => !o.IsFinal && o.Value == "res"),
+                                TT<FunctionCall>(
+                                    TT<Identifier>(o => o.Value == "op"),
+                                    TT<Identifier>(o => o.Value == "res"),
+                                    TT<Identifier>(o => o.Value == "arg")
+                                )
+                            )
+                        )
+                    ),
+                    TT<Return>(
+                        TT<Identifier>(o => o.Value == "Res")
+                    )
+                )
+            )
+        );
+    }
+
     [SetUp]
     public void Setup()
     {
@@ -109,9 +170,11 @@ public class TestGroup1
         }
         
         Testers.Add(FizzBuzz());
+        Testers.Add(Reduce());
     }
 
     [TestCase(0)]
+    [TestCase(1)]
     public void TestAst(int ind)
     {
         Syntaxer syntaxer = new Syntaxer(new GrammarUnit(GrammarUnitType.Module));

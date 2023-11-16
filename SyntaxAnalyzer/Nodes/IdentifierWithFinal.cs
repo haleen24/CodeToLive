@@ -16,7 +16,7 @@ public class IdentifierWithFinal : INode // IdentifierWithFinal
 
     public override string ToString()
     {
-        return $"IdentifierWithFinal(name={Value})";
+        return $"IdentifierWithFinal(name={Value}, is_final={IsFinal})";
     }
 
     public IEnumerable<INode> Walk()

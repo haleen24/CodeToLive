@@ -29,7 +29,18 @@ public class Exact : Parser
             LexerSpace.FloatLiteral fl => new FloatLiteral(fl),
             LexerSpace.IntLiteral il => new IntLiteral(il),
             LexerSpace.Identifier id => new Identifier(id),
-            _ => new StaticLexemNode(lexem.LType)
+            _ => lexem.LType switch
+            {
+                LexemType.True => new True(),
+                LexemType.False => new False(),
+                LexemType.Null => new Null(),
+                LexemType.This => new This(),
+                LexemType.Base => new Base(),
+                LexemType.Inner => new Inner(),
+                LexemType.Getter => new Getter(),
+                LexemType.Setter => new Setter(),
+                _ => new StaticLexemNode(lexem.LType)
+            }
         };
 
     public override bool Parse(LexemStream ls)
