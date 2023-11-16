@@ -4,9 +4,9 @@ namespace SyntaxAnalyzer.Nodes;
 
 public class Import : INode
 {
-    public INode Value { get; }
+    public string Value { get; }
 
-    public Import(INode value)
+    public Import(string value)
     {
         Value = value;
     }
@@ -18,7 +18,7 @@ public class Import : INode
 
     public IEnumerable<INode?> Walk()
     {
-        yield return Value;
+        yield break;
     }
     
     public static INode Construct(IParser parser)
