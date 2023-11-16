@@ -1,8 +1,9 @@
-﻿using SyntaxAnalyzer.Parsers;
+﻿using System.Diagnostics;
+using SyntaxAnalyzer.Parsers;
 
 namespace SyntaxAnalyzer.Nodes;
 
-public class CatchBlock : INode  // В итоговом дереве быть не должно
+public class CatchBlock : INode // В итоговом дереве быть не должно
 {
     public IReadOnlyList<INode> Catches { get; }
     public INode? Else { get; }
@@ -25,9 +26,11 @@ public class CatchBlock : INode  // В итоговом дереве быть н
         yield return Else;
         yield return Finally;
     }
-    
+
     public static INode Construct(IParser parser)
     {
-        throw new NotImplementedException();
+        Debug.Assert(parser.Length == 3);
+        return new CatchBlock((parser[0] as CatchSequence)!.Catches, parser[1] is Idle ? null : parser[1],
+            parser[2] is Idle ? null : parser[2]);
     }
 }

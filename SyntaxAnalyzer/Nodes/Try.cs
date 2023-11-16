@@ -1,4 +1,5 @@
-﻿using SyntaxAnalyzer.Parsers;
+﻿using System.Diagnostics;
+using SyntaxAnalyzer.Parsers;
 
 namespace SyntaxAnalyzer.Nodes;
 
@@ -38,6 +39,12 @@ public class Try : INode
     
     public static INode Construct(IParser parser)
     {
-        throw new NotImplementedException();
+        Debug.Assert(parser.Length == 4);
+        switch (parser[3])
+        {
+            case CatchBlock cb: return new Try(parser[2], cb.Catches, cb.Else, cb.Finally);
+            case Nodes.Finally @finally: return new Try(parser[2], new List<INode>(), null, @finally.Body);
+            default: throw new Exception("wrongType"); // Never gonna happend
+        }
     }
 }

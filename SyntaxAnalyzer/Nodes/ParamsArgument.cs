@@ -1,8 +1,9 @@
-﻿using SyntaxAnalyzer.Parsers;
+﻿using System.Diagnostics;
+using SyntaxAnalyzer.Parsers;
 
 namespace SyntaxAnalyzer.Nodes;
 
-public class ParamsArgument : INode  // В итоговом дереве быть не должно
+public class ParamsArgument : INode // В итоговом дереве быть не должно
 {
     public INode Argument { get; }
 
@@ -15,9 +16,16 @@ public class ParamsArgument : INode  // В итоговом дереве быт�
     {
         yield return Argument;
     }
-    
+
     public static INode Construct(IParser parser)
     {
-        throw new NotImplementedException();
+        Debug.Assert(parser.Length == 3);
+        return new ParamsArgument(parser[2]);
     }
-}
+
+    public static INode AdditionalConstruct(IParser parser)
+    {
+        Debug.Assert(parser.Length == 4);
+        return parser[3];
+    }
+}   

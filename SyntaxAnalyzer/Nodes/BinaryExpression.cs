@@ -5,9 +5,9 @@ namespace SyntaxAnalyzer.Nodes;
 
 public class BinaryExpression : INode
 {
-    public INode LeftOperand { get; }
+    public INode LeftOperand { get; internal set; }
     public LexemType Operator { get; }
-    public INode RightOperand { get; }
+    public INode RightOperand { get; internal set; }
 
     public BinaryExpression(INode leftOperand, LexemType @operator, INode rightOperand)
     {
@@ -26,7 +26,7 @@ public class BinaryExpression : INode
         yield return LeftOperand;
         yield return RightOperand;
     }
-    
+
     public static INode Construct(IParser parser)
     {
         throw new NotImplementedException();

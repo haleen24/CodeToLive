@@ -1,8 +1,9 @@
-﻿using SyntaxAnalyzer.Parsers;
+﻿using System.Diagnostics;
+using SyntaxAnalyzer.Parsers;
 
 namespace SyntaxAnalyzer.Nodes;
 
-public class GetterDeclaration : INode  // Для переопределения геттера поля
+public class GetterDeclaration : INode // Для переопределения геттера поля
 {
     public INode GetterOf { get; }
 
@@ -20,9 +21,10 @@ public class GetterDeclaration : INode  // Для переопределения
     {
         yield return GetterOf;
     }
-    
+
     public static INode Construct(IParser parser)
     {
-        throw new NotImplementedException();
+        Debug.Assert(parser.Length == 3);
+        return new GetterDeclaration(parser[0]);
     }
 }

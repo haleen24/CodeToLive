@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Diagnostics;
 using SyntaxAnalyzer.Parsers;
 
 namespace SyntaxAnalyzer.Nodes;
@@ -31,9 +32,10 @@ public class ClassDefinition : INode
 
         yield return Body;
     }
-    
+
     public static INode Construct(IParser parser)
     {
-        throw new NotImplementedException();
+        Debug.Assert(parser.Length == 6);
+        return new ClassDefinition(parser[1], parser[3] as IEnumerable<INode>, parser[^1]);
     }
 }

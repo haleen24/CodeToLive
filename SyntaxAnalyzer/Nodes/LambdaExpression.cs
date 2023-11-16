@@ -1,4 +1,6 @@
-﻿using SyntaxAnalyzer.Parsers;
+﻿using System.Data;
+using System.Diagnostics;
+using SyntaxAnalyzer.Parsers;
 
 namespace SyntaxAnalyzer.Nodes;
 
@@ -35,9 +37,12 @@ public class LambdaExpression : INode
 
         yield return Body;
     }
-    
+
     public static INode Construct(IParser parser)
     {
-        throw new NotImplementedException();
+        Debug.Assert(parser.Length == 7);
+
+        var args = parser[2] as Arguments;
+        return new LambdaExpression(args!.Positional, args.Named, parser[^1]);
     }
 }

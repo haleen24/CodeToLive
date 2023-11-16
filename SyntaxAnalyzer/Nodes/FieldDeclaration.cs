@@ -1,4 +1,6 @@
-﻿using SyntaxAnalyzer.Parsers;
+﻿using System.Diagnostics;
+using LexerSpace;
+using SyntaxAnalyzer.Parsers;
 
 namespace SyntaxAnalyzer.Nodes;
 
@@ -9,7 +11,7 @@ public class FieldDeclaration : INode
     public bool IsComputable { get; }
     public bool IsStatic { get; }
 
-    public FieldDeclaration(INode name, bool isFinal, bool isComputable, bool isStatic)
+    public FieldDeclaration(INode name, bool isStatic = false, bool isFinal = false, bool isComputable = false)
     {
         Name = name;
         IsFinal = isFinal;
@@ -26,9 +28,17 @@ public class FieldDeclaration : INode
     {
         yield return Name;
     }
-    
+
     public static INode Construct(IParser parser)
     {
-        throw new NotImplementedException();
+        Debug.Assert(parser.Length == 4);
+        return parser[1] switch
+        {
+            Idle idle => new FieldDeclaration(parser[^1], parser[0] is not Idle),
+            StaticLexemNode lexemNode => lexemNode.Type_ == LexemType.Final
+                ? new FieldDeclaration(parser[^1], parser[0] is not Idle, true)
+                : new FieldDeclaration(parser[^1], parser[0] is not Idle, false, true),
+            _ => throw new Exception("Type Error")
+        };
     }
 }

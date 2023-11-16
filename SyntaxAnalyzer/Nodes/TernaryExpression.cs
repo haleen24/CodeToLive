@@ -1,4 +1,5 @@
-﻿using SyntaxAnalyzer.Parsers;
+﻿using System.Diagnostics;
+using SyntaxAnalyzer.Parsers;
 
 namespace SyntaxAnalyzer.Nodes;
 
@@ -26,9 +27,10 @@ public class TernaryExpression : INode
         yield return FirstBranch;
         yield return SecondBranch;
     }
-    
+
     public static INode Construct(IParser parser)
     {
-        throw new NotImplementedException();
+        Debug.Assert(parser.Length == 5);
+        return new TernaryExpression(parser[0], parser[2], parser[4]);
     }
 }

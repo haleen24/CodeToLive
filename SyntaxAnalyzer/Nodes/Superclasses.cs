@@ -1,8 +1,9 @@
-﻿using SyntaxAnalyzer.Parsers;
+﻿using System.Diagnostics;
+using SyntaxAnalyzer.Parsers;
 
 namespace SyntaxAnalyzer.Nodes;
 
-public class Superclasses : INode  // В итоговом дереве быть не должно
+public class Superclasses : INode // В итоговом дереве быть не должно
 {
     public IReadOnlyList<INode> Classes { get; }
 
@@ -15,9 +16,23 @@ public class Superclasses : INode  // В итоговом дереве быть 
     {
         return Classes;
     }
-    
+
+    private static IEnumerable<INode> Extract(IParser parser)
+    {
+        for (int i = 0; i < parser.Length; i += 2)
+        {
+            yield return parser[i];
+        }
+    }
+
     public static INode Construct(IParser parser)
     {
-        throw new NotImplementedException();
+        return new Superclasses(Extract(parser));
+    }
+
+    public static INode AdditionalConstract(IParser parser)
+    {
+        Debug.Assert(parser.Length == 3);
+        return parser[2];
     }
 }

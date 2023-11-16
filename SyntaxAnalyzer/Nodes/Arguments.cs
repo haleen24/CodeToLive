@@ -1,8 +1,9 @@
-﻿using SyntaxAnalyzer.Parsers;
+﻿using System.Diagnostics;
+using SyntaxAnalyzer.Parsers;
 
 namespace SyntaxAnalyzer.Nodes;
 
-public class Arguments : INode  // В итоговом дереве быть не должно
+public class Arguments : INode // В итоговом дереве быть не должно
 {
     public IReadOnlyList<INode> Positional { get; }
     public INode? Params { get; }
@@ -31,6 +32,29 @@ public class Arguments : INode  // В итоговом дереве быть н�
 
     public static INode Construct(IParser parser)
     {
-        throw new NotImplementedException();
+    }
+
+    private static IEnumerable<INode> Extract(IParser parser)
+    {
+        for (int i = 0; i < parser.Length; ++i)
+        {
+            yield return parser[i];
+        }
+    }
+
+    public static INode NamedArgumentsConstruct(IParser parser)
+    {
+        return new Arguments(new List<INode>(), null, Extract(parser));
+    }
+
+    public static INode AdditionalNamedArgumentsConstruct(IParser parser)
+    {
+        Debug.Assert(parser.Length == 3);
+        return parser[2];
+    }
+    public static INode FormalArgumentsWithPositionalConstruct(IParser parser)
+    {
+        Debug.Assert(parser.Length == 3);
+        return new Arguments()
     }
 }

@@ -282,12 +282,12 @@ public static class RulesMap
             {
                 GrammarUnitType.NamedArguments,
                 new Rule(() => new Repetition(GU(GrammarUnitType.NamedArgument), GU(GrammarUnitType.CommaWithNewLine)),
-                    Arguments.Construct)
+                    Arguments.NamedArgumentsConstruct)
             },
             {
                 GrammarUnitType.AdditionalNamedArguments,
                 new Rule(() => new Sequence(GU(LexemType.Comma, GrammarUnitType.SNL, GrammarUnitType.NamedArguments)),
-                    Arguments.Construct)
+                    Arguments.AdditionalNamedArgumentsConstruct)
             },
 
             {
@@ -503,7 +503,9 @@ public static class RulesMap
             {
                 GrammarUnitType.Lambda,
                 new Rule(
-                    () => new Sequence(GU(GrammarUnitType.FunctionFormalArguments, LexemType.Lambda,
+                    () => new Sequence(GU(LexemType.Lparenthese, GrammarUnitType.SNL,
+                        GrammarUnitType.FunctionFormalArguments, GrammarUnitType.SNL, LexemType.Rparenthese,
+                        LexemType.Lambda,
                         GrammarUnitType.Stmt)),
                     LambdaExpression.Construct)
             },

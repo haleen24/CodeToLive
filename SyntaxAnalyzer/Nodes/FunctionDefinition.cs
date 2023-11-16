@@ -1,4 +1,5 @@
-﻿using SyntaxAnalyzer.Parsers;
+﻿using System.Diagnostics;
+using SyntaxAnalyzer.Parsers;
 
 namespace SyntaxAnalyzer.Nodes;
 
@@ -46,6 +47,8 @@ public class FunctionDefinition : INode
 
     public static INode Construct(IParser parser)
     {
-        throw new NotImplementedException();
+        Debug.Assert(parser.Length == 11);
+        var args = parser[6] as Arguments;
+        return new FunctionDefinition(parser[2], args!.Positional, args.Params, args.Named, parser[^1]);
     }
 }
