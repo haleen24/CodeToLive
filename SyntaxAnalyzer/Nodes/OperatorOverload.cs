@@ -1,8 +1,9 @@
-﻿using SyntaxAnalyzer.Parsers;
+﻿using System.Diagnostics;
+using SyntaxAnalyzer.Parsers;
 
 namespace SyntaxAnalyzer.Nodes;
 
-public class OperatorOverload
+public class OperatorOverload : INode
 {
     public enum OverloadableOperator
     {
@@ -38,7 +39,7 @@ public class OperatorOverload
         IndexatorOperator
     }
 
-    private OverloadableOperator GetOperator(INode node)
+    private static OverloadableOperator GetOperator(INode node)
     {
         switch (node)
         {
@@ -47,10 +48,10 @@ public class OperatorOverload
             case IndexatorOperator:
                 return OverloadableOperator.IndexatorOperator;
             default:
-                throw new Exception("Wrong node");  // must never happen 
+                throw new Exception("Wrong node"); // must never happen 
         }
     }
-    
+
     public OverloadableOperator Operator { get; }
 
     public OperatorOverload(OverloadableOperator @operator)
@@ -65,6 +66,12 @@ public class OperatorOverload
 
     public static INode Construct(IParser parser)
     {
-        throw new NotImplementedException();
+        Debug.Assert(parser.Length == 2);
+        return new OperatorOverload(GetOperator(parser[1]));
+    }
+
+    public IEnumerable<INode?> Walk()
+    {
+        yield break;
     }
 }

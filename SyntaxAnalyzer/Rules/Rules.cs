@@ -74,7 +74,7 @@ public static class RulesMap
             {
                 GrammarUnitType.IdentifierWithFinal,
                 new Rule(() => new Sequence(GU(GrammarUnitType.OptionalFinal, LexemType.Identifier)),
-                    VariableDeclaration.Construct)
+                    IdentifierWithFinal.Construct)
             },
 
             {
@@ -113,7 +113,7 @@ public static class RulesMap
                 GrammarUnitType.Parenth,
                 new Rule(
                     () => new Sequence(GU(LexemType.Lparenthese, GrammarUnitType.Expression, GrammarUnitType.SNL,
-                        LexemType.Rparenthese)), Identical) // Уже поставил
+                        LexemType.Rparenthese)), x => x[1]) // Уже поставил
             },
 
             {

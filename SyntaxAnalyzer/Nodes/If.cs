@@ -26,9 +26,9 @@ public class If : INode
         yield return Body;
         yield return Else;
     }
-    
+
     public static INode Construct(IParser parser)
     {
-        throw new NotImplementedException();
+        return new If(parser[2], parser[4], parser[5] is Idle ? null : parser[5]);
     }
 }
