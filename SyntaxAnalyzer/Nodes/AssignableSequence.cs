@@ -16,9 +16,17 @@ public class
     {
         return Assignables;
     }
+
+    private static IEnumerable<INode> Extract(IParser parser)
+    {
+        for (int i = 0; i < parser.Length; i += 2)
+        {
+            yield return parser[i];
+        }
+    }
     
     public static INode Construct(IParser parser)
     {
-        throw new NotImplementedException();
+        return new AssignableSequence(Extract(parser));
     }
 }

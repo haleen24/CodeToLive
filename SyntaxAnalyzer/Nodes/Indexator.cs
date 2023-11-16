@@ -1,4 +1,5 @@
-﻿using SyntaxAnalyzer.Parsers;
+﻿using System.Diagnostics;
+using SyntaxAnalyzer.Parsers;
 
 namespace SyntaxAnalyzer.Nodes;
 
@@ -23,9 +24,10 @@ public class Indexator : INode
         yield return IndexOf;
         yield return IndexValue;
     }
-    
+
     public static INode Construct(IParser parser)
     {
-        throw new NotImplementedException();
+        Debug.Assert(parser.Length == 6);
+        return new Indexator(parser[0], parser[3]);
     }
 }

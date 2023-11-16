@@ -4,11 +4,13 @@ using SyntaxAnalyzer.Parsers;
 
 namespace SyntaxAnalyzer.Nodes;
 
-public class Assignment : INode  // Представляет оператор присваивания
+public class Assignment : INode // Представляет оператор присваивания
 {
-    public IReadOnlyList<INode> Lhs { get; }  // Левая часть (assignable) 
-    public LexemType Sign { get; }  // Знак (=, +=, -=, *=, ...)
-    public INode Rhs { get; }  // Правая часть (expression)
+    public IReadOnlyList<INode> Lhs { get; } // Левая часть (assignable) 
+    public LexemType Sign { get; } // Знак (=, +=, -=, *=, ...)
+    public INode Rhs { get; } // Правая часть (expression)
+
+    public bool IsSeq { get; private set; }
 
     private Assignment(IEnumerable<INode> lhs, LexemType sign, INode rhs)
     {
@@ -31,9 +33,14 @@ public class Assignment : INode  // Представляет оператор п
 
         yield return Rhs;
     }
-    
+
     public static INode Construct(IParser parser)
     {
-        throw new NotImplementedException();
+        Debug.Assert(parser.Length == 4);
+        var res = new Assignment((parser[0] as AssignableSequence)!.Assignables, (parser[2] as StaticLexemNode)!.Type_,
+            parser[3]);
+
+        res.IsSeq = res.Lhs.Count >= 2 || parser[1] is not Idle;
+        return res;
     }
 }
