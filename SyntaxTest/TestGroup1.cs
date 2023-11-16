@@ -1,11 +1,9 @@
-using System.Collections.ObjectModel;
 using LexerSpace;
 using SyntaxAnalyzer;
 using SyntaxAnalyzer.Nodes;
 using SyntaxAnalyzer.Rules;
-using Attribute = System.Attribute;
+using Attribute = SyntaxAnalyzer.Nodes.Attribute;
 using Identifier = SyntaxAnalyzer.Nodes.Identifier;
-using IntLiteral = LexerSpace.IntLiteral;
 using StringLiteral = SyntaxAnalyzer.Nodes.StringLiteral;
 
 namespace SyntaxTest;
@@ -181,7 +179,7 @@ public class TestGroup1
                                 TT<Identifier>(o => o.Value == "s"),
                                 TT<Identifier>(o => o.Value == "v"),
                                 TT<FunctionCall>(
-                                    TT<SyntaxAnalyzer.Nodes.Attribute>(
+                                    TT<Attribute>(
                                         TT<Identifier>(o => o.Value == "decompositions"),
                                         TT<Identifier>(o => o.Value == "svd_decomposition")
                                     ),
@@ -216,17 +214,17 @@ public class TestGroup1
                             TT<Return>(
                                 TT<BinaryExpression>(
                                     o => o.Operator == LexemType.Product,
-                                    TT<SyntaxAnalyzer.Nodes.Attribute>(
+                                    TT<Attribute>(
                                         TT<Inner>(),
                                         TT<Identifier>(o => o.Value == "u")
                                     ),
                                     TT<BinaryExpression>(
                                         o => o.Operator == LexemType.Product,
-                                        TT<SyntaxAnalyzer.Nodes.Attribute>(
+                                        TT<Attribute>(
                                             TT<Inner>(),
                                             TT<Identifier>(o => o.Value == "s")
                                         ),
-                                        TT<SyntaxAnalyzer.Nodes.Attribute>(
+                                        TT<Attribute>(
                                             TT<Inner>(),
                                             TT<Identifier>(o => o.Value == "v")
                                         )
@@ -259,7 +257,7 @@ public class TestGroup1
                         TT<Identifier>(o => o.Value == "v"),
                         TT<Assignment>(
                             o => !o.IsSeq && o.Sign == LexemType.Assignment,
-                            TT<SyntaxAnalyzer.Nodes.Attribute>(
+                            TT<Attribute>(
                                 TT<Identifier>(o => o.Value == "storage"),
                                 TT<Inner>()
                             ),
@@ -292,15 +290,17 @@ public class TestGroup1
 
         Testers.Add(FizzBuzz());
         Testers.Add(Reduce());
+        Testers.Add(MatrixStorage());
     }
 
     [TestCase(0)]
     [TestCase(1)]
+    [TestCase(2)]
     public void TestAst(int ind)
     {
         Syntaxer syntaxer = new Syntaxer(new GrammarUnit(GrammarUnitType.Module));
         INode res = syntaxer.Parse(LexerOutputs[ind]);
         ITreeTester tester = Testers[ind];
-        Assert.That(tester.Test(res));
+        Assert.That(tester.Test(res), res.ToString());
     }
 }
