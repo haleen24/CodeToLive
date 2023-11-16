@@ -15,6 +15,12 @@ public class LambdaExpression : INode
         Body = body;
     }
 
+    public override string ToString()
+    {
+        return
+            $"LambdaExpression(positional_arguments=[{string.Join(", ", PositionalArguments)}], named_arguments=[{string.Join(", ", NamedArguments)}], body={Body})";
+    }
+
     public IEnumerable<INode?> Walk()
     {
         foreach (INode node in PositionalArguments)

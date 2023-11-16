@@ -15,6 +15,11 @@ public class Foreach : INode
         Body = body;
     }
 
+    public override string ToString()
+    {
+        return $"Foreach(var={Variable}, collection={Collection}, body={Body})";
+    }
+
     public IEnumerable<INode?> Walk()
     {
         yield return Variable;

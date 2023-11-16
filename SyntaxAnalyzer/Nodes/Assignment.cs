@@ -17,6 +17,11 @@ public class Assignment : INode  // Представляет оператор п
         Rhs = rhs;
     }
 
+    public override string ToString()
+    {
+        return $"Assignment(lhs=[{string.Join(", ", Lhs)}], sign={Sign}, rhs={Rhs})";
+    }
+
     public IEnumerable<INode> Walk()
     {
         foreach (INode node in Lhs)

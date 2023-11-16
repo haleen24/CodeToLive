@@ -11,6 +11,11 @@ public class GetterDeclaration : INode  // Для переопределения
         GetterOf = getterOf;
     }
 
+    public override string ToString()
+    {
+        return $"GetterDeclaration(of={GetterOf})";
+    }
+
     public IEnumerable<INode?> Walk()
     {
         yield return GetterOf;

@@ -15,6 +15,11 @@ public class If : INode
         Else = @else;
     }
 
+    public override string ToString()
+    {
+        return $"If(condition={Condition}, body={Body}, else={Else})";
+    }
+
     public IEnumerable<INode?> Walk()
     {
         yield return Condition;

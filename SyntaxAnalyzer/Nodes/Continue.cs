@@ -2,7 +2,7 @@
 
 namespace SyntaxAnalyzer.Nodes;
 
-public class Continue : INode
+public class Continue : EmptyNode, INode
 {
     public IEnumerable<INode?> Walk()
     {

@@ -13,6 +13,11 @@ public class NamedArgument : INode
         Value = value;
     }
 
+    public override string ToString()
+    {
+        return $"NamedArgument(name={Name}, value={Value})";
+    }
+
     public IEnumerable<INode?> Walk()
     {
         yield return Name;

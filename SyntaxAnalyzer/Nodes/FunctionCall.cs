@@ -7,14 +7,19 @@ public class FunctionCall : INode
     public INode Name { get; }
     public IReadOnlyList<INode> PositionalArguments { get; }
     public IReadOnlyList<INode> NamedArguments { get; }
-    public INode Body { get; }
 
-    public FunctionCall(INode name, IEnumerable<INode> positionalArguments, IEnumerable<INode> namedArguments, INode body)
+    public FunctionCall(INode name, IEnumerable<INode> positionalArguments, IEnumerable<INode> namedArguments,
+        INode body)
     {
         Name = name;
         PositionalArguments = INode.Copy(positionalArguments);
         NamedArguments = INode.Copy(namedArguments);
-        Body = body;
+    }
+
+    public override string ToString()
+    {
+        return
+            $"FunctionCall(name={Name}, positional_arguments=[{string.Join(", ", PositionalArguments)}], named_arguments=[{string.Join(", ", NamedArguments)}])";
     }
 
     public IEnumerable<INode?> Walk()
@@ -24,15 +29,13 @@ public class FunctionCall : INode
         {
             yield return node;
         }
-        
+
         foreach (INode node in NamedArguments)
         {
             yield return node;
         }
-
-        yield return Body;
     }
-    
+
     public static INode Construct(IParser parser)
     {
         throw new NotImplementedException();

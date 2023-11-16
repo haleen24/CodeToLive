@@ -17,6 +17,14 @@ public class For : INode
         Body = body;
     }
 
+    public override string ToString()
+    {
+        string init = (Init != null ? Init.ToString() : "null")!;
+        string cond = (Condition != null ? Condition.ToString() : "null")!;
+        string step = (Step != null ? Step.ToString() : "null")!;
+        return $"For(init={init}, cond={cond}, step={step}, body={Body})";
+    }
+
     public IEnumerable<INode?> Walk()
     {
         yield return Init;

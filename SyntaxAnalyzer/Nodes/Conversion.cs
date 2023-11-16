@@ -11,6 +11,11 @@ public class Conversion : INode
         ConvertTo = convertTo;
     }
 
+    public override string ToString()
+    {
+        return $"Conversion(to={ConvertTo})";
+    }
+
     public IEnumerable<INode> Walk()
     {
         yield return ConvertTo;

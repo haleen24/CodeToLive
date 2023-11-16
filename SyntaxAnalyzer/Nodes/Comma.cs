@@ -2,7 +2,7 @@
 
 namespace SyntaxAnalyzer.Nodes;
 
-public class Comma : INode
+public class Comma : EmptyNode, INode
 {
     public IEnumerable<INode?> Walk()
     {

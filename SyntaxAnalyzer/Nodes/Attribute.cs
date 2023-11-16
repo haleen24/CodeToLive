@@ -13,6 +13,11 @@ public class Attribute : INode
         AttributeName = attributeName;
     }
 
+    public override string ToString()
+    {
+        return $"Attribute(of={AttributeOf}, name={AttributeName})";
+    }
+
     public IEnumerable<INode> Walk()
     {
         yield return AttributeOf;

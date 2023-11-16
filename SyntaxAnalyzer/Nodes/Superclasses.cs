@@ -2,7 +2,7 @@
 
 namespace SyntaxAnalyzer.Nodes;
 
-public class Superclasses : INode
+public class Superclasses : INode  // В итоговом дереве быть не должно
 {
     public IReadOnlyList<INode> Classes { get; }
 

@@ -15,6 +15,11 @@ public class TernaryExpression : INode
         SecondBranch = secondBranch;
     }
 
+    public override string ToString()
+    {
+        return $"TernaryExpression(condition={Condition}, first_branch={FirstBranch}, second_branch={SecondBranch})";
+    }
+
     public IEnumerable<INode?> Walk()
     {
         yield return Condition;

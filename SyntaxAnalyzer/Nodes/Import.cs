@@ -11,6 +11,11 @@ public class Import : INode
         Value = value;
     }
 
+    public override string ToString()
+    {
+        return $"Import(module={Value})";
+    }
+
     public IEnumerable<INode?> Walk()
     {
         yield return Value;

@@ -16,6 +16,11 @@ public class ClassDefinition : INode
         Body = body;
     }
 
+    public override string ToString()
+    {
+        return $"ClassDefinition(name={Name}, superclasses=[{string.Join(", ", Superclasses)}], body={Body})";
+    }
+
     public IEnumerable<INode?> Walk()
     {
         yield return Name;

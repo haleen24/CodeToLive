@@ -16,6 +16,11 @@ public class BinaryExpression : INode
         RightOperand = rightOperand;
     }
 
+    public override string ToString()
+    {
+        return $"BinaryExpression(left={LeftOperand}, operation={Operator}, right={RightOperand})";
+    }
+
     public IEnumerable<INode?> Walk()
     {
         yield return LeftOperand;

@@ -13,6 +13,11 @@ public class While : INode
         Body = body;
     }
 
+    public override string ToString()
+    {
+        return $"While(condition={Condition}, body={Body})";
+    }
+
     public IEnumerable<INode?> Walk()
     {
         yield return Condition;

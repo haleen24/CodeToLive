@@ -2,20 +2,23 @@
 
 namespace SyntaxAnalyzer.Nodes;
 
-public class VariableDeclaration : INode  // IdentifierWithFinal
+public class IdentifierWithFinal : INode  // IdentifierWithFinal
 {
-    public INode Identifier { get; }
-    public bool IsFinal { get; }
+    public string Value { get; }
 
-    public VariableDeclaration(INode identifier, bool isFinal)
+    public IdentifierWithFinal(string value)
     {
-        Identifier = identifier;
-        IsFinal = isFinal;
+        Value = value;
+    }
+
+    public override string ToString()
+    {
+        return $"IdentifierWithFinal(name={Value})";
     }
 
     public IEnumerable<INode> Walk()
     {
-        yield return Identifier;
+        yield break;
     }
     
     public static INode Construct(IParser parser)

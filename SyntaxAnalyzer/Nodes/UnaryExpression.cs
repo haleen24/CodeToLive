@@ -14,6 +14,11 @@ public class UnaryExpression : INode
         Operand = operand;
     }
 
+    public override string ToString()
+    {
+        return $"UnaryExpression(operation={Operator}, operand={Operand})";
+    }
+
     public IEnumerable<INode?> Walk()
     {
         yield return Operand;

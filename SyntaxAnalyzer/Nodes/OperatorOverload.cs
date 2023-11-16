@@ -57,7 +57,12 @@ public class OperatorOverload
     {
         Operator = @operator;
     }
-    
+
+    public override string ToString()
+    {
+        return $"OperatorOverload(of={Operator})";
+    }
+
     public static INode Construct(IParser parser)
     {
         throw new NotImplementedException();

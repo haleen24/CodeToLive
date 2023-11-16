@@ -13,6 +13,11 @@ public class Indexator : INode
         IndexValue = indexValue;
     }
 
+    public override string ToString()
+    {
+        return $"Indexator(of={IndexOf}, value={IndexValue})";
+    }
+
     public IEnumerable<INode> Walk()
     {
         yield return IndexOf;

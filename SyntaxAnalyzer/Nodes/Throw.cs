@@ -11,6 +11,11 @@ public class Throw : INode
         Value = value;
     }
 
+    public override string ToString()
+    {
+        return $"Throw(exception={Value})";
+    }
+
     public IEnumerable<INode?> Walk()
     {
         yield return Value;

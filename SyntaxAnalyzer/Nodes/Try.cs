@@ -6,15 +6,22 @@ public class Try : INode
 {
     public INode Body { get; }
     public IReadOnlyList<INode> Catches { get; }  // Если Catch нет - будет пустой
-    public INode Else { get; }
-    public INode Finally { get; }
+    public INode? Else { get; }
+    public INode? Finally { get; }
 
-    public Try(INode body, IEnumerable<INode> catches, INode @else, INode @finally)
+    public Try(INode body, IEnumerable<INode> catches, INode? @else, INode? @finally)
     {
         Body = body;
         Catches = new List<INode>(catches).AsReadOnly();
         Else = @else;
         Finally = @finally;
+    }
+
+    public override string ToString()
+    {
+        string @else = Else != null ? Else.ToString()! : "null";
+        string @finally = Finally != null ? Finally.ToString()! : "null";
+        return $"Try(body={Body}, catches=[{string.Join(", ", Catches)}], {@else}, {@finally})";
     }
 
     public IEnumerable<INode?> Walk()

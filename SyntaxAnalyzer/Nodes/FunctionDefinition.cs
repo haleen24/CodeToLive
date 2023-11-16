@@ -20,6 +20,13 @@ public class FunctionDefinition : INode
         NamedArguments = INode.Copy(namedArguments);
     }
 
+    public override string ToString()
+    {
+        string @params = ParamsArgument != null ? $"params={ParamsArgument}" : "";
+        return
+            $"FunctionDefinition(name={Name}, positional_arguments=[{string.Join(", ", PositionalArguments)}], {@params}, named_arguments=[{string.Join(", ", NamedArguments)}], body={Body})";
+    }
+
     public IEnumerable<INode?> Walk()
     {
         yield return Name;
@@ -36,7 +43,7 @@ public class FunctionDefinition : INode
 
         yield return Body;
     }
-    
+
     public static INode Construct(IParser parser)
     {
         throw new NotImplementedException();

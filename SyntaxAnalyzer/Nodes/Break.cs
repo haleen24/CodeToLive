@@ -2,7 +2,7 @@
 
 namespace SyntaxAnalyzer.Nodes;
 
-public class Break : INode
+public class Break : EmptyNode, INode
 {
     public IEnumerable<INode?> Walk()
     {

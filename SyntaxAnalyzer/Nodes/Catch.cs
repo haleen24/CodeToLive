@@ -15,6 +15,12 @@ public class Catch : INode
         Body = body;
     }
 
+    public override string ToString()
+    {
+        string variable = Variable == null ? $"variable={Variable}" : "";
+        return $"Catch(Exception={ExceptionClass}, {variable}, body={Body})";
+    }
+
     public IEnumerable<INode?> Walk()
     {
         yield return ExceptionClass;

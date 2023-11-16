@@ -11,6 +11,11 @@ public class SetterDeclaration : INode  // Для переопределения
         SetterOf = setterOf;
     }
 
+    public override string ToString()
+    {
+        return $"SetterDeclaration(of={SetterOf})";
+    }
+
     public IEnumerable<INode?> Walk()
     {
         yield return SetterOf;

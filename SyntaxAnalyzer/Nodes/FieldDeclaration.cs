@@ -17,6 +17,11 @@ public class FieldDeclaration : INode
         IsStatic = isStatic;
     }
 
+    public override string ToString()
+    {
+        return $"FieldDeclaration(name={Name}, is_final={IsFinal}, is_computable={IsComputable}, is_static={IsStatic})";
+    }
+
     public IEnumerable<INode?> Walk()
     {
         yield return Name;

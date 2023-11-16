@@ -16,10 +16,15 @@ public class TreeTester<T> : ITreeTester
     private FieldsTester? Tester { get; }
     private ITreeTester[] ChildrenTesters { get; }
 
-    public TreeTester(FieldsTester? fieldsTester = null, params ITreeTester[] testers)
+    public TreeTester(FieldsTester? fieldsTester, params ITreeTester[] testers)
     {
         Tester = fieldsTester;
         ChildrenTesters = testers;
+    }
+
+    public TreeTester(params ITreeTester[] testers) : this(null, testers)
+    {
+        
     }
 
     public bool Test(INode? node)
