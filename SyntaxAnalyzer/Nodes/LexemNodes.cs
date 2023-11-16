@@ -89,6 +89,14 @@ public class Setter : EmptyNode, INode
     }
 }
 
+public class New : EmptyNode, INode 
+{
+    public IEnumerable<INode?> Walk()
+    {
+        yield break;
+    }
+}
+
 public abstract class DynamicLexemNode : INode  // Представляет динамическую лексему
 {
     public string Value { get; }

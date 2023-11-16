@@ -3,6 +3,7 @@ using LexerSpace;
 using SyntaxAnalyzer;
 using SyntaxAnalyzer.Nodes;
 using SyntaxAnalyzer.Rules;
+using Attribute = System.Attribute;
 using Identifier = SyntaxAnalyzer.Nodes.Identifier;
 using IntLiteral = LexerSpace.IntLiteral;
 using StringLiteral = SyntaxAnalyzer.Nodes.StringLiteral;
@@ -156,6 +157,126 @@ public class TestGroup1
         );
     }
 
+    private ITreeTester MatrixStorage()
+    {
+        return TT<Module>(
+            TT<Import>(o => o.Value == "\"linear_algebra/decompositions\""),
+            TT<ClassDefinition>(
+                TT<Identifier>(o => o.Value == "MatrixStorage"),
+                TT<Block>(
+                    TT<FieldDeclaration>(
+                        o => !o.IsFinal && !o.IsComputable && !o.IsStatic,
+                        TT<Identifier>(o => o.Value == "Storage")
+                    ),
+                    TT<FunctionDefinition>(
+                        o => o.PositionalArguments.Count == 1,
+                        TT<SetterDeclaration>(
+                            TT<Identifier>(o => o.Value == "storage")
+                        ),
+                        TT<Identifier>(o => o.Value == "matrix"),
+                        TT<Block>(
+                            TT<Assignment>(
+                                o => o.IsSeq && o.Sign == LexemType.Assignment,
+                                TT<Identifier>(o => o.Value == "u"),
+                                TT<Identifier>(o => o.Value == "s"),
+                                TT<Identifier>(o => o.Value == "v"),
+                                TT<FunctionCall>(
+                                    TT<SyntaxAnalyzer.Nodes.Attribute>(
+                                        TT<Identifier>(o => o.Value == "decompositions"),
+                                        TT<Identifier>(o => o.Value == "svd_decomposition")
+                                    ),
+                                    TT<Identifier>(o => o.Value == "matrix")
+                                )
+                            ),
+                            TT<FunctionCall>(
+                                o => o.NamedArguments.Count == 0,
+                                TT<Identifier>(o => o.Value == "print"),
+                                TT<StringLiteral>(o => o.Value == "\"SVD decomposition\""),
+                                TT<Identifier>(o => o.Value == "u"),
+                                TT<Identifier>(o => o.Value == "s"),
+                                TT<Identifier>(o => o.Value == "v")
+                            ),
+                            TT<Assignment>(
+                                o => !o.IsSeq && o.Sign == LexemType.Assignment,
+                                TT<Inner>(),
+                                TT<FunctionCall>(
+                                    o => o.NamedArguments.Count == 0,
+                                    TT<Identifier>(o => o.Value == "u"),
+                                    TT<Identifier>(o => o.Value == "s"),
+                                    TT<Identifier>(o => o.Value == "v")
+                                )
+                            )
+                        )
+                    ),
+                    TT<FunctionDefinition>(
+                        TT<GetterDeclaration>(
+                            TT<Identifier>(o => o.Value == "storage")
+                        ),
+                        TT<Block>(
+                            TT<Return>(
+                                TT<BinaryExpression>(
+                                    o => o.Operator == LexemType.Product,
+                                    TT<SyntaxAnalyzer.Nodes.Attribute>(
+                                        TT<Inner>(),
+                                        TT<Identifier>(o => o.Value == "u")
+                                    ),
+                                    TT<BinaryExpression>(
+                                        o => o.Operator == LexemType.Product,
+                                        TT<SyntaxAnalyzer.Nodes.Attribute>(
+                                            TT<Inner>(),
+                                            TT<Identifier>(o => o.Value == "s")
+                                        ),
+                                        TT<SyntaxAnalyzer.Nodes.Attribute>(
+                                            TT<Inner>(),
+                                            TT<Identifier>(o => o.Value == "v")
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    ),
+                    TT<FunctionDefinition>(
+                        TT<New>(),
+                        TT<Block>()
+                    ),
+                    TT<FunctionDefinition>(
+                        o => o.PositionalArguments.Count == 1,
+                        TT<New>(),
+                        TT<Identifier>(o => o.Value == "matrix"),
+                        TT<Block>(
+                            TT<Assignment>(
+                                o => !o.IsSeq && o.Sign == LexemType.Assignment,
+                                TT<Identifier>(o => o.Value == "storage"),
+                                TT<Identifier>(o => o.Value == "matrix")
+                            )
+                        )
+                    ),
+                    TT<FunctionDefinition>(
+                        o => o.PositionalArguments.Count == 3,
+                        TT<New>(),
+                        TT<Identifier>(o => o.Value == "u"),
+                        TT<Identifier>(o => o.Value == "s"),
+                        TT<Identifier>(o => o.Value == "v"),
+                        TT<Assignment>(
+                            o => !o.IsSeq && o.Sign == LexemType.Assignment,
+                            TT<SyntaxAnalyzer.Nodes.Attribute>(
+                                TT<Identifier>(o => o.Value == "storage"),
+                                TT<Inner>()
+                            ),
+                            TT<FunctionCall>(
+                                o => o.PositionalArguments.Count == 3,
+                                TT<Identifier>(o => o.Value == "tuple"),
+                                TT<Identifier>(o => o.Value == "u"),
+                                TT<Identifier>(o => o.Value == "s"),
+                                TT<Identifier>(o => o.Value == "v")
+                            )
+                        )
+                    )
+                )
+            )
+        );
+    }
+
     [SetUp]
     public void Setup()
     {
@@ -168,7 +289,7 @@ public class TestGroup1
             Lexer l = new Lexer(fn);
             LexerOutputs.Add(l.Lex());
         }
-        
+
         Testers.Add(FizzBuzz());
         Testers.Add(Reduce());
     }

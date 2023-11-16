@@ -39,6 +39,7 @@ public class Exact : Parser
                 LexemType.Inner => new Inner(),
                 LexemType.Getter => new Getter(),
                 LexemType.Setter => new Setter(),
+                LexemType.New => new New(),
                 _ => new StaticLexemNode(lexem.LType)
             }
         };
