@@ -30,13 +30,10 @@ public class TestGroup1
     {
         return TT<Module>(
             TT<FunctionDefinition>(
-                ft: null,
                 TT<Identifier>(o => o.Value == "fizz_buzz"),
                 TT<Identifier>(o => o.Value == "n"),
                 TT<Block>(
-                    ft: null,
                     TT<If>(
-                        ft: null,
                         TT<BinaryExpression>(
                             o => o.Operator == LexemType.Eqv,
                             TT<BinaryExpression>(
@@ -47,13 +44,11 @@ public class TestGroup1
                             TT<SyntaxAnalyzer.Nodes.IntLiteral>(o => o.Value == "0")
                         ),
                         TT<Return>(
-                            ft: null,
                             TT<StringLiteral>(o => o.Value == "\"FizzBuzz\"")
                         ),
                         N()
                     ),
                     TT<If>(
-                        ft: null,
                         TT<BinaryExpression>(
                             o => o.Operator == LexemType.Eqv,
                             TT<BinaryExpression>(
@@ -64,14 +59,11 @@ public class TestGroup1
                             TT<SyntaxAnalyzer.Nodes.IntLiteral>(o => o.Value == "0")
                         ),
                         TT<Block>(
-                            ft: null,
                             TT<Return>(
-                                ft: null,
                                 TT<StringLiteral>(o => o.Value == "\"Buzz\"")
                             )
                         ),
                         TT<If>(
-                            ft: null,
                             TT<BinaryExpression>(
                                 o => o.Operator == LexemType.Eqv,
                                 TT<BinaryExpression>(
@@ -82,11 +74,9 @@ public class TestGroup1
                                 TT<SyntaxAnalyzer.Nodes.IntLiteral>(o => o.Value == "0")
                             ),
                             TT<Return>(
-                                ft: null,
                                 TT<StringLiteral>(o => o.Value == "\"Fizz\"")
                             ),
                             TT<Return>(
-                                ft: null,
                                 TT<Identifier>(o => o.Value == "n")
                             )
                         )
@@ -94,13 +84,10 @@ public class TestGroup1
                 )
             ),
             TT<FunctionCall>(
-                ft: null,
                 TT<Identifier>(o => o.Value == "fizz_buzz"),
                 TT<FunctionCall>(
-                    ft: null,
                     TT<Identifier>(o => o.Value == "int"),
                     TT<FunctionCall>(
-                        ft: null,
                         TT<Identifier>(o => o.Value == "input")
                     )
                 )
@@ -112,7 +99,7 @@ public class TestGroup1
     public void Setup()
     {
         string[] filenames = new[]
-            { "fizzbuzz.upl", "binary_tree.up", "matrix_storage.upl", "reduce.upl", "streams.upl", "vector2.upl" };
+            { "fizzbuzz.upl", "reduce.upl", "matrix_storage.upl", "binary_tree.upl", "streams.upl", "vector2.upl" };
 
         foreach (string s in filenames)
         {
