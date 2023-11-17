@@ -48,15 +48,45 @@ public static class RulesMap
             },
 
             {
-                GrammarUnitType.AttributeNameOrAccessor,
-                Rule.Alternative(GU(GrammarUnitType.AttributeName, LexemType.Getter, LexemType.Setter, LexemType.Inner))
+                GrammarUnitType.IdentifierOrInner,
+                Rule.Alternative(GU(LexemType.Identifier, LexemType.Inner))
+            },
+
+            {
+                GrammarUnitType.AttributeNameSequence,
+                new Rule(() => new Repetition(GU(GrammarUnitType.IdentifierOrInner), GU(LexemType.Dot)),
+                    AttributeNameSequence.Construct)
+            },
+
+            {
+                GrammarUnitType.AdditionalAttributeNameSequence,
+                new Rule(() => new Sequence(GU(LexemType.Dot, GrammarUnitType.AttributeNameSequence)), x => x[1])
+            },
+
+            {
+                GrammarUnitType.OptionalAdditionalAttributeNameSequence,
+                Rule.Optional(GU(GrammarUnitType.AdditionalAttributeNameSequence))
+            },
+
+            {
+                GrammarUnitType.AttributeEnd,
+                Rule.Alternative(GU(LexemType.Getter, LexemType.Setter, LexemType.New, GrammarUnitType.OperatorOverload, GrammarUnitType.Conversion))
+            },
+
+            {
+                GrammarUnitType.AdditionalAttributeEnd,
+                new Rule(() => new Sequence(GU(LexemType.Comma, GrammarUnitType.AttributeEnd)), x => x[1])
+            },
+
+            {
+                GrammarUnitType.OptionalAdditionalAttributeEnd,
+                Rule.Optional(GU(GrammarUnitType.AdditionalAttributeEnd))
             },
 
             {
                 GrammarUnitType.Attribute,
                 new Rule(
-                    () => new Sequence(GU(GrammarUnitType.Expression, LexemType.Dot,
-                        GrammarUnitType.AttributeNameOrAccessor)), Nodes.Attribute.Construct)
+                    () => new Sequence(GU(GrammarUnitType.ExpressionWithoutAttribute, GrammarUnitType.OptionalAdditionalAttributeNameSequence, GrammarUnitType.OptionalAdditionalAttributeEnd)), Nodes.Attribute.Construct)
             },
 
             {
@@ -529,9 +559,14 @@ public static class RulesMap
 
             {
                 GrammarUnitType.ExpressionWithoutBinaryOperators,
+                Rule.Alternative(GU(GrammarUnitType.Attribute, GrammarUnitType.ExpressionWithoutAttribute))
+            },
+
+            {
+                GrammarUnitType.ExpressionWithoutAttribute,
                 Rule.Alternative(GU(LexemType.True, LexemType.False, LexemType.Null, LexemType.This, LexemType.Base,
                     LexemType.Inner, LexemType.StringLiteral, LexemType.IntLiteral, LexemType.FloatLiteral,
-                    LexemType.Identifier, GrammarUnitType.Attribute, GrammarUnitType.Indexator,
+                    LexemType.Identifier, GrammarUnitType.Indexator,
                     GrammarUnitType.Parenth, GrammarUnitType.FunctionCall, GrammarUnitType.UnaryExpression,
                     GrammarUnitType.Lambda, GrammarUnitType.TernaryOperatorExpression))
             }

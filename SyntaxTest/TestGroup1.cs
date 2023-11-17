@@ -283,7 +283,7 @@ public class TestGroup1
 
         foreach (string s in filenames)
         {
-            string fn = "../../../TestInputs" + s;
+            string fn = "../../../TestInputs/" + s;
             Lexer l = new Lexer(fn);
             LexerOutputs.Add(l.Lex());
         }

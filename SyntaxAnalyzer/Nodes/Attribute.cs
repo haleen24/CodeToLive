@@ -24,10 +24,52 @@ public class Attribute : INode
         yield return AttributeOf;
         yield return AttributeName;
     }
+    
+    private static IEnumerable<INode> Nodes(IParser parser)
+    {
+        yield return parser[0];
+
+        if (parser[1] is AttributeNameSequence ans)
+        {
+            foreach (INode an in ans.AttributeNames)
+            {
+                yield return an;
+            }
+        }
+
+        if (parser[2] is not Idle)
+        {
+            yield return parser[2];
+        }
+    }
 
     public static INode Construct(IParser parser)
     {
         Debug.Assert(parser.Length == 3);
-        return new Attribute(parser[0], parser[2]);
+        var names = Nodes(parser);
+        int i = 0;
+
+        INode? attOf = null;
+        INode? attName = null;
+
+        foreach (INode node in names)
+        {
+            if (i == 0)
+            {
+                attOf = node;
+            } else if (i == 1)
+            {
+                attName = node;
+            }
+            else
+            {
+                attOf = new Attribute(attOf!, attName!);
+                attName = node;
+            }
+
+            ++i;
+        }
+
+        return new Attribute(attOf!, attName!);
     }
 }

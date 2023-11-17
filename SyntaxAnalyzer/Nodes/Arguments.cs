@@ -52,7 +52,13 @@ public class Arguments : INode // В итоговом дереве быть не
     public static INode FormalArgumentsWithPositionalConstruct(IParser parser)
     {
         Debug.Assert(parser.Length == 3);
-        return new Arguments((parser[0] as Arguments)!.Positional, parser[1], (parser[2] as Arguments)!.Named);
+        switch (parser[2])
+        {
+            case Idle:
+                return new Arguments((parser[0] as PositionalArgumentsSequence)!.Arguments, parser[1], new List<INode>());
+            default:
+                return new Arguments((parser[0] as Arguments)!.Positional, parser[1], (parser[2] as Arguments)!.Named);
+        }
     }
 
     public static INode FormalArgumentsWithParamsConstruct(IParser parser)

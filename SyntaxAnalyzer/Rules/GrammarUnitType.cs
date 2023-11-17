@@ -11,7 +11,13 @@ public enum GrammarUnitType  // Список всех составных гра�
     OperatorOverload,
     Conversion,
     AttributeName,
-    AttributeNameOrAccessor,
+    IdentifierOrInner,
+    AttributeNameSequence,
+    AdditionalAttributeNameSequence,
+    OptionalAdditionalAttributeNameSequence,
+    AttributeEnd,
+    AdditionalAttributeEnd,
+    OptionalAdditionalAttributeEnd,
     Attribute,
     Indexator,
     OptionalFinal,
@@ -88,5 +94,6 @@ public enum GrammarUnitType  // Список всех составных гра�
     Lambda,
     InlineStmt,
     Stmt,
-    ExpressionWithoutBinaryOperators
+    ExpressionWithoutBinaryOperators,
+    ExpressionWithoutAttribute
 }
