@@ -112,7 +112,11 @@ public static class RulesMap
                 GrammarUnitType.Parenth,
                 new Rule(
                     () => new Sequence(GU(LexemType.Lparenthese, GrammarUnitType.Expression, GrammarUnitType.SNL,
-                        LexemType.Rparenthese)), x => x[1]) // Уже поставил
+                        LexemType.Rparenthese)), x => x[1] switch
+                    {
+                        BinaryExpression be => be.PutInParentheses(),
+                        _ => x[1]
+                    }) // Уже поставил
             },
 
             {

@@ -9,16 +9,26 @@ public class BinaryExpression : INode
     public LexemType Operator { get; }
     public INode RightOperand { get; internal set; }
 
-    public BinaryExpression(INode leftOperand, LexemType @operator, INode rightOperand)
+    public bool InParentheses { get; private set; }
+
+    public BinaryExpression(INode leftOperand, LexemType @operator, INode rightOperand, bool inParentheses = false)
     {
         LeftOperand = leftOperand;
         Operator = @operator;
         RightOperand = rightOperand;
+        InParentheses = inParentheses;
+    }
+
+    public BinaryExpression PutInParentheses()
+    {
+        InParentheses = true;
+        return this;
     }
 
     public override string ToString()
     {
-        return $"BinaryExpression(left={LeftOperand}, operation={Operator}, right={RightOperand})";
+        return
+            $"BinaryExpression(left={LeftOperand}, operation={Operator}, right={RightOperand}, in_parentheses={InParentheses})";
     }
 
     public IEnumerable<INode?> Walk()
