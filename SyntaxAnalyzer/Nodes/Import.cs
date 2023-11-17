@@ -25,6 +25,6 @@ public class Import : INode
     public static INode Construct(IParser parser)
     {
         Debug.Assert(parser.Length == 2);
-        return new Import(parser[1]);
+        return new Import((parser[1] as StringLiteral)!.Value);
     }
 }
