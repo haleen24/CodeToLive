@@ -1,4 +1,5 @@
-﻿using SyntaxAnalyzer.Parsers;
+﻿using System.Diagnostics;
+using SyntaxAnalyzer.Parsers;
 
 namespace SyntaxAnalyzer.Nodes;
 
@@ -8,8 +9,7 @@ public class FunctionCall : INode
     public IReadOnlyList<INode> PositionalArguments { get; }
     public IReadOnlyList<INode> NamedArguments { get; }
 
-    public FunctionCall(INode name, IEnumerable<INode> positionalArguments, IEnumerable<INode> namedArguments,
-        INode body)
+    public FunctionCall(INode name, IEnumerable<INode> positionalArguments, IEnumerable<INode> namedArguments)
     {
         Name = name;
         PositionalArguments = INode.Copy(positionalArguments);
@@ -38,6 +38,10 @@ public class FunctionCall : INode
 
     public static INode Construct(IParser parser)
     {
-        throw new NotImplementedException();
+        Debug.Assert(parser.Length == 6);
+        var args = parser[3] as Arguments;
+        return args == null
+            ? new FunctionCall(parser[0], new List<INode>(), new List<INode>())
+            : new FunctionCall(parser[0], args.Positional, args.Named);
     }
 }

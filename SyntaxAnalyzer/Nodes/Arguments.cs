@@ -30,10 +30,6 @@ public class Arguments : INode // В итоговом дереве быть не
         }
     }
 
-    public static INode Construct(IParser parser)
-    {
-    }
-
     private static IEnumerable<INode> Extract(IParser parser)
     {
         for (int i = 0; i < parser.Length; ++i)
@@ -52,9 +48,22 @@ public class Arguments : INode // В итоговом дереве быть не
         Debug.Assert(parser.Length == 3);
         return parser[2];
     }
+
     public static INode FormalArgumentsWithPositionalConstruct(IParser parser)
     {
         Debug.Assert(parser.Length == 3);
-        return new Arguments()
+        return new Arguments((parser[0] as Arguments)!.Positional, parser[1], (parser[2] as Arguments)!.Named);
+    }
+
+    public static INode FormalArgumentsWithParamsConstruct(IParser parser)
+    {
+        Debug.Assert(parser.Length == 2);
+        return new Arguments(new List<INode>(), parser[1], (parser[0] as Arguments)!.Named);
+    }
+
+    public static INode ActualArgumentsWithPositionalConstruct(IParser parser)
+    {
+        Debug.Assert(parser.Length == 2);
+        return new Arguments((parser[0] as Arguments)!.Positional, null, (parser[1] as Arguments)!.Named);
     }
 }

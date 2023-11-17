@@ -11,7 +11,6 @@ public static class RulesMap
     private static Dictionary<GrammarUnitType, Rule> RulesDict =>
         new Dictionary<GrammarUnitType, Rule>()
         {
-            //TODO: конструкторы нод
             { GrammarUnitType.SNL, Rule.Optional(GU(LexemType.NewLine)) },
             { GrammarUnitType.Separator, Rule.Alternative(GU(LexemType.Semicolon, LexemType.NewLine)) },
             {
@@ -319,7 +318,7 @@ public static class RulesMap
                         GrammarUnitType.PositionalFormalArguments,
                         GrammarUnitType.OptionalAdditionalParamsArgument,
                         GrammarUnitType.OptionalAdditionalNamedArguments)),
-                    Arguments.Construct)
+                    Arguments.FormalArgumentsWithPositionalConstruct)
             },
 
             {
@@ -327,7 +326,7 @@ public static class RulesMap
                 new Rule(
                     () => new Sequence(GU(GrammarUnitType.ParamsArgument,
                         GrammarUnitType.OptionalAdditionalNamedArguments)),
-                    Arguments.Construct)
+                    Arguments.FormalArgumentsWithParamsConstruct)
             },
 
             {
@@ -438,7 +437,7 @@ public static class RulesMap
                 new Rule(
                     () => new Sequence(GU(GrammarUnitType.PositionalActualArguments,
                         GrammarUnitType.OptionalAdditionalNamedArguments)),
-                    Arguments.Construct)
+                    Arguments.ActualArgumentsWithPositionalConstruct)
             },
 
             {

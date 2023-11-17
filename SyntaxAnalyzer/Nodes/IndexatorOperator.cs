@@ -2,15 +2,15 @@
 
 namespace SyntaxAnalyzer.Nodes;
 
-public class IndexatorOperator : INode  // В конечном дереве быть не должно
+public class IndexatorOperator : INode // В конечном дереве быть не должно
 {
     public IEnumerable<INode> Walk()
     {
         yield break;
     }
-    
+
     public static INode Construct(IParser parser)
     {
-        throw new NotImplementedException();
+        return new IndexatorOperator();
     }
 }

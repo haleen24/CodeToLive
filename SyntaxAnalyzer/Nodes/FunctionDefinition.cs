@@ -49,6 +49,8 @@ public class FunctionDefinition : INode
     {
         Debug.Assert(parser.Length == 11);
         var args = parser[6] as Arguments;
-        return new FunctionDefinition(parser[2], args!.Positional, args.Params, args.Named, parser[^1]);
+        return args == null
+            ? new FunctionDefinition(parser[2], new List<INode>(), null, new List<INode>(), parser[^1])
+            : new FunctionDefinition(parser[2], args!.Positional, args.Params, args.Named, parser[^1]);
     }
 }
