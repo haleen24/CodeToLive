@@ -8,9 +8,9 @@ public class Comma : EmptyNode, INode
     {
         yield break;
     }
-    
+
     public static INode Construct(IParser parser)
     {
-        throw new NotImplementedException();
+        return new Comma();
     }
 }

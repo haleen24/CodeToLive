@@ -1,4 +1,5 @@
-﻿using LexerSpace;
+﻿using System.Diagnostics;
+using LexerSpace;
 using SyntaxAnalyzer.Parsers;
 
 namespace SyntaxAnalyzer.Nodes;
@@ -23,9 +24,10 @@ public class UnaryExpression : INode
     {
         yield return Operand;
     }
-    
+
     public static INode Construct(IParser parser)
     {
-        throw new NotImplementedException();
+        Debug.Assert(parser.Length == 2);
+        return new UnaryExpression((parser[0] as StaticLexemNode)!.Type_, parser[1]);
     }
 }

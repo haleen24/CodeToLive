@@ -1,4 +1,5 @@
-﻿using SyntaxAnalyzer.Parsers;
+﻿using System.Diagnostics;
+using SyntaxAnalyzer.Parsers;
 
 namespace SyntaxAnalyzer.Nodes;
 
@@ -24,6 +25,7 @@ public class Return : INode
 
     public static INode Construct(IParser parser)
     {
-        throw new NotImplementedException();
+        Debug.Assert(parser.Length == 2);
+        return new Return(parser[1] is Idle ? null : parser[1]);
     }
 }

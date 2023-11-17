@@ -1,4 +1,5 @@
-﻿using SyntaxAnalyzer.Parsers;
+﻿using System.Diagnostics;
+using SyntaxAnalyzer.Parsers;
 
 namespace SyntaxAnalyzer.Nodes;
 
@@ -23,9 +24,10 @@ public class While : INode
         yield return Condition;
         yield return Body;
     }
-    
+
     public static INode Construct(IParser parser)
     {
-        throw new NotImplementedException();
+        Debug.Assert(parser.Length == 5);
+        return new While(parser[2], parser[4]);
     }
 }

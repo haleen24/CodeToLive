@@ -1,8 +1,9 @@
-﻿using SyntaxAnalyzer.Parsers;
+﻿using System.Diagnostics;
+using SyntaxAnalyzer.Parsers;
 
 namespace SyntaxAnalyzer.Nodes;
 
-public class Arguments : INode  // В итоговом дереве быть не должно
+public class Arguments : INode // В итоговом дереве быть не должно
 {
     public IReadOnlyList<INode> Positional { get; }
     public INode? Params { get; }
@@ -29,8 +30,40 @@ public class Arguments : INode  // В итоговом дереве быть н�
         }
     }
 
-    public static INode Construct(IParser parser)
+    private static IEnumerable<INode> Extract(IParser parser)
     {
-        throw new NotImplementedException();
+        for (int i = 0; i < parser.Length; ++i)
+        {
+            yield return parser[i];
+        }
+    }
+
+    public static INode NamedArgumentsConstruct(IParser parser)
+    {
+        return new Arguments(new List<INode>(), null, Extract(parser));
+    }
+
+    public static INode AdditionalNamedArgumentsConstruct(IParser parser)
+    {
+        Debug.Assert(parser.Length == 3);
+        return parser[2];
+    }
+
+    public static INode FormalArgumentsWithPositionalConstruct(IParser parser)
+    {
+        Debug.Assert(parser.Length == 3);
+        return new Arguments((parser[0] as Arguments)!.Positional, parser[1], (parser[2] as Arguments)!.Named);
+    }
+
+    public static INode FormalArgumentsWithParamsConstruct(IParser parser)
+    {
+        Debug.Assert(parser.Length == 2);
+        return new Arguments(new List<INode>(), parser[1], (parser[0] as Arguments)!.Named);
+    }
+
+    public static INode ActualArgumentsWithPositionalConstruct(IParser parser)
+    {
+        Debug.Assert(parser.Length == 2);
+        return new Arguments((parser[0] as Arguments)!.Positional, null, (parser[1] as Arguments)!.Named);
     }
 }
