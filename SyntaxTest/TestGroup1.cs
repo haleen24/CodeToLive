@@ -25,6 +25,8 @@ public class TestGroup1
 
     private ITreeTester N() => new NullTester();
 
+    private FieldsTester V(string val) => o => o.Value == val;
+
     private ITreeTester FizzBuzz()
     {
         return TT<Module>(
@@ -275,6 +277,151 @@ public class TestGroup1
         );
     }
 
+    private ITreeTester BinaryTree()
+    {
+        return
+            TT<Module>(
+                TT<ClassDefinition>(
+                    TT<Identifier>(o => o.Value == "BinaryTree"),
+                    TT<Block>(
+                        TT<FieldDeclaration>(
+                            o => !o.IsFinal && !o.IsComputable && !o.IsStatic,
+                            TT<Identifier>(o => o.Value == "left")
+                        ),
+                        TT<FieldDeclaration>(
+                            o => o.IsFinal && !o.IsComputable && !o.IsStatic,
+                            TT<Identifier>(o => o.Value == "value")
+                        ),
+                        TT<FieldDeclaration>(
+                            o => !o.IsFinal && !o.IsComputable && !o.IsStatic,
+                            TT<Identifier>(o => o.Value == "right")
+                        ),
+                        TT<FunctionDefinition>(
+                            o => o.Params == null,
+                            TT<New>(),
+                            TT<Identifier>(V("val")),
+                            TT<Block>(
+                                TT<Assignment>(
+                                    o => !o.IsSeq && o.Sign == LexemType.Assignment,
+                                    TT<Identifier>(V("value")),
+                                    TT<Identifier>(V("val"))
+                                )
+                            )
+                        ),
+                        TT<FunctionDefinition>(
+                            TT<Identifier>(V("contains")),
+                            TT<Identifier>(V("val")),
+                            TT<Block>(
+                                TT<If>(
+                                    TT<BinaryExpression>(
+                                        o => o.Operator == LexemType.Eqv,
+                                        TT<Identifier>(V("value")),
+                                        TT<Identifier>(V("val"))
+                                    ),
+                                    TT<Return>(
+                                        TT<True>()
+                                    )
+                                ),
+                                TT<If>(
+                                    TT<BinaryExpression>(
+                                        o => o.Operator == LexemType.Less,
+                                        TT<Identifier>(V("value")),
+                                        TT<Identifier>(V("val"))
+                                    ),
+                                    TT<If>(
+                                        TT<Identifier>(V("right")),
+                                        TT<Return>(
+                                            TT<FunctionCall>(
+                                                TT<Attribute>(
+                                                    TT<Identifier>(V("right")),
+                                                    TT<Identifier>(V("contains"))
+                                                ),
+                                                TT<Identifier>(V("val"))
+                                            )
+                                        ),
+                                        TT<Return>(
+                                            TT<False>()
+                                        )
+                                    )
+                                ),
+                                TT<If>(
+                                    TT<Identifier>(V("left")),
+                                    TT<Return>(
+                                        TT<FunctionCall>(
+                                            TT<Attribute>(
+                                                TT<Identifier>(V("left")),
+                                                TT<Identifier>(V("contains"))
+                                            ),
+                                            TT<Identifier>(V("val"))
+                                        )
+                                    )
+                                ),
+                                TT<Return>(
+                                    TT<False>()
+                                )
+                            )
+                        ),
+                        TT<FunctionDefinition>(
+                            TT<Identifier>(V("add")),
+                            TT<Identifier>(V("val")),
+                            TT<Block>(
+                                TT<If>(
+                                    TT<BinaryExpression>(
+                                        o => o.Operator == LexemType.LessEq,
+                                        TT<Identifier>(V("value")),
+                                        TT<Identifier>(V("val"))
+                                    ),
+                                    TT<Block>(
+                                        TT<If>(
+                                            TT<Identifier>(V("left")),
+                                            TT<Return>(
+                                                TT<FunctionCall>(
+                                                    TT<Attribute>(
+                                                        TT<Identifier>(V("left")),
+                                                        TT<Identifier>(V("add"))
+                                                    ),
+                                                    TT<Identifier>(V("val"))
+                                                )
+                                            )
+                                        ),
+                                        TT<Assignment>(
+                                            o => o.Sign == LexemType.Assignment,
+                                            TT<Identifier>(V("left")),
+                                            TT<FunctionCall>(
+                                                TT<Identifier>(V("BinaryTree")),
+                                                TT<Identifier>(V("val"))
+                                            )
+                                        ),
+                                        TT<Return>()
+                                    ),
+                                    TT<If>(
+                                        TT<Identifier>(V("right")),
+                                        TT<Return>(
+                                            TT<FunctionCall>(
+                                                TT<Attribute>(
+                                                    TT<Identifier>(V("right")),
+                                                    TT<Identifier>(V("add"))
+                                                ),
+                                                TT<Identifier>(V("val"))
+                                            )
+                                        )
+                                    ),
+                                    TT<Assignment>(
+                                        o => o.Sign == LexemType.Assignment,
+                                        TT<Identifier>(V("right")),
+                                        TT<FunctionCall>(
+                                            TT<Identifier>(V("BinaryTree")),
+                                            TT<Identifier>(V("val"))
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+    }
+
     [SetUp]
     public void Setup()
     {
@@ -291,11 +438,13 @@ public class TestGroup1
         Testers.Add(FizzBuzz());
         Testers.Add(Reduce());
         Testers.Add(MatrixStorage());
+        Testers.Add(BinaryTree());
     }
 
     [TestCase(0)]
     [TestCase(1)]
     [TestCase(2)]
+    [TestCase(3)]
     public void TestAst(int ind)
     {
         Syntaxer syntaxer = new Syntaxer(new GrammarUnit(GrammarUnitType.Module));
