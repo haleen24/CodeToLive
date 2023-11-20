@@ -64,14 +64,19 @@ function_formal_arguments = (formal_arguments_with_positional|formal_arguments_w
 optional_function_formal_arguments = [function_formal_arguments]
 getter_declaration = `identifier`, `.`, `getter`
 setter_declaration = `identifier`, `.`, `setter`
-function_name = (attribute_name|getter_declaration|setter_declaration|operator_overload|conversion)
-function_definition = optional_static, `func`, attribute_name, snl, `(`, snl, optional_function_formal_arguments, snl, `)`, snl, stmt
+function_name = (attribute_name|getter_declaration|setter_declaration)
+function_declaration = `func`, attribute_name, snl, `(`, snl, optional_function_formal_arguments, snl, `)`
+function_definition = optional_static, function_declaration, snl, stmt
 
 superclasses_list = {`identifier`, comma_with_new_line}
 superclasses_declaration = `:`, snl, superclasses_list
 optional_superclasses_declaration = [superclasses_declaration]
-class_type = (`class`, `interface`)
-class_definition = class_type, `identifier`, snl, optional_superclasses_declaration, snl, stmt
+class_definition = `class`, `identifier`, snl, optional_superclasses_declaration, snl, stmt
+
+function_declaration_sequence = {function_declaration, separator}
+function_declaration_block = `{`, snl, function_declaration_sequence, snl, `}`
+interface_body = (function_declaration|function_declaration_block)
+interface_definition = `interface`, `identifier`, snl, optional_superclasses_declaration, snl, interface_body
 
 optional_stmt = [stmt]
 nonempty_stmt_sequence = {optional_stmt, separator}

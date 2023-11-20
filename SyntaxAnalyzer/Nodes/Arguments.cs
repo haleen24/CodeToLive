@@ -16,6 +16,12 @@ public class Arguments : INode // В итоговом дереве быть не
         Named = INode.Copy(named);
     }
 
+    public override string ToString()
+    {
+        string @params = Params == null ? "" : $", params={Params}, ";
+        return $"Arguments(positional=[{string.Join(", ", Positional)}]{@params}named=[{string.Join(", ", Named)}])";
+    }
+
     public IEnumerable<INode?> Walk()
     {
         foreach (INode node in Positional)

@@ -364,17 +364,23 @@ public static class RulesMap
             },
 
             {
+                GrammarUnitType.FunctionDeclaration,
+                new Rule(() => new Sequence(GU(LexemType.Func, GrammarUnitType.AttributeName,
+                        GrammarUnitType.SNL, LexemType.Lparenthese, GrammarUnitType.SNL,
+                        GrammarUnitType.OptionalFunctionFormalArguments, GrammarUnitType.SNL, LexemType.Rparenthese)),
+                    FunctionDeclaration.Construct)
+            },
+
+            {
                 GrammarUnitType.FunctionName,
                 Rule.Alternative(GU(GrammarUnitType.AttributeName, GrammarUnitType.GetterDeclaration,
-                    GrammarUnitType.SetterDeclaration, GrammarUnitType.OperatorOverload, GrammarUnitType.Conversion))
+                    GrammarUnitType.SetterDeclaration))
             },
 
             {
                 GrammarUnitType.FunctionDefinition,
                 new Rule(
-                    () => new Sequence(GU(GrammarUnitType.OptionalStatic, LexemType.Func, GrammarUnitType.AttributeName,
-                        GrammarUnitType.SNL, LexemType.Lparenthese, GrammarUnitType.SNL,
-                        GrammarUnitType.OptionalFunctionFormalArguments, GrammarUnitType.SNL, LexemType.Rparenthese,
+                    () => new Sequence(GU(GrammarUnitType.OptionalStatic, GrammarUnitType.FunctionDeclaration,
                         GrammarUnitType.SNL, GrammarUnitType.Stmt)),
                     FunctionDefinition.Construct)
             },
@@ -398,16 +404,37 @@ public static class RulesMap
             },
 
             {
-                GrammarUnitType.ClassType,
-                Rule.Alternative(GU(LexemType.Class, LexemType.Interface))
+                GrammarUnitType.ClassDefinition,
+                new Rule(
+                    () => new Sequence(GU(LexemType.Class, LexemType.Identifier, GrammarUnitType.SNL,
+                        GrammarUnitType.OptionalSuperclassesDeclaration, GrammarUnitType.SNL, GrammarUnitType.Stmt)),
+                    ClassDefinition.ConstructClass)
             },
 
             {
-                GrammarUnitType.ClassDefinition,
-                new Rule(
-                    () => new Sequence(GU(GrammarUnitType.ClassType, LexemType.Identifier, GrammarUnitType.SNL,
-                        GrammarUnitType.OptionalSuperclassesDeclaration, GrammarUnitType.SNL, GrammarUnitType.Stmt)),
-                    ClassDefinition.Construct)
+                GrammarUnitType.FunctionDeclarationSequence,
+                new Rule(() => new Repetition(GU(GrammarUnitType.FunctionDeclaration), GU(GrammarUnitType.Separator)),
+                    p => new Block((StatementSequence.Construct(p) as StatementSequence)!
+                        .Statements))
+            },
+
+            {
+                GrammarUnitType.FunctionDeclarationBlock,
+                new Rule(() => new Sequence(GU(LexemType.Lbrace, GrammarUnitType.SNL,
+                    GrammarUnitType.FunctionDeclarationSequence, GrammarUnitType.SNL, LexemType.Rbrace)), x => x[2])
+            },
+
+            {
+                GrammarUnitType.InterfaceBody,
+                Rule.Alternative(GU(GrammarUnitType.FunctionDeclaration, GrammarUnitType.FunctionDeclarationBlock))
+            },
+
+            {
+                GrammarUnitType.InterfaceDefinition,
+                new Rule(() => new Sequence(GU(LexemType.Interface, LexemType.Identifier, GrammarUnitType.SNL,
+                        GrammarUnitType.OptionalSuperclassesDeclaration, GrammarUnitType.SNL,
+                        GrammarUnitType.InterfaceBody)),
+                    ClassDefinition.ConstructInterface)
             },
 
             {
