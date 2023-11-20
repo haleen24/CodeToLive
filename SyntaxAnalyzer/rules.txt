@@ -6,11 +6,13 @@ overloadable_operator = (`+=`, `-=`, `*=`, `/=`, `//=`, `%=`, `&=`, `|=`, `^=`, 
 
 operator_overload = `operator`, overloadable_operator
 conversion = `conversion`, `[`, `identifier`, `]`
-attribute_name = (`identifier`|operator_overload|conversion|`new`),
-optional_final = [`final`]
-identifier_with_final = optional_final, `identifier`
-assignable = (attribute|indexator|identifier_with_final)
-assignable_sequence = {assignable, `,`}
+attribute_name = (`identifier`|operator_overload|conversion|`new`)
+accessor = (`getter`, `setter`)
+
+variables = { `identifier`, `,` }
+final_variables = `final`, variables
+expression_sequence = {expression_without_binary_operators, `,`}
+assignable_sequence = (final_variables | expression_sequence)
 assign_operator = (`=`|`+=`|`-=`|`*=`|`/=`, `//=`, `%=`, `&=`, `|=`, `^=`, `<<=`, `>>=`, `&&=`, `||=`)
 optional_comma = [`,`]
 assign_statement = assignable_sequence, optional_comma, assign_operator, expression
@@ -94,7 +96,7 @@ lambda = `(`, snl, function_formal_arguments, snl, `)`, `->`, stmt
 inline_stmt = (assign_statement|expression)
 stmt = (if_stmt|while_stmt|for_stmt|foreach_stmt|field_stmt|try_stmt|break_stmt|continue_stmt|return_stmt|throw_stmt|import_stmt|function_definition|class_definition|block|inline_stmt)
 
-possible_attribute = (attribute_name|attribute_end)
+possible_attribute = (attribute_name|accessor)
 attribute = `.`, possible_attribute
 indexator = `[`, snl, expression, snl, `]`
 function_call = `(`, snl, optional_function_actual_arguments, snl, `)`

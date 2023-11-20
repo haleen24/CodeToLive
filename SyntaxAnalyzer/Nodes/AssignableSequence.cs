@@ -6,9 +6,12 @@ public class
     AssignableSequence : INode // в итоговом дереве быть не должно
 {
     public IReadOnlyList<INode> Assignables { get; }
+    
+    public bool IsFinal { get; }
 
-    public AssignableSequence(IEnumerable<INode> assignables)
+    public AssignableSequence(IEnumerable<INode> assignables, bool isFinal)
     {
+        IsFinal = isFinal;
         Assignables = INode.Copy(assignables);
     }
 
@@ -25,8 +28,13 @@ public class
         }
     }
     
-    public static INode Construct(IParser parser)
+    public static INode ConstructFromVariables(IParser parser)
     {
-        return new AssignableSequence(Extract(parser));
+        return new AssignableSequence(Extract(parser), true);
+    }
+
+    public static INode ConstructFromExpressions(IParser parser)
+    {
+        return new AssignableSequence(Extract(parser), false);
     }
 }

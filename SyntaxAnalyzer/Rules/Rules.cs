@@ -1,7 +1,6 @@
 ﻿using LexerSpace;
 using SyntaxAnalyzer.Nodes;
 using SyntaxAnalyzer.Parsers;
-using Attribute = System.Attribute;
 
 namespace SyntaxAnalyzer.Rules;
 
@@ -48,14 +47,14 @@ public static class RulesMap
             },
 
             {
-                GrammarUnitType.AttributeEnd,
+                GrammarUnitType.Accessor,
                 Rule.Alternative(GU(LexemType.Getter, LexemType.Setter, LexemType.New, GrammarUnitType.OperatorOverload,
                     GrammarUnitType.Conversion))
             },
 
             {
                 GrammarUnitType.PossibleAttribute,
-                Rule.Alternative(GU(GrammarUnitType.AttributeName, GrammarUnitType.AttributeEnd))
+                Rule.Alternative(GU(GrammarUnitType.AttributeName, GrammarUnitType.Accessor))
             },
 
             {
@@ -72,31 +71,32 @@ public static class RulesMap
             },
 
             {
-                GrammarUnitType.OptionalFinal,
-                Rule.Optional(GU(LexemType.Final))
+                GrammarUnitType.Variables,
+                new Rule(() => new Repetition(GU(LexemType.Identifier), GU(LexemType.Comma)),
+                    AssignableSequence.ConstructFromVariables)
             },
 
             {
-                GrammarUnitType.IdentifierWithFinal,
-                new Rule(() => new Sequence(GU(GrammarUnitType.OptionalFinal, LexemType.Identifier)),
-                    IdentifierWithFinal.Construct)
+                GrammarUnitType.FinalVariables,
+                new Rule(() => new Sequence(GU(LexemType.Final, GrammarUnitType.Variables)), x => x[1])
             },
 
             {
-                GrammarUnitType.Assignable,
-                Rule.Alternative(GU(GrammarUnitType.Attribute, GrammarUnitType.Indexator,
-                    GrammarUnitType.IdentifierWithFinal))
+                GrammarUnitType.ExpressionSequence,
+                new Rule(
+                    () => new Repetition(GU(GrammarUnitType.ExpressionWithoutBinaryOperators), GU(LexemType.Comma)),
+                    AssignableSequence.ConstructFromExpressions)
             },
 
             {
                 GrammarUnitType.AssignableSequence,
-                new Rule(() => new Repetition(GU(GrammarUnitType.Assignable), GU(LexemType.Comma)),
-                    AssignableSequence.Construct)
+                Rule.Alternative(GU(GrammarUnitType.FinalVariables, GrammarUnitType.ExpressionSequence))
             },
 
             {
                 GrammarUnitType.AssignOperator,
-                Rule.Alternative(GU(LexemType.Assignment, LexemType.PlusAssign, LexemType.MinusAssign, LexemType.DivAssign,
+                Rule.Alternative(GU(LexemType.Assignment, LexemType.PlusAssign, LexemType.MinusAssign,
+                    LexemType.DivAssign,
                     LexemType.MulAssign, LexemType.TrueDivAssign, LexemType.ModAssign, LexemType.BandAssign,
                     LexemType.OrAssign, LexemType.BxorAssign, LexemType.BLshiftAssign, LexemType.BRshiftAssign,
                     LexemType.AndAssign, LexemType.BorAssign)
@@ -564,7 +564,8 @@ public static class RulesMap
             {
                 GrammarUnitType.ExpressionWithoutBinaryOperators,
                 new Rule(() => new Sequence(GU(GrammarUnitType.AtomicExpression,
-                    GrammarUnitType.OptionalExpressionPartSequence, GrammarUnitType.OptionalTernaryOperator)), ExpressionConstructor.Construct)
+                        GrammarUnitType.OptionalExpressionPartSequence, GrammarUnitType.OptionalTernaryOperator)),
+                    ExpressionConstructor.Construct)
             },
         };
 
