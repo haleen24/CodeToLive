@@ -7,16 +7,6 @@ overloadable_operator = (`+=`, `-=`, `*=`, `/=`, `//=`, `%=`, `&=`, `|=`, `^=`, 
 operator_overload = `operator`, overloadable_operator
 conversion = `conversion`, `[`, `identifier`, `]`
 attribute_name = (`identifier`|operator_overload|conversion|`new`),
-identifier_or_inner = (`identifier`|`inner`)
-attribute_name_sequence = {identifier_or_inner, `.`}
-additional_attribute_name_sequence = `.`, attribute_name_sequence
-optional_additional_attribute_name_sequence = [additional_attribute_name_sequence]
-attribute_end = (`getter`|`setter`|`new`|operator_overload|conversion)
-additional_attribute_end = `.`, attribute_end
-optional_additional_attribute_end = [additional_attribute_end]
-attribute = expression_without_attribute, optional_additional_attribute_name_sequence, optional_additional_attribute_end
-indexator = expression, `[`, snl, expression, snl, `]`
-
 optional_final = [`final`]
 identifier_with_final = optional_final, `identifier`
 assignable = (attribute|indexator|identifier_with_final)
@@ -91,7 +81,6 @@ positional_actual_arguments = {expression, comma_with_new_line}
 actual_arguments_with_positional = positional_actual_arguments, optional_additional_named_arguments
 function_actual_arguments = (actual_arguments_with_positional|named_arguments)
 optional_function_actual_arguments = [function_actual_arguments]
-function_call = expression, `(`, snl, optional_function_actual_arguments, snl, `)`
 
 unary_operator = (`+`|`-`, `!`, `~`)
 unary_expression = unary_operator, expression
@@ -99,11 +88,24 @@ unary_expression = unary_operator, expression
 binary_operator = (`+`, `-`, `*`, `/`, `//`, `%`, `&`, `|`, `^`, `==`, `>`, `<`, `>=`, `<=`, `!=`, `<<`, `>>`, `&&`, `||`, `is`)
 expression_with_binary_operators = expression_without_binary_operators, binary_operator, expression
 expression = (expression_with_binary_operators|expression_without_binary_operators)
-ternary_operator_expression = expression, `?`, expression, `:`, expression
 
 lambda = `(`, snl, function_formal_arguments, snl, `)`, `->`, stmt
 
 inline_stmt = (assign_statement|expression)
 stmt = (if_stmt|while_stmt|for_stmt|foreach_stmt|field_stmt|try_stmt|break_stmt|continue_stmt|return_stmt|throw_stmt|import_stmt|function_definition|class_definition|block|inline_stmt)
-expression_without_binary_operators = (attribute|expression_without_attribute)
-expression_without_attribute = (`true`|`false`|`null`|`this`|`base`|`inner`|`string_literal`|`int_literal`|`float_literal`|`identifier`|indexator|parenth|function_call|unary_expression|lambda|ternary_operator_expression)
+
+possible_attribute = (attribute_name|attribute_end)
+attribute = `.`, possible_attribute
+indexator = `[`, snl, expression, snl, `]`
+function_call = `(`, snl, optional_function_actual_arguments, snl, `)`
+ternary_operator = `?`, expression, `:`, expression
+
+optional_ternary_operator = [ternary_operator]
+
+expression_part = (attribute|indexator|function_call)
+expression_part_sequence = {expression_part}
+optional_expression_part_sequence = [expression_part_sequence]
+
+atomic_expression = (`true`|`false`|`null`|`this`|`base`|`inner`|`string_literal`|`int_literal`|`float_literal`|`identifier`|parenth|unary_expression|lambda)
+
+expression_without_binary_operators = atomic_expression, optional_expression_part_sequence, optional_ternary_operator

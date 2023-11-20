@@ -2,7 +2,7 @@
 
 public enum GrammarUnitType  // Список всех составных грамматических единиц
                              // (простые представлены LexemType)
-                             // Определения записанф в rules.txt
+                             // Определения записан в rules.txt
 {
     SNL,
     Separator,
@@ -11,13 +11,7 @@ public enum GrammarUnitType  // Список всех составных гра�
     OperatorOverload,
     Conversion,
     AttributeName,
-    IdentifierOrInner,
-    AttributeNameSequence,
-    AdditionalAttributeNameSequence,
-    OptionalAdditionalAttributeNameSequence,
     AttributeEnd,
-    AdditionalAttributeEnd,
-    OptionalAdditionalAttributeEnd,
     Attribute,
     Indexator,
     OptionalFinal,
@@ -90,10 +84,15 @@ public enum GrammarUnitType  // Список всех составных гра�
     BinaryOperator,
     ExpressionWithBinaryOperators,
     Expression,
-    TernaryOperatorExpression,
+    TernaryOperator,
+    OptionalTernaryOperator,
+    PossibleAttribute,
+    ExpressionPart,
+    ExpressionPartSequence,
+    OptionalExpressionPartSequence,
+    AtomicExpression,
     Lambda,
     InlineStmt,
     Stmt,
     ExpressionWithoutBinaryOperators,
-    ExpressionWithoutAttribute
 }
