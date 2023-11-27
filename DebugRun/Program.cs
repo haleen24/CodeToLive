@@ -9,7 +9,7 @@ public class Program
     public static void Main(string[] args)
     {
         string filename = "test.upl";
-        string code = "interface a {func b(); func c()}";
+        string code = "f();g(2, 3);h(params v);k(e=3);l(params q, c=4)";
         Lexer l = new Lexer(filename, code);
         var res = l.Lex();
         Syntaxer s = new Syntaxer(new GrammarUnit(GrammarUnitType.Module));

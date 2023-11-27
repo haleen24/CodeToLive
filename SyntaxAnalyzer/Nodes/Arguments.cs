@@ -63,33 +63,31 @@ public class Arguments : INode // В итоговом дереве быть не
         return new Arguments(new List<INode>(), null, Extract(parser));
     }
 
-    public static INode AdditionalNamedArgumentsConstruct(IParser parser)
+    public static INode ArgumentsWithPositionalConstruct(IParser parser)
     {
         Debug.Assert(parser.Length == 3);
-        return parser[2];
-    }
-
-    public static INode FormalArgumentsWithPositionalConstruct(IParser parser)
-    {
-        Debug.Assert(parser.Length == 3);
+        INode? @params = parser[1] switch
+        {
+            Idle => null,
+            _ => parser[1]
+        };
         switch (parser[2])
         {
             case Idle:
-                return new Arguments((parser[0] as Arguments)!.Positional, parser[1], new List<INode>());
+                return new Arguments((parser[0] as Arguments)!.Positional, @params, new List<INode>());
             default:
-                return new Arguments((parser[0] as Arguments)!.Positional, parser[1], (parser[2] as Arguments)!.Named);
+                return new Arguments((parser[0] as Arguments)!.Positional, @params, (parser[2] as Arguments)!.Named);
         }
     }
 
-    public static INode FormalArgumentsWithParamsConstruct(IParser parser)
+    public static INode ArgumentsWithParamsConstruct(IParser parser)
     {
         Debug.Assert(parser.Length == 2);
-        return new Arguments(new List<INode>(), parser[1], (parser[0] as Arguments)!.Named);
-    }
-
-    public static INode ActualArgumentsWithPositionalConstruct(IParser parser)
-    {
-        Debug.Assert(parser.Length == 2);
-        return new Arguments((parser[0] as Arguments)!.Positional, null, (parser[1] as Arguments)!.Named);
+        return new Arguments(new List<INode>(), parser[0], parser[1] switch
+        {
+            Arguments args => args.Named,
+            Idle => new List<INode>(),
+            _ => throw new Exception("Wrong params")  // Никогда не должно произойти
+        });
     }
 }

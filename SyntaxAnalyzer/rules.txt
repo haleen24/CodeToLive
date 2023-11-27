@@ -60,7 +60,7 @@ additional_params_argument = `,`, snl, params_argument
 optional_additional_params_argument = [additional_params_argument]
 formal_arguments_with_positional = positional_formal_arguments, optional_additional_params_argument, optional_additional_named_arguments
 formal_arguments_with_params = params_argument, optional_additional_named_arguments
-function_formal_arguments = (formal_arguments_with_positional|formal_arguments_with_params|named_arguments)
+function_formal_arguments = (named_arguments|formal_arguments_with_positional|formal_arguments_with_params)
 optional_function_formal_arguments = [function_formal_arguments]
 getter_declaration = `identifier`, `.`, `getter`
 setter_declaration = `identifier`, `.`, `setter`
@@ -85,8 +85,12 @@ block = `{`, snl, stmt_separator, snl, `}`
 module = stmt_sequence, snl
 
 positional_actual_arguments = {expression, comma_with_new_line}
-actual_arguments_with_positional = positional_actual_arguments, optional_additional_named_arguments
-function_actual_arguments = (actual_arguments_with_positional|named_arguments)
+actual_params_argument = `params`, expression
+additional_actual_params_argument = `,`, snl, actual_params_argument
+optional_additional_actual_params_argument = [additional_actual_params_argument]
+actual_arguments_with_positional = positional_actual_arguments, optional_additional_actual_params_argument, optional_additional_named_arguments
+actual_arguments_with_params = actual_params_argument, optional_additional_named_arguments
+function_actual_arguments = (named_arguments|actual_arguments_with_positional|actual_arguments_with_params)
 optional_function_actual_arguments = [function_actual_arguments]
 
 unary_operator = (`+`|`-`, `!`, `~`)

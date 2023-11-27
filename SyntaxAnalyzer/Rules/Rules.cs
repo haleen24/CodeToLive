@@ -4,8 +4,6 @@ using SyntaxAnalyzer.Parsers;
 
 namespace SyntaxAnalyzer.Rules;
 
-// TODO: явный вызов params
-
 public static class RulesMap
 {
     // В этом словаре каждой грамматической единице сопоставляется праило (см. rules.txt)
@@ -298,7 +296,7 @@ public static class RulesMap
             {
                 GrammarUnitType.AdditionalNamedArguments,
                 new Rule(() => new Sequence(GU(LexemType.Comma, GrammarUnitType.SNL, GrammarUnitType.NamedArguments)),
-                    Arguments.AdditionalNamedArgumentsConstruct)
+                    x => x[2])
             },
 
             {
@@ -330,7 +328,7 @@ public static class RulesMap
                         GrammarUnitType.PositionalFormalArguments,
                         GrammarUnitType.OptionalAdditionalParamsArgument,
                         GrammarUnitType.OptionalAdditionalNamedArguments)),
-                    Arguments.FormalArgumentsWithPositionalConstruct)
+                    Arguments.ArgumentsWithPositionalConstruct)
             },
 
             {
@@ -338,13 +336,13 @@ public static class RulesMap
                 new Rule(
                     () => new Sequence(GU(GrammarUnitType.ParamsArgument,
                         GrammarUnitType.OptionalAdditionalNamedArguments)),
-                    Arguments.FormalArgumentsWithParamsConstruct)
+                    Arguments.ArgumentsWithParamsConstruct)
             },
 
             {
                 GrammarUnitType.FunctionFormalArguments,
-                Rule.Alternative(GU(GrammarUnitType.FormalArgumentsWithPositional,
-                    GrammarUnitType.FormalArgumentsWithParams, GrammarUnitType.NamedArguments))
+                Rule.Alternative(GU(GrammarUnitType.NamedArguments, GrammarUnitType.FormalArgumentsWithPositional,
+                    GrammarUnitType.FormalArgumentsWithParams))
             },
             {
                 GrammarUnitType.OptionalFunctionFormalArguments,
@@ -456,7 +454,8 @@ public static class RulesMap
             {
                 GrammarUnitType.Block,
                 new Rule(
-                    () => new Sequence(GU(LexemType.Lbrace, GrammarUnitType.SNL, GrammarUnitType.StmtSequence, GrammarUnitType.SNL,
+                    () => new Sequence(GU(LexemType.Lbrace, GrammarUnitType.SNL, GrammarUnitType.StmtSequence,
+                        GrammarUnitType.SNL,
                         LexemType.Rbrace)), Block.Construct)
             },
 
@@ -472,16 +471,45 @@ public static class RulesMap
             },
 
             {
+                GrammarUnitType.ActualParamsArgument,
+                new Rule(() => new Sequence(GU(LexemType.Params, GrammarUnitType.Expression)),
+                    x => x[1])
+            },
+
+            {
+                GrammarUnitType.AdditionalActualParamsArgument,
+                new Rule(
+                    () => new Sequence(GU(LexemType.Comma, GrammarUnitType.SNL, GrammarUnitType.ActualParamsArgument)),
+                    x => x[2])
+            },
+
+            {
+                GrammarUnitType.OptionalAdditionalActualParamsArgument,
+                Rule.Optional(GU(GrammarUnitType.AdditionalActualParamsArgument))
+            },
+
+            {
                 GrammarUnitType.ActualArgumentsWithPositional,
                 new Rule(
                     () => new Sequence(GU(GrammarUnitType.PositionalActualArguments,
+                        GrammarUnitType.OptionalAdditionalActualParamsArgument,
                         GrammarUnitType.OptionalAdditionalNamedArguments)),
-                    Arguments.ActualArgumentsWithPositionalConstruct)
+                    Arguments.ArgumentsWithPositionalConstruct)
+            },
+
+            {
+                GrammarUnitType.ActualArgumentsWithParams,
+                new Rule(
+                    () => new Sequence(GU(GrammarUnitType.ActualParamsArgument,
+                        GrammarUnitType.OptionalAdditionalNamedArguments)),
+                    Arguments.ArgumentsWithParamsConstruct
+                )
             },
 
             {
                 GrammarUnitType.FunctionActualArguments,
-                Rule.Alternative(GU(GrammarUnitType.ActualArgumentsWithPositional, GrammarUnitType.NamedArgument))
+                Rule.Alternative(GU(GrammarUnitType.NamedArguments, GrammarUnitType.ActualArgumentsWithPositional,
+                    GrammarUnitType.ActualArgumentsWithParams))
             },
 
             {
@@ -587,7 +615,8 @@ public static class RulesMap
                     GrammarUnitType.ForeachStmt, GrammarUnitType.FieldStmt, GrammarUnitType.TryStmt,
                     GrammarUnitType.BreakStmt, GrammarUnitType.ContinueStmt, GrammarUnitType.ReturnStmt,
                     GrammarUnitType.ThrowStmt, GrammarUnitType.ImportStmt, GrammarUnitType.FunctionDefinition,
-                    GrammarUnitType.ClassDefinition, GrammarUnitType.InterfaceDefinition, GrammarUnitType.Block, GrammarUnitType.InlineStmt))
+                    GrammarUnitType.ClassDefinition, GrammarUnitType.InterfaceDefinition, GrammarUnitType.Block,
+                    GrammarUnitType.InlineStmt))
             },
 
             {
