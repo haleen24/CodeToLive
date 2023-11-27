@@ -4,6 +4,8 @@ using SyntaxAnalyzer.Parsers;
 
 namespace SyntaxAnalyzer.Rules;
 
+// TODO: явный вызов params
+
 public static class RulesMap
 {
     // В этом словаре каждой грамматической единице сопоставляется праило (см. rules.txt)
@@ -274,7 +276,7 @@ public static class RulesMap
 
             {
                 GrammarUnitType.NamedArgument,
-                new Rule(() => new Sequence(GU(LexemType.Identifier, GrammarUnitType.SNL, LexemType.Eqv,
+                new Rule(() => new Sequence(GU(LexemType.Identifier, GrammarUnitType.SNL, LexemType.Assignment,
                     GrammarUnitType.SNL, GrammarUnitType.Expression)), NamedArgument.Construct)
             },
 
@@ -286,7 +288,7 @@ public static class RulesMap
             {
                 GrammarUnitType.PositionalFormalArguments,
                 new Rule(() => new Repetition(GU(LexemType.Identifier), GU(GrammarUnitType.CommaWithNewLine)),
-                    PositionalArgumentsSequence.Construct)
+                    Arguments.PositionalArgumentsConstruct)
             },
             {
                 GrammarUnitType.NamedArguments,
@@ -307,13 +309,13 @@ public static class RulesMap
             {
                 GrammarUnitType.ParamsArgument,
                 new Rule(() => new Sequence(GU(LexemType.Params, GrammarUnitType.SNL, LexemType.Identifier)),
-                    ParamsArgument.Construct)
+                    x => x[2])
             },
 
             {
                 GrammarUnitType.AdditionalParamsArgument,
                 new Rule(() => new Sequence(GU(LexemType.Comma, GrammarUnitType.SNL, GrammarUnitType.ParamsArgument)),
-                    ParamsArgument.Construct)
+                    x => x[2])
             },
 
             {
@@ -454,7 +456,7 @@ public static class RulesMap
             {
                 GrammarUnitType.Block,
                 new Rule(
-                    () => new Sequence(GU(LexemType.Lbrace, GrammarUnitType.StmtSequence, GrammarUnitType.SNL,
+                    () => new Sequence(GU(LexemType.Lbrace, GrammarUnitType.SNL, GrammarUnitType.StmtSequence, GrammarUnitType.SNL,
                         LexemType.Rbrace)), Block.Construct)
             },
 
@@ -466,7 +468,7 @@ public static class RulesMap
             {
                 GrammarUnitType.PositionalActualArguments,
                 new Rule(() => new Repetition(GU(GrammarUnitType.Expression), GU(GrammarUnitType.CommaWithNewLine)),
-                    PositionalArgumentsSequence.Construct)
+                    Arguments.PositionalArgumentsConstruct)
             },
 
             {
@@ -585,7 +587,7 @@ public static class RulesMap
                     GrammarUnitType.ForeachStmt, GrammarUnitType.FieldStmt, GrammarUnitType.TryStmt,
                     GrammarUnitType.BreakStmt, GrammarUnitType.ContinueStmt, GrammarUnitType.ReturnStmt,
                     GrammarUnitType.ThrowStmt, GrammarUnitType.ImportStmt, GrammarUnitType.FunctionDefinition,
-                    GrammarUnitType.ClassDefinition, GrammarUnitType.Block, GrammarUnitType.InlineStmt))
+                    GrammarUnitType.ClassDefinition, GrammarUnitType.InterfaceDefinition, GrammarUnitType.Block, GrammarUnitType.InlineStmt))
             },
 
             {

@@ -99,7 +99,7 @@ expression = (expression_with_binary_operators|expression_without_binary_operato
 lambda = `(`, snl, function_formal_arguments, snl, `)`, `->`, stmt
 
 inline_stmt = (assign_statement|expression)
-stmt = (if_stmt|while_stmt|for_stmt|foreach_stmt|field_stmt|try_stmt|break_stmt|continue_stmt|return_stmt|throw_stmt|import_stmt|function_definition|class_definition|block|inline_stmt)
+stmt = (if_stmt|while_stmt|for_stmt|foreach_stmt|field_stmt|try_stmt|break_stmt|continue_stmt|return_stmt|throw_stmt|import_stmt|function_definition|class_definition|interface_definition|block|inline_stmt)
 
 possible_attribute = (attribute_name|accessor)
 attribute = `.`, possible_attribute

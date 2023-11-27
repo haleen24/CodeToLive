@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections;
+using System.Diagnostics;
 using SyntaxAnalyzer.Parsers;
 
 namespace SyntaxAnalyzer.Nodes;
@@ -19,7 +20,7 @@ public class Arguments : INode // В итоговом дереве быть не
     public override string ToString()
     {
         string @params = Params == null ? "" : $", params={Params}, ";
-        return $"Arguments(positional=[{string.Join(", ", Positional)}]{@params}named=[{string.Join(", ", Named)}])";
+        return $"Arguments(positional=[{string.Join(", ", Positional)}]{@params},named=[{string.Join(", ", Named)}])";
     }
 
     public IEnumerable<INode?> Walk()
@@ -44,6 +45,19 @@ public class Arguments : INode // В итоговом дереве быть не
         }
     }
 
+    private static IEnumerable<INode> ExtractEven(IParser parser)
+    {
+        for (int i = 0; i < parser.Length; i += 2)
+        {
+            yield return parser[i];
+        }
+    }
+
+    public static INode PositionalArgumentsConstruct(IParser parser)
+    {
+        return new Arguments(ExtractEven(parser), null, new List<INode>());
+    }
+
     public static INode NamedArgumentsConstruct(IParser parser)
     {
         return new Arguments(new List<INode>(), null, Extract(parser));
@@ -61,7 +75,7 @@ public class Arguments : INode // В итоговом дереве быть не
         switch (parser[2])
         {
             case Idle:
-                return new Arguments((parser[0] as PositionalArgumentsSequence)!.Arguments, parser[1], new List<INode>());
+                return new Arguments((parser[0] as Arguments)!.Positional, parser[1], new List<INode>());
             default:
                 return new Arguments((parser[0] as Arguments)!.Positional, parser[1], (parser[2] as Arguments)!.Named);
         }

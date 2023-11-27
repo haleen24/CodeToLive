@@ -31,4 +31,9 @@ public class FunctionDeclaration : INode
             _ => throw new Exception("Wrong type")  // Никогда не должно произойти
         });
     }
+
+    public override string ToString()
+    {
+        return $"FunctionDeclaration(name={Name}, arguments={Arguments})";
+    }
 }
