@@ -1,8 +1,7 @@
 ﻿using System.Diagnostics;
-using SyntaxAnalyzer.Nodes;
 using SyntaxAnalyzer.Parsers;
 
-namespace SyntaxAnalyzer;
+namespace SyntaxAnalyzer.Nodes;
 
 public class Set : INode
 {
