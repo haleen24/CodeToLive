@@ -1,6 +1,8 @@
 ﻿using LexerSpace;
 using SyntaxAnalyzer.Nodes;
 using SyntaxAnalyzer.Parsers;
+using KeyValuePair = SyntaxAnalyzer.Nodes.KeyValuePair;
+using Tuple = SyntaxAnalyzer.Nodes.Tuple;
 
 namespace SyntaxAnalyzer.Rules;
 
@@ -82,7 +84,7 @@ public static class RulesMap
             },
 
             {
-                GrammarUnitType.ExpressionSequence,
+                GrammarUnitType.LeftExpressionSequence,
                 new Rule(
                     () => new Repetition(GU(GrammarUnitType.ExpressionWithoutBinaryOperators), GU(LexemType.Comma)),
                     AssignableSequence.ConstructFromExpressions)
@@ -90,7 +92,7 @@ public static class RulesMap
 
             {
                 GrammarUnitType.AssignableSequence,
-                Rule.Alternative(GU(GrammarUnitType.FinalVariables, GrammarUnitType.ExpressionSequence))
+                Rule.Alternative(GU(GrammarUnitType.FinalVariables, GrammarUnitType.LeftExpressionSequence))
             },
 
             {
@@ -600,7 +602,7 @@ public static class RulesMap
                 GrammarUnitType.AtomicExpression,
                 Rule.Alternative(GU(LexemType.True, LexemType.False, LexemType.Null, LexemType.This, LexemType.Base,
                     LexemType.Inner, LexemType.StringLiteral, LexemType.IntLiteral, LexemType.FloatLiteral,
-                    LexemType.Identifier, GrammarUnitType.Parenth, GrammarUnitType.UnaryExpression,
+                    LexemType.Identifier, GrammarUnitType.Parenth, GrammarUnitType.ListLiteral, GrammarUnitType.SetLiteral, GrammarUnitType.TupleLiteral, GrammarUnitType.DictLiteral, GrammarUnitType.UnaryExpression,
                     GrammarUnitType.Lambda))
             },
 
@@ -625,6 +627,89 @@ public static class RulesMap
                         GrammarUnitType.OptionalExpressionPartSequence, GrammarUnitType.OptionalTernaryOperator)),
                     ExpressionConstructor.Construct)
             },
+
+            {
+                GrammarUnitType.ExpressionSequence,
+                new Rule(
+                    () => new Repetition(GU(GrammarUnitType.Expression), GU(GrammarUnitType.CommaWithNewLine)),
+                    ExpressionSequence.Construct
+                )
+            },
+
+            {
+                GrammarUnitType.OptionalExpressionSequence,
+                Rule.Optional(GU(GrammarUnitType.ExpressionSequence))
+            },
+
+            {
+                GrammarUnitType.ListLiteral,
+                new Rule(
+                    () => new Sequence(GU(LexemType.Lbracket, GrammarUnitType.SNL,
+                        GrammarUnitType.OptionalExpressionSequence, GrammarUnitType.OptionalComma, GrammarUnitType.SNL, LexemType.Rbracket)),
+                    List.Construct
+                )
+            },
+
+            {
+                GrammarUnitType.SetLiteral,
+                new Rule(
+                    () => new Sequence(GU(LexemType.Lbrace, GrammarUnitType.SNL, GrammarUnitType.ExpressionSequence, GrammarUnitType.OptionalComma,
+                        GrammarUnitType.SNL, LexemType.Rbrace)),
+                    Set.Construct
+                )
+            },
+
+            {
+                GrammarUnitType.TupleBody,
+                new Rule(
+                    () => new Sequence(GU(GrammarUnitType.Expression, LexemType.Comma, GrammarUnitType.SNL,
+                        GrammarUnitType.OptionalExpressionSequence, GrammarUnitType.OptionalComma)),
+                    Tuple.ConstructBody
+                )
+            },
+
+            {
+                GrammarUnitType.OptionalTupleBody,
+                Rule.Optional(GU(GrammarUnitType.TupleBody))
+            },
+
+            {
+                GrammarUnitType.TupleLiteral,
+                new Rule(
+                    () => new Sequence(GU(LexemType.Lparenthese, GrammarUnitType.SNL, GrammarUnitType.OptionalTupleBody,
+                        GrammarUnitType.SNL, LexemType.Rparenthese)),
+                    Tuple.Construct
+                )
+            },
+
+            {
+                GrammarUnitType.KeyValuePair,
+                new Rule(
+                    () => new Sequence(GU(GrammarUnitType.Expression, LexemType.Colon, GrammarUnitType.Expression)),
+                    KeyValuePair.Construct
+                )
+            },
+
+            {
+                GrammarUnitType.DictBody,
+                new Rule(
+                    () => new Repetition(GU(GrammarUnitType.KeyValuePair), GU(GrammarUnitType.CommaWithNewLine)),
+                    Dict.ConstructBody
+                )
+            },
+
+            {
+                GrammarUnitType.OptionalDictBody,
+                Rule.Optional(GU(GrammarUnitType.DictBody))
+            },
+
+            {
+                GrammarUnitType.DictLiteral,
+                new Rule(
+                    () => new Sequence(GU(LexemType.Lbrace, GrammarUnitType.SNL, GrammarUnitType.OptionalDictBody, GrammarUnitType.OptionalComma, GrammarUnitType.SNL, LexemType.Rbrace)),
+                    Dict.Construct
+                )
+            }
         };
 
 // Сокращения для конструкторв, чтобы меньше писать

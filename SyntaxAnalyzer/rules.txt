@@ -11,7 +11,7 @@ accessor = (`getter`, `setter`)
 
 variables = { `identifier`, `,` }
 final_variables = `final`, variables
-expression_sequence = {expression_without_binary_operators, `,`}
+left_expression_sequence = {expression_without_binary_operators, `,`}
 assignable_sequence = (final_variables | expression_sequence)
 assign_operator = (`=`|`+=`|`-=`|`*=`|`/=`, `//=`, `%=`, `&=`, `|=`, `^=`, `<<=`, `>>=`, `&&=`, `||=`)
 optional_comma = [`,`]
@@ -117,6 +117,21 @@ expression_part = (attribute|indexator|function_call)
 expression_part_sequence = {expression_part}
 optional_expression_part_sequence = [expression_part_sequence]
 
-atomic_expression = (`true`|`false`|`null`|`this`|`base`|`inner`|`string_literal`|`int_literal`|`float_literal`|`identifier`|parenth|unary_expression|lambda)
+expression_sequence = {expression, comma_with_new_line}
+optional_expression_sequence = [expression_sequence]
+
+list_literal = `[`, snl, optional_expression_sequence, snl, `]`
+set_literal = `{`, snl, expression_sequence, snl, `}`
+
+tuple_body = expression, `,`, snl, optional_expression_sequence
+optional_tuple_body = [tuple_body]
+tuple_literal = `(`, snl, optional_tuple_body, snl, `)`
+
+key_value_pair = expression, `:`, expression
+dict_body = {key_value_pair, comma_with_new_line}
+optional_dict_body = [dict_body]
+dict_literal = `{`, snl, optional_dict_body, snl, `}`
+
+atomic_expression = (`true`|`false`|`null`|`this`|`base`|`inner`|`string_literal`|`int_literal`|`float_literal`|`identifier`|parenth|list_literal|set_literal|tuple_literal|dict_literal|unary_expression|lambda)
 
 expression_without_binary_operators = atomic_expression, optional_expression_part_sequence, optional_ternary_operator
