@@ -36,6 +36,14 @@ public class BinaryExpression : INode
         { LexemType.Or, 5 },
     };
 
+    private static readonly HashSet<LexemType> InversedOperators = new HashSet<LexemType>()
+    {
+        LexemType.Minus,
+        LexemType.Div,
+        LexemType.Mod,
+        LexemType.TrueDiv
+    };
+
     public BinaryExpression(INode leftOperand, LexemType @operator, INode rightOperand, bool inParentheses = false)
     {
         LeftOperand = leftOperand;
@@ -70,8 +78,21 @@ public class BinaryExpression : INode
 
     private static INode ManagePriorities(INode lhs, LexemType sign, INode rhs)
     {
-        if (rhs is not BinaryExpression rightBinary || rightBinary.InParentheses ||
-            Priorities[sign] >= Priorities[rightBinary.Operator])
+        if (rhs is not BinaryExpression rightBinary || rightBinary.InParentheses )
+        {
+            return new BinaryExpression(lhs, sign, rhs);
+        }
+        
+        if (InversedOperators.Contains(sign) && Priorities[sign] == Priorities[rightBinary.Operator])
+        {
+            return new BinaryExpression(
+                new BinaryExpression(lhs, sign, rightBinary.LeftOperand),
+                rightBinary.Operator,
+                rightBinary.RightOperand
+            );
+        }
+        
+        if (Priorities[sign] >= Priorities[rightBinary.Operator])
         {
             return new BinaryExpression(lhs, sign, rhs);
         }
