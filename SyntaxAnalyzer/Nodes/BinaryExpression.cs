@@ -44,6 +44,8 @@ public class BinaryExpression : INode
         LexemType.TrueDiv
     };
 
+    private static bool IsTransitive(LexemType op) => Priorities[op] == 3;
+
     public BinaryExpression(INode leftOperand, LexemType @operator, INode rightOperand, bool inParentheses = false)
     {
         LeftOperand = leftOperand;
@@ -89,6 +91,15 @@ public class BinaryExpression : INode
                 new BinaryExpression(lhs, sign, rightBinary.LeftOperand),
                 rightBinary.Operator,
                 rightBinary.RightOperand
+            );
+        }
+
+        if (IsTransitive(sign) && IsTransitive(rightBinary.Operator))
+        {
+            return new BinaryExpression(
+                new BinaryExpression(lhs, sign, rightBinary.LeftOperand),
+                LexemType.And,
+                rightBinary
             );
         }
         
