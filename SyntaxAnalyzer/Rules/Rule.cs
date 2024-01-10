@@ -19,4 +19,5 @@ public class Rule
 
     public static Rule Alternative(params GrammarUnit[] args) => new Rule(() => new Alternative(args), Identical);
     public static Rule Optional(GrammarUnit gu) => new Rule(() => new Optional(gu), Identical);
+    public static Rule Additional(GrammarUnit gu) => new Rule(() => new Sequence(new GrammarUnit(LexemType.Comma), new GrammarUnit(GrammarUnitType.SNL), gu), x => x[2]);
 }

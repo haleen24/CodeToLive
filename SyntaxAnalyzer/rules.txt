@@ -51,16 +51,12 @@ field_stmt = optional_static, optional_field_modifier, `field`, `identifier`
 
 named_argument = `identifier`, snl, `=`, snl, expression
 comma_with_new_line = `,`, snl
-positional_formal_arguments = {`identifier`, comma_with_new_line}
 named_arguments = {named_argument, comma_with_new_line}
 additional_named_arguments = `,`, snl, named_arguments
 optional_additional_named_arguments = [additional_named_arguments]
 params_argument = `params`, snl, `identifier`
-additional_params_argument = `,`, snl, params_argument
-optional_additional_params_argument = [additional_params_argument]
-formal_arguments_with_positional = positional_formal_arguments, optional_additional_params_argument, optional_additional_named_arguments
-formal_arguments_with_params = params_argument, optional_additional_named_arguments
-function_formal_arguments = (named_arguments|formal_arguments_with_positional|formal_arguments_with_params)
+formal_argument = (params_argument|named_argument|`identifier`)
+function_formal_arguments = {formal_argument, comma_with_new_line}  # Синтаксический анализатор должен дополнительно проверить, что все аргументы расположены в корректном порядке
 optional_function_formal_arguments = [function_formal_arguments]
 getter_declaration = `identifier`, `.`, `getter`
 setter_declaration = `identifier`, `.`, `setter`
@@ -98,7 +94,7 @@ unary_expression = unary_operator, expression_with_binary_operators
 
 binary_operator = (`+`, `-`, `*`, `/`, `//`, `%`, `&`, `|`, `^`, `==`, `>`, `<`, `>=`, `<=`, `!=`, `<<`, `>>`, `&&`, `||`, `is`)
 
-lambda = `(`, snl, function_formal_arguments, snl, `)`, `->`, stmt
+lambda = `(`, snl, optional_function_formal_arguments, snl, `)`, `->`, stmt
 
 inline_stmt = (assign_statement|expression)
 stmt = (if_stmt|while_stmt|for_stmt|foreach_stmt|field_stmt|try_stmt|break_stmt|continue_stmt|return_stmt|throw_stmt|import_stmt|function_definition|class_definition|interface_definition|block|inline_stmt)

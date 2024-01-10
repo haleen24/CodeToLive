@@ -286,19 +286,14 @@ public static class RulesMap
             },
 
             {
-                GrammarUnitType.PositionalFormalArguments,
-                new Rule(() => new Repetition(GU(LexemType.Identifier), GU(GrammarUnitType.CommaWithNewLine)),
-                    Arguments.PositionalArgumentsConstruct)
-            },
-            {
                 GrammarUnitType.NamedArguments,
                 new Rule(() => new Repetition(GU(GrammarUnitType.NamedArgument), GU(GrammarUnitType.CommaWithNewLine)),
-                    Arguments.NamedArgumentsConstruct)
+                    FormalArguments.NamedArgumentsConstruct)
             },
+            
             {
                 GrammarUnitType.AdditionalNamedArguments,
-                new Rule(() => new Sequence(GU(LexemType.Comma, GrammarUnitType.SNL, GrammarUnitType.NamedArguments)),
-                    x => x[2])
+                Rule.Additional(GU(GrammarUnitType.NamedArguments))
             },
 
             {
@@ -309,42 +304,20 @@ public static class RulesMap
             {
                 GrammarUnitType.ParamsArgument,
                 new Rule(() => new Sequence(GU(LexemType.Params, GrammarUnitType.SNL, LexemType.Identifier)),
-                    x => x[2])
+                    ParamsArgument.Construct)
             },
 
             {
-                GrammarUnitType.AdditionalParamsArgument,
-                new Rule(() => new Sequence(GU(LexemType.Comma, GrammarUnitType.SNL, GrammarUnitType.ParamsArgument)),
-                    x => x[2])
-            },
-
-            {
-                GrammarUnitType.OptionalAdditionalParamsArgument,
-                Rule.Optional(GU(GrammarUnitType.AdditionalParamsArgument))
-            },
-
-            {
-                GrammarUnitType.FormalArgumentsWithPositional,
-                new Rule(
-                    () => new Sequence(GU(
-                        GrammarUnitType.PositionalFormalArguments,
-                        GrammarUnitType.OptionalAdditionalParamsArgument,
-                        GrammarUnitType.OptionalAdditionalNamedArguments)),
-                    Arguments.ArgumentsWithPositionalConstruct)
-            },
-
-            {
-                GrammarUnitType.FormalArgumentsWithParams,
-                new Rule(
-                    () => new Sequence(GU(GrammarUnitType.ParamsArgument,
-                        GrammarUnitType.OptionalAdditionalNamedArguments)),
-                    Arguments.ArgumentsWithParamsConstruct)
+                GrammarUnitType.FormalArgument,
+                Rule.Alternative(GU(GrammarUnitType.ParamsArgument, GrammarUnitType.NamedArgument, LexemType.Identifier))
             },
 
             {
                 GrammarUnitType.FunctionFormalArguments,
-                Rule.Alternative(GU(GrammarUnitType.NamedArguments, GrammarUnitType.FormalArgumentsWithPositional,
-                    GrammarUnitType.FormalArgumentsWithParams))
+                new Rule(
+                    () => new Repetition(GU(GrammarUnitType.FormalArgument), GU(GrammarUnitType.CommaWithNewLine)),
+                    FormalArguments.Construct
+                )
             },
             {
                 GrammarUnitType.OptionalFunctionFormalArguments,
@@ -480,9 +453,7 @@ public static class RulesMap
 
             {
                 GrammarUnitType.AdditionalActualParamsArgument,
-                new Rule(
-                    () => new Sequence(GU(LexemType.Comma, GrammarUnitType.SNL, GrammarUnitType.ActualParamsArgument)),
-                    x => x[2])
+                Rule.Additional(GU(GrammarUnitType.ActualParamsArgument))
             },
 
             {

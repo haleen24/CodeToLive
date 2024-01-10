@@ -6,18 +6,21 @@ namespace SyntaxAnalyzer.Nodes;
 public class FunctionDeclaration : INode
 {
     public INode Name { get; }
-    public INode Arguments { get; }
+    public IReadOnlyList<INode> Arguments { get; }
 
-    public FunctionDeclaration(INode name, INode arguments)
+    public FunctionDeclaration(INode name, IEnumerable<INode> arguments)
     {
         Name = name;
-        Arguments = arguments;
+        Arguments = INode.Copy(arguments);
     }
 
     public IEnumerable<INode?> Walk()
     {
         yield return Name;
-        yield return Arguments;
+        foreach (INode no in Arguments)
+        {
+            yield return no;
+        }
     }
 
     public static INode Construct(IParser parser)
@@ -26,9 +29,9 @@ public class FunctionDeclaration : INode
 
         return new FunctionDeclaration(parser[1], parser[5] switch
         {
-            Arguments a => a,
-            Idle => new Arguments(new List<INode>(), null, new List<INode>()),
-            _ => throw new Exception("Wrong type")  // Никогда не должно произойти
+            FormalArguments fa => fa.Arguments,
+            Idle => new List<INode>(),
+            _ => throw new Exception("Wrong formal arguments type") // Никогда не должно произойти
         });
     }
 
