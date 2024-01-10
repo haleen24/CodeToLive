@@ -17,8 +17,8 @@ public static class ExpressionConstructor
             {
                 res = part switch
                 {
-                    Idle => new FunctionCall(res, new List<INode>(), new List<INode>()),
-                    Arguments args => new FunctionCall(res, args.Positional, args.Named, args.Params),
+                    Idle => new FunctionCall(res, new List<INode>()),
+                    ActualArguments args => new FunctionCall(res, args.Arguments),
                     IndexatorPart ip => new Indexator(res, ip.Expr),
                     AttributePart ap => new Attribute(res, ap.Name),
                     _ => throw new Exception("Wrong expression part") // Никогда не должно случиться

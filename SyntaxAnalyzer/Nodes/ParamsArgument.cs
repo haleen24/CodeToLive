@@ -5,21 +5,21 @@ namespace SyntaxAnalyzer.Nodes;
 
 public class ParamsArgument : INode
 {
-    public INode Name { get; }
+    public INode ToUnpack { get; }
 
-    public ParamsArgument(INode name)
+    public ParamsArgument(INode toUnpack)
     {
-        Name = name;
+        ToUnpack = toUnpack;
     }
 
     public IEnumerable<INode?> Walk()
     {
-        yield return Name;
+        yield return ToUnpack;
     }
     
     public override string ToString()
     {
-        return $"ParamsArgument(name={Name})";
+        return $"ParamsArgument(to_unpack={ToUnpack})";
     }
 
     public static INode Construct(IParser parser)

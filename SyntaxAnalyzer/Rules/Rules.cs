@@ -286,30 +286,14 @@ public static class RulesMap
             },
 
             {
-                GrammarUnitType.NamedArguments,
-                new Rule(() => new Repetition(GU(GrammarUnitType.NamedArgument), GU(GrammarUnitType.CommaWithNewLine)),
-                    FormalArguments.NamedArgumentsConstruct)
-            },
-            
-            {
-                GrammarUnitType.AdditionalNamedArguments,
-                Rule.Additional(GU(GrammarUnitType.NamedArguments))
-            },
-
-            {
-                GrammarUnitType.OptionalAdditionalNamedArguments,
-                Rule.Optional(GU(GrammarUnitType.AdditionalNamedArguments))
-            },
-
-            {
-                GrammarUnitType.ParamsArgument,
+                GrammarUnitType.ParamsFormalArgument,
                 new Rule(() => new Sequence(GU(LexemType.Star, GrammarUnitType.SNL, LexemType.Identifier)),
                     ParamsArgument.Construct)
             },
 
             {
                 GrammarUnitType.FormalArgument,
-                Rule.Alternative(GU(GrammarUnitType.ParamsArgument, GrammarUnitType.NamedArgument, LexemType.Identifier))
+                Rule.Alternative(GU(GrammarUnitType.ParamsFormalArgument, GrammarUnitType.NamedArgument, LexemType.Identifier))
             },
 
             {
@@ -440,49 +424,24 @@ public static class RulesMap
             },
 
             {
-                GrammarUnitType.PositionalActualArguments,
-                new Rule(() => new Repetition(GU(GrammarUnitType.Expression), GU(GrammarUnitType.CommaWithNewLine)),
-                    Arguments.PositionalArgumentsConstruct)
-            },
-
-            {
-                GrammarUnitType.ActualParamsArgument,
-                new Rule(() => new Sequence(GU(LexemType.Params, GrammarUnitType.Expression)),
-                    x => x[1])
-            },
-
-            {
-                GrammarUnitType.AdditionalActualParamsArgument,
-                Rule.Additional(GU(GrammarUnitType.ActualParamsArgument))
-            },
-
-            {
-                GrammarUnitType.OptionalAdditionalActualParamsArgument,
-                Rule.Optional(GU(GrammarUnitType.AdditionalActualParamsArgument))
-            },
-
-            {
-                GrammarUnitType.ActualArgumentsWithPositional,
+                GrammarUnitType.ParamsActualArgument,
                 new Rule(
-                    () => new Sequence(GU(GrammarUnitType.PositionalActualArguments,
-                        GrammarUnitType.OptionalAdditionalActualParamsArgument,
-                        GrammarUnitType.OptionalAdditionalNamedArguments)),
-                    Arguments.ArgumentsWithPositionalConstruct)
-            },
-
-            {
-                GrammarUnitType.ActualArgumentsWithParams,
-                new Rule(
-                    () => new Sequence(GU(GrammarUnitType.ActualParamsArgument,
-                        GrammarUnitType.OptionalAdditionalNamedArguments)),
-                    Arguments.ArgumentsWithParamsConstruct
+                    () => new Sequence(GU(LexemType.Star, GrammarUnitType.SNL, GrammarUnitType.Expression)),
+                    ParamsArgument.Construct
                 )
             },
 
             {
+                GrammarUnitType.ActualArgument,
+                Rule.Alternative(GU(GrammarUnitType.NamedArgument, GrammarUnitType.ParamsActualArgument, GrammarUnitType.Expression))
+            },
+
+            {
                 GrammarUnitType.FunctionActualArguments,
-                Rule.Alternative(GU(GrammarUnitType.NamedArguments, GrammarUnitType.ActualArgumentsWithPositional,
-                    GrammarUnitType.ActualArgumentsWithParams))
+                new Rule(
+                    () => new Repetition(GU(GrammarUnitType.ActualArgument), GU(GrammarUnitType.CommaWithNewLine)),
+                    ActualArguments.Construct
+                )
             },
 
             {
