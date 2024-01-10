@@ -9,7 +9,7 @@ namespace LexerSpace
     {
         Plus,
         Minus,
-        Product,
+        Star,
         TrueDiv,
         Div,
         Mod,

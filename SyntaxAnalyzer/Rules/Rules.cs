@@ -23,7 +23,7 @@ public static class RulesMap
                 Rule.Alternative(GU(LexemType.PlusAssign, LexemType.MinusAssign, LexemType.MulAssign,
                     LexemType.TrueDivAssign, LexemType.DivAssign, LexemType.ModAssign, LexemType.AndAssign,
                     LexemType.OrAssign, LexemType.BxorAssign, LexemType.BLshiftAssign, LexemType.BRshiftAssign,
-                    LexemType.Plus, LexemType.Minus, LexemType.Product, LexemType.Div, LexemType.TrueDiv, LexemType.Mod,
+                    LexemType.Plus, LexemType.Minus, LexemType.Star, LexemType.Div, LexemType.TrueDiv, LexemType.Mod,
                     LexemType.Band, LexemType.Bor, LexemType.Binv, LexemType.Bxor, LexemType.Eqv, LexemType.NotEqv,
                     LexemType.GreaterEq, LexemType.LessEq, LexemType.BRshift, LexemType.BLshift, LexemType.Greater,
                     LexemType.Less, GrammarUnitType.IndexatorOperator)
@@ -303,7 +303,7 @@ public static class RulesMap
 
             {
                 GrammarUnitType.ParamsArgument,
-                new Rule(() => new Sequence(GU(LexemType.Params, GrammarUnitType.SNL, LexemType.Identifier)),
+                new Rule(() => new Sequence(GU(LexemType.Star, GrammarUnitType.SNL, LexemType.Identifier)),
                     ParamsArgument.Construct)
             },
 
@@ -513,7 +513,7 @@ public static class RulesMap
 
             {
                 GrammarUnitType.BinaryOperator,
-                Rule.Alternative(GU(LexemType.Plus, LexemType.Minus, LexemType.Product, LexemType.Div,
+                Rule.Alternative(GU(LexemType.Plus, LexemType.Minus, LexemType.Star, LexemType.Div,
                     LexemType.TrueDiv, LexemType.Mod, LexemType.Band, LexemType.Bor, LexemType.Bxor, LexemType.Eqv,
                     LexemType.Greater, LexemType.Less, LexemType.GreaterEq, LexemType.LessEq, LexemType.NotEqv,
                     LexemType.BLshift, LexemType.BRshift, LexemType.And, LexemType.Or, LexemType.Is))

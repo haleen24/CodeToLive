@@ -43,7 +43,7 @@ public class BinaryExpression : INode
 
     private static readonly Dictionary<LexemType, int> Priorities = new()
     {
-        { LexemType.Product, 0 },
+        { LexemType.Star, 0 },
         { LexemType.Div, 0 },
         { LexemType.TrueDiv, 0 },
         { LexemType.Mod, 0 },

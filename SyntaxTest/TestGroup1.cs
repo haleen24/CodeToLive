@@ -213,13 +213,13 @@ public class TestGroup1
                         TT<Block>(
                             TT<Return>(
                                 TT<BinaryExpression>(
-                                    o => o.Operator == LexemType.Product,
+                                    o => o.Operator == LexemType.Star,
                                     TT<Attribute>(
                                         TT<Inner>(),
                                         TT<Identifier>(o => o.Value == "u")
                                     ),
                                     TT<BinaryExpression>(
-                                        o => o.Operator == LexemType.Product,
+                                        o => o.Operator == LexemType.Star,
                                         TT<Attribute>(
                                             TT<Inner>(),
                                             TT<Identifier>(o => o.Value == "s")

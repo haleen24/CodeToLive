@@ -75,7 +75,7 @@ namespace LexerSpace
             {
                 { "+", LexemType.Plus },
                 { "-", LexemType.Minus },
-                { "*", LexemType.Product },
+                { "*", LexemType.Star },
                 { "/", LexemType.TrueDiv },
                 { "//", LexemType.Div },
                 { "%", LexemType.Mod },
