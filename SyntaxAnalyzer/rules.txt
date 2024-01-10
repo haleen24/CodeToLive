@@ -93,12 +93,10 @@ actual_arguments_with_params = actual_params_argument, optional_additional_named
 function_actual_arguments = (named_arguments|actual_arguments_with_positional|actual_arguments_with_params)
 optional_function_actual_arguments = [function_actual_arguments]
 
-unary_operator = (`+`|`-`, `!`, `~`)
-unary_expression = unary_operator, expression
+unary_operator = (`+`|`-`|`!`|`~`)
+unary_expression = unary_operator, expression_with_binary_operators
 
 binary_operator = (`+`, `-`, `*`, `/`, `//`, `%`, `&`, `|`, `^`, `==`, `>`, `<`, `>=`, `<=`, `!=`, `<<`, `>>`, `&&`, `||`, `is`)
-expression_with_binary_operators = expression_without_binary_operators, binary_operator, expression
-expression = (expression_with_binary_operators|expression_without_binary_operators)
 
 lambda = `(`, snl, function_formal_arguments, snl, `)`, `->`, stmt
 
@@ -134,4 +132,6 @@ dict_literal = `{`, snl, optional_dict_body, snl, `}`
 
 atomic_expression = (`true`|`false`|`null`|`this`|`base`|`inner`|`string_literal`|`int_literal`|`float_literal`|`identifier`|parenth|list_literal|set_literal|tuple_literal|dict_literal|unary_expression|lambda)
 
-expression_without_binary_operators = atomic_expression, optional_expression_part_sequence, optional_ternary_operator
+expression_without_binary_operators = atomic_expression, optional_expression_part_sequence
+expression_with_binary_operators = {expression_without_binary_operators, binary_operator}
+expression = expression_with_binary_operators, optional_ternary_operator

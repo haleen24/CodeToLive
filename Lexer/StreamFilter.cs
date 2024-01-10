@@ -76,7 +76,7 @@ public class StreamFilter
             do
             {
                 TrueAdvance();
-            } while (Peek() != '\n');
+            } while (!EndOfStream && Peek() != '\n');
         }
     }
 }

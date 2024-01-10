@@ -44,8 +44,11 @@ internal static class LexemStreamConstructor
         }
     }
 
-    public static LexemStream ConstructStream(IEnumerable<Lexem> input) =>
-        new LexemStream(new List<Lexem>(ConcatLines(RemoveDuplicateNewLines(input))));
+    public static LexemStream ConstructStream(IEnumerable<Lexem> input)
+    {
+        var lexems = new List<Lexem>(ConcatLines(RemoveDuplicateNewLines(input)));
+        return new LexemStream(lexems);
+    }
 }
 
 public class Syntaxer

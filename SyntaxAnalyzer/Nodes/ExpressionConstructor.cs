@@ -5,9 +5,9 @@ namespace SyntaxAnalyzer.Nodes;
 
 public static class ExpressionConstructor
 {
-    public static INode Construct(IParser parser)
+    public static INode ConstructExpressionWithoutBinaryOperators(IParser parser)
     {
-        Debug.Assert(parser.Length == 3);
+        Debug.Assert(parser.Length == 2);
 
         INode res = parser[0];
 
@@ -26,9 +26,18 @@ public static class ExpressionConstructor
             }
         }
 
-        if (parser[2] is TernaryOperator tp)
+        return res;
+    }
+
+    public static INode Construct(IParser parser)
+    {
+        Debug.Assert(parser.Length == 2);
+
+        INode res = parser[0];
+
+        if (parser[1] is TernaryOperator to)
         {
-            res = new TernaryExpression(res, tp.FirstBranch, tp.SecondBranch);
+            res = new TernaryExpression(res, to.FirstBranch, to.SecondBranch);
         }
 
         return res;

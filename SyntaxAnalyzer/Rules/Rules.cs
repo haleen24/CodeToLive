@@ -534,7 +534,9 @@ public static class RulesMap
 
             {
                 GrammarUnitType.UnaryExpression,
-                new Rule(() => new Sequence(GU(GrammarUnitType.UnaryOperator, GrammarUnitType.Expression)),
+                new Rule(
+                    () => new Sequence(GU(GrammarUnitType.UnaryOperator,
+                        GrammarUnitType.ExpressionWithoutBinaryOperators)),
                     UnaryExpression.Construct)
             },
 
@@ -549,15 +551,17 @@ public static class RulesMap
             {
                 GrammarUnitType.ExpressionWithBinaryOperators,
                 new Rule(
-                    () => new Sequence(GU(GrammarUnitType.ExpressionWithoutBinaryOperators,
-                        GrammarUnitType.BinaryOperator, GrammarUnitType.Expression)),
+                    () => new Repetition(GU(GrammarUnitType.ExpressionWithoutBinaryOperators),
+                        GU(GrammarUnitType.BinaryOperator)),
                     BinaryExpression.Construct)
             },
 
             {
                 GrammarUnitType.Expression,
-                Rule.Alternative(GU(GrammarUnitType.ExpressionWithBinaryOperators,
-                    GrammarUnitType.ExpressionWithoutBinaryOperators))
+                new Rule(
+                    () => new Sequence(GU(GrammarUnitType.ExpressionWithBinaryOperators, GrammarUnitType.OptionalTernaryOperator)),
+                    ExpressionConstructor.Construct
+                )
             },
 
             {
@@ -602,7 +606,9 @@ public static class RulesMap
                 GrammarUnitType.AtomicExpression,
                 Rule.Alternative(GU(LexemType.True, LexemType.False, LexemType.Null, LexemType.This, LexemType.Base,
                     LexemType.Inner, LexemType.StringLiteral, LexemType.IntLiteral, LexemType.FloatLiteral,
-                    LexemType.Identifier, GrammarUnitType.Parenth, GrammarUnitType.ListLiteral, GrammarUnitType.SetLiteral, GrammarUnitType.TupleLiteral, GrammarUnitType.DictLiteral, GrammarUnitType.UnaryExpression,
+                    LexemType.Identifier, GrammarUnitType.Parenth, GrammarUnitType.ListLiteral,
+                    GrammarUnitType.SetLiteral, GrammarUnitType.TupleLiteral, GrammarUnitType.DictLiteral,
+                    GrammarUnitType.UnaryExpression,
                     GrammarUnitType.Lambda))
             },
 
@@ -624,8 +630,8 @@ public static class RulesMap
             {
                 GrammarUnitType.ExpressionWithoutBinaryOperators,
                 new Rule(() => new Sequence(GU(GrammarUnitType.AtomicExpression,
-                        GrammarUnitType.OptionalExpressionPartSequence, GrammarUnitType.OptionalTernaryOperator)),
-                    ExpressionConstructor.Construct)
+                        GrammarUnitType.OptionalExpressionPartSequence)),
+                    ExpressionConstructor.ConstructExpressionWithoutBinaryOperators)
             },
 
             {
@@ -645,7 +651,8 @@ public static class RulesMap
                 GrammarUnitType.ListLiteral,
                 new Rule(
                     () => new Sequence(GU(LexemType.Lbracket, GrammarUnitType.SNL,
-                        GrammarUnitType.OptionalExpressionSequence, GrammarUnitType.OptionalComma, GrammarUnitType.SNL, LexemType.Rbracket)),
+                        GrammarUnitType.OptionalExpressionSequence, GrammarUnitType.OptionalComma, GrammarUnitType.SNL,
+                        LexemType.Rbracket)),
                     List.Construct
                 )
             },
@@ -653,7 +660,8 @@ public static class RulesMap
             {
                 GrammarUnitType.SetLiteral,
                 new Rule(
-                    () => new Sequence(GU(LexemType.Lbrace, GrammarUnitType.SNL, GrammarUnitType.ExpressionSequence, GrammarUnitType.OptionalComma,
+                    () => new Sequence(GU(LexemType.Lbrace, GrammarUnitType.SNL, GrammarUnitType.ExpressionSequence,
+                        GrammarUnitType.OptionalComma,
                         GrammarUnitType.SNL, LexemType.Rbrace)),
                     Set.Construct
                 )
@@ -706,7 +714,8 @@ public static class RulesMap
             {
                 GrammarUnitType.DictLiteral,
                 new Rule(
-                    () => new Sequence(GU(LexemType.Lbrace, GrammarUnitType.SNL, GrammarUnitType.OptionalDictBody, GrammarUnitType.OptionalComma, GrammarUnitType.SNL, LexemType.Rbrace)),
+                    () => new Sequence(GU(LexemType.Lbrace, GrammarUnitType.SNL, GrammarUnitType.OptionalDictBody,
+                        GrammarUnitType.OptionalComma, GrammarUnitType.SNL, LexemType.Rbrace)),
                     Dict.Construct
                 )
             }
