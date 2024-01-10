@@ -1,36 +1,28 @@
-﻿using System.Data;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using SyntaxAnalyzer.Parsers;
 
 namespace SyntaxAnalyzer.Nodes;
 
 public class LambdaExpression : INode
 {
-    public IReadOnlyList<INode> PositionalArguments { get; }
-    public IReadOnlyList<INode> NamedArguments { get; }
+    public IReadOnlyList<INode> Arguments { get; }
     public INode Body { get; }
 
-    public LambdaExpression(IEnumerable<INode> positionalArguments, IEnumerable<INode> namedArguments, INode body)
+    public LambdaExpression(IEnumerable<INode> arguments, INode body)
     {
-        PositionalArguments = new List<INode>(positionalArguments).AsReadOnly();
-        NamedArguments = new List<INode>(namedArguments).AsReadOnly();
+        Arguments = INode.Copy(arguments);
         Body = body;
     }
 
     public override string ToString()
     {
         return
-            $"LambdaExpression(positional_arguments=[{string.Join(", ", PositionalArguments)}], named_arguments=[{string.Join(", ", NamedArguments)}], body={Body})";
+            $"LambdaExpression(arguments=[{string.Join(", ", Arguments)}], body={Body})";
     }
 
     public IEnumerable<INode?> Walk()
     {
-        foreach (INode node in PositionalArguments)
-        {
-            yield return node;
-        }
-
-        foreach (INode node in NamedArguments)
+        foreach (INode node in Arguments)
         {
             yield return node;
         }
@@ -42,7 +34,11 @@ public class LambdaExpression : INode
     {
         Debug.Assert(parser.Length == 7);
 
-        var args = parser[2] as Arguments;
-        return new LambdaExpression(args!.Positional, args.Named, parser[^1]);
+        var args = parser[2] as FormalArguments;
+        return args switch
+        {
+            { } nnargs => new LambdaExpression(nnargs.Arguments, parser[^1]),
+            _ => new LambdaExpression(new List<INode>(), parser[^1])
+        };
     }
 }

@@ -126,7 +126,7 @@ dict_body = {key_value_pair, comma_with_new_line}
 optional_dict_body = [dict_body]
 dict_literal = `{`, snl, optional_dict_body, snl, `}`
 
-atomic_expression = (`true`|`false`|`null`|`this`|`base`|`inner`|`string_literal`|`int_literal`|`float_literal`|`identifier`|parenth|list_literal|set_literal|tuple_literal|dict_literal|unary_expression|lambda)
+atomic_expression = (`true`|`false`|`null`|`this`|`base`|`inner`|`string_literal`|`int_literal`|`float_literal`|`identifier`|lambda|parenth|list_literal|set_literal|tuple_literal|dict_literal|unary_expression)
 
 expression_without_binary_operators = atomic_expression, optional_expression_part_sequence
 expression_with_binary_operators = {expression_without_binary_operators, binary_operator}

@@ -539,7 +539,7 @@ public static class RulesMap
                 GrammarUnitType.Lambda,
                 new Rule(
                     () => new Sequence(GU(LexemType.Lparenthese, GrammarUnitType.SNL,
-                        GrammarUnitType.FunctionFormalArguments, GrammarUnitType.SNL, LexemType.Rparenthese,
+                        GrammarUnitType.OptionalFunctionFormalArguments, GrammarUnitType.SNL, LexemType.Rparenthese,
                         LexemType.Lambda,
                         GrammarUnitType.Stmt)),
                     LambdaExpression.Construct)
@@ -577,10 +577,11 @@ public static class RulesMap
                 GrammarUnitType.AtomicExpression,
                 Rule.Alternative(GU(LexemType.True, LexemType.False, LexemType.Null, LexemType.This, LexemType.Base,
                     LexemType.Inner, LexemType.StringLiteral, LexemType.IntLiteral, LexemType.FloatLiteral,
-                    LexemType.Identifier, GrammarUnitType.Parenth, GrammarUnitType.ListLiteral,
+                    LexemType.Identifier, 
+                    GrammarUnitType.Lambda,
+                    GrammarUnitType.Parenth, GrammarUnitType.ListLiteral,
                     GrammarUnitType.SetLiteral, GrammarUnitType.TupleLiteral, GrammarUnitType.DictLiteral,
-                    GrammarUnitType.UnaryExpression,
-                    GrammarUnitType.Lambda))
+                    GrammarUnitType.UnaryExpression))
             },
 
             {
