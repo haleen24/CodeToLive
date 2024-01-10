@@ -2,7 +2,7 @@
 
 namespace SyntaxAnalyzer;
 
-public class LexemStream  // Вывод лексера, с сохраненной позицией
+public class LexemStream  // Вывод лексера с сохраненной позицией
 {
     public IList<Lexem> Lexems { get; }
     public int Position { get; set; }

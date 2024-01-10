@@ -114,7 +114,7 @@ namespace LexerSpace
                 { "?", LexemType.Ternary }
             };
 
-        // Множество всех ключевых слов, после которого не может идти пробел
+        // Множество всех ключевых слов, после которых не может идти пробел
         private HashSet<LexemType> SpaceForbiddenKeywords { get; } = new HashSet<LexemType>()
             { LexemType.Operator, LexemType.Conversion };
 
@@ -425,7 +425,7 @@ namespace LexerSpace
                     continue;
                 }
 
-                if (char.IsDigit(c) /*|| c == '.'*/) // Если лексема начинается с цифры - это числовой литерал
+                if (char.IsDigit(c)) // Если лексема начинается с цифры - это числовой литерал
                 {
                     yield return GetNumericLiteral();
                     continue;
