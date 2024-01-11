@@ -80,12 +80,6 @@ stmt_sequence = [nonempty_stmt_sequence]
 block = `{`, snl, stmt_separator, snl, `}`
 module = stmt_sequence, snl
 
--positional_actual_arguments = {expression, comma_with_new_line}
--actual_params_argument = `params`, expression
--additional_actual_params_argument = `,`, snl, actual_params_argument
--optional_additional_actual_params_argument = [additional_actual_params_argument]
--actual_arguments_with_positional = positional_actual_arguments, optional_additional_actual_params_argument, optional_additional_named_arguments
--actual_arguments_with_params = actual_params_argument, optional_additional_named_arguments
 params_actual_argument = `*`, snl, expression
 actual_argument = (named_argument|params_actual_argument|expression)
 function_actual_arguments = {actual_argument, comma_with_new_line}  # Синтаксический анализатор должен дополнительно проверить, что все аргументы расположены в корректном порядке
