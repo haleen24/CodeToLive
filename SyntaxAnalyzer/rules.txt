@@ -5,7 +5,7 @@ indexator_operator = `[`, `]`
 overloadable_operator = (`+=`, `-=`, `*=`, `/=`, `//=`, `%=`, `&=`, `|=`, `^=`, `<<=`, `>>=`, `+`, `-`, `*`, `/`, `//`, `%`, `&`, `|`, `~`, `^`, `==`, `!=`, `>=`, `<=`, `>>`, `<<`, `>`, `<`, indexator_operator)
 
 operator_overload = `operator`, overloadable_operator
-conversion = `conversion`, `[`, `identifier`, `]`
+conversion = `conversion`, `[`, snl, `identifier`, snl, `]`
 attribute_name = (`identifier`|operator_overload|conversion|`new`)
 accessor = (`getter`, `setter`)
 

@@ -24,7 +24,7 @@ public class Conversion : INode
 
     public static INode Construct(IParser parser)
     {
-        Debug.Assert(parser.Length == 4);
-        return new Conversion(parser[2]);
+        Debug.Assert(parser.Length == 6);
+        return new Conversion(parser[3]);
     }
 }

@@ -38,7 +38,8 @@ public static class RulesMap
 
             {
                 GrammarUnitType.Conversion,
-                new Rule(() => new Sequence(GU(LexemType.Conversion, LexemType.Lbracket, LexemType.Identifier,
+                new Rule(() => new Sequence(GU(LexemType.Conversion, LexemType.Lbracket, GrammarUnitType.SNL,
+                    LexemType.Identifier, GrammarUnitType.SNL,
                     LexemType.Rbracket)), Conversion.Construct)
             },
 
@@ -293,7 +294,8 @@ public static class RulesMap
 
             {
                 GrammarUnitType.FormalArgument,
-                Rule.Alternative(GU(GrammarUnitType.ParamsFormalArgument, GrammarUnitType.NamedArgument, LexemType.Identifier))
+                Rule.Alternative(GU(GrammarUnitType.ParamsFormalArgument, GrammarUnitType.NamedArgument,
+                    LexemType.Identifier))
             },
 
             {
@@ -433,7 +435,8 @@ public static class RulesMap
 
             {
                 GrammarUnitType.ActualArgument,
-                Rule.Alternative(GU(GrammarUnitType.NamedArgument, GrammarUnitType.ParamsActualArgument, GrammarUnitType.Expression))
+                Rule.Alternative(GU(GrammarUnitType.NamedArgument, GrammarUnitType.ParamsActualArgument,
+                    GrammarUnitType.Expression))
             },
 
             {
@@ -489,7 +492,8 @@ public static class RulesMap
             {
                 GrammarUnitType.Expression,
                 new Rule(
-                    () => new Sequence(GU(GrammarUnitType.ExpressionWithBinaryOperators, GrammarUnitType.OptionalTernaryOperator)),
+                    () => new Sequence(GU(GrammarUnitType.ExpressionWithBinaryOperators,
+                        GrammarUnitType.OptionalTernaryOperator)),
                     ExpressionConstructor.Construct
                 )
             },
@@ -536,7 +540,7 @@ public static class RulesMap
                 GrammarUnitType.AtomicExpression,
                 Rule.Alternative(GU(LexemType.True, LexemType.False, LexemType.Null, LexemType.This, LexemType.Base,
                     LexemType.Inner, LexemType.StringLiteral, LexemType.IntLiteral, LexemType.FloatLiteral,
-                    LexemType.Identifier, 
+                    LexemType.Identifier,
                     GrammarUnitType.Lambda,
                     GrammarUnitType.Parenth, GrammarUnitType.ListLiteral,
                     GrammarUnitType.SetLiteral, GrammarUnitType.TupleLiteral, GrammarUnitType.DictLiteral,
